@@ -1,0 +1,3 @@
+import type {Metadata} from "next";import "./globals.css";
+export const metadata:Metadata={title:{default:"منصة د. عبد الرحمن حسان",template:"%s | منصة الكيمياء"},description:"منصة الكيمياء الذكية لطلاب الثانوية العامة — شرح وتدريب ومتابعة ونتائج حقيقية.",openGraph:{title:"الكيمياء مش حفظ",description:"منصة د. عبد الرحمن حسان لطلاب الثانوية العامة",type:"website",locale:"ar_EG",images:[{url:"/og.png",width:1672,height:941,alt:"منصة د. عبد الرحمن حسان"}]},twitter:{card:"summary_large_image",title:"الكيمياء مش حفظ",description:"منصة د. عبد الرحمن حسان",images:["/og.png"]}};
+export default function Layout({children}:{children:React.ReactNode}){return <html lang="ar" dir="rtl"><body>{children}</body></html>}
