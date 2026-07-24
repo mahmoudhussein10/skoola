@@ -1,0 +1,1 @@
+export default function TeacherLoading(){return <div className="dashboardRouteSkeleton"><aside/><main><header/><section/><div><i/><i/><i/></div><article/></main></div>}

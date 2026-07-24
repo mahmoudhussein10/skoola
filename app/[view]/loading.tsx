@@ -1,0 +1,1 @@
+export default function StudentLoading(){return <div className="studentRouteSkeleton"><aside/><main><header/><section/><div><i/><i/><i/><i/></div></main></div>}

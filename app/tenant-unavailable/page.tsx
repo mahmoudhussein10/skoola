@@ -1,0 +1,1 @@
+export default function TenantUnavailablePage() { return <main className="tenantUnavailable"><section><span>المنصة غير متاحة مؤقتًا</span><h1>سنعود قريبًا</h1><p>تم إيقاف مساحة العمل مؤقتًا بواسطة إدارة المنصة. جميع البيانات محفوظة ولم تُحذف.</p><form action="/api/auth/logout" method="post"><button className="btn dark">العودة لتسجيل الدخول</button></form></section></main>; }

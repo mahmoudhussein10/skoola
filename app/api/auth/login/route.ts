@@ -1,0 +1,77 @@
+import { compare } from "bcryptjs";
+import { NextResponse } from "next/server";
+import { prisma } from "../../../../lib/prisma";
+import { createSession, homeForRole, requestFingerprint } from "../../../../lib/auth";
+import { loginSchema } from "../../../../lib/validation";
+import { isSameOrigin } from "../../../../lib/api-auth";
+
+const GENERIC_ERROR = "بيانات الدخول غير صحيحة";
+
+export async function POST(request: Request) {
+  if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
+  const parsed = loginSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ ok: false, message: "تحقق من البيانات المدخلة" }, { status: 400 });
+
+  const identifier = parsed.data.identifier.toLowerCase();
+  const { ipHash } = await requestFingerprint();
+  const since = new Date(Date.now() - 15 * 60 * 1000);
+  const failures = await prisma.loginAttempt.count({ where: { ipHash, successful: false, createdAt: { gte: since } } });
+  if (failures >= 8) return NextResponse.json({ ok: false, message: "محاولات كثيرة. حاول مرة أخرى بعد 15 دقيقة" }, { status: 429 });
+
+  const platform = await prisma.platformSettings.upsert({ where: { id: "default" }, update: {}, create: {} });
+  const user = await prisma.user.findFirst({
+    where: { OR: [{ email: identifier }, { username: identifier }, { phone: parsed.data.identifier }] },
+    include: {
+      memberships: {
+        where: { status: "ACTIVE" },
+        include: { tenant: { select: { id: true, slug: true, status: true } } },
+        orderBy: { createdAt: "asc" },
+      },
+    },
+  });
+  const valid = user ? await compare(parsed.data.password, user.passwordHash) : false;
+  await prisma.loginAttempt.create({ data: { identifier, ipHash, successful: Boolean(valid), userId: user?.id } });
+
+  if (!user || !valid) return NextResponse.json({ ok: false, message: GENERIC_ERROR }, { status: 401 });
+  if (platform.maintenanceMode && user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") return NextResponse.json({ ok: false, message: "المنصة في وضع الصيانة مؤقتًا" }, { status: 503 });
+  if (user.status === "SUSPENDED") return NextResponse.json({ ok: false, message: "الحساب موقوف. تواصل مع الدعم" }, { status: 403 });
+  if (user.status !== "ACTIVE") return NextResponse.json({ ok: false, message: "الحساب قيد المراجعة" }, { status: 403 });
+
+  let activeTenantId: string | undefined = undefined;
+  let targetSlug: string | undefined = undefined;
+
+  if (user.role === "STUDENT") {
+    const studentMembership = user.memberships.find(
+      (m) => (!parsed.data.tenantSlug || m.tenant.slug === parsed.data.tenantSlug) && m.tenant.status !== "SUSPENDED" && m.tenant.status !== "DISABLED" && m.tenant.status !== "ARCHIVED"
+    );
+    if (!studentMembership) {
+      return NextResponse.json({ ok: false, message: "حساب الطالب غير مرتبط بمدرس نشط حاليًا" }, { status: 403 });
+    }
+    activeTenantId = studentMembership.tenantId;
+    targetSlug = studentMembership.tenant.slug;
+  } else if (user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") {
+    const availableMemberships = user.memberships.filter(
+      (membership) => membership.tenant.status !== "SUSPENDED" && membership.tenant.status !== "DISABLED" && membership.tenant.status !== "ARCHIVED"
+    );
+    const staffMembership = parsed.data.tenantSlug
+      ? availableMemberships.find((membership) => membership.tenant.slug === parsed.data.tenantSlug)
+      : availableMemberships.length === 1 ? availableMemberships[0] : null;
+    if (!staffMembership) {
+      return NextResponse.json({ ok: false, message: "الحساب مرتبط بأكثر من منصة. سجّل الدخول من رابط المنصة المطلوبة." }, { status: 409 });
+    }
+    activeTenantId = staffMembership.tenantId;
+  }
+
+  try {
+    await createSession(user.id, parsed.data.remember, activeTenantId);
+  } catch (error) {
+    if (error instanceof Error && error.message === "DEVICE_LIMIT") {
+      return NextResponse.json({ ok: false, message: "تم الوصول للحد الأقصى للأجهزة. ألغِ جهازًا قديمًا أولًا" }, { status: 403 });
+    }
+    throw error;
+  }
+
+  await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+  const redirectTo = targetSlug ? `/t/${targetSlug}` : homeForRole(user.role);
+  return NextResponse.json({ ok: true, redirectTo });
+}

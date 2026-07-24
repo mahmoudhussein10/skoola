@@ -1,7 +1,498 @@
-import {notFound} from "next/navigation";import {Side,AppTop,Brand} from "../ui";
-const tasks=[["🧪","واجب الاتزان الكيميائي","اليوم · 8:00 م","12 سؤال"],["◫","اختبار الباب الثاني","غدًا · 6:30 م","35 دقيقة"],["▶","مراجعة درس سرعة التفاعل","قبل الخميس","22 دقيقة"]];
-function Dashboard(){return <div className="appShell"><Side/><main className="appMain"><AppTop title="أهلًا يا يوسف 👋"/><div className="dashGrid"><section><div className="welcome"><span>استمر يا بطل 🔥</span><h2>أنت أقرب لهدفك كل يوم.</h2><p>أكملت 68% من خطة هذا الأسبوع. متبقي درسان واختبار قصير.</p><a className="btn primary" href="/course">كمّل آخر درس ←</a></div><div className="kpis">{[["سلسلة الالتزام","14 يوم","↑ أفضل رقم"],["وقت المشاهدة","8س 24د","+18%"],["متوسط النتائج","91%","+4%"],["ترتيبك","# 37","من 2,840"]].map(x=><div className="kpi" key={x[0]}><span>{x[0]}</span><b>{x[1]}</b><small>{x[2]}</small></div>)}</div><div className="panel"><div className="panelHead"><h2>كمّل من حيث توقفت</h2><a href="/course">كل الدروس ←</a></div><div className="continue"><a className="thumb" href="/course">▶</a><div><small>الباب الثالث · الدرس ٨</small><h3>العوامل المؤثرة في سرعة التفاعل</h3><p>د. عبد الرحمن حسان · 46 دقيقة</p><div className="progress"><span>تمت مشاهدة 68%</span><i><b style={{width:"68%"}}/></i></div><a className="btn primary" href="/course">متابعة الدرس ←</a></div></div></div><div className="panel tablePanel"><div className="panelHead"><h2>تقدمك في المنهج</h2><a href="/course">التفاصيل</a></div><table><tbody>{[["الباب الأول: العناصر الانتقالية","100%"],["الباب الثاني: التحليل الكيميائي","82%"],["الباب الثالث: الاتزان الكيميائي","46%"]].map(x=><tr key={x[0]}><td>{x[0]}</td><td><i><b style={{width:x[1]}}/></i></td><th>{x[1]}</th></tr>)}</tbody></table></div></section><aside><div className="panel"><div className="panelHead"><h2>مهام اليوم</h2><a href="#tasks">عرض الكل</a></div>{tasks.map(x=><div className="task" key={x[1]}><i>{x[0]}</i><span><b>{x[1]}</b><small>{x[2]}</small></span><b>{x[3]}</b></div>)}</div><div className="panel weekly"><div className="panelHead"><h2>نشاطك الأسبوعي</h2><span>6س 45د</span></div><div className="bars">{[42,75,55,92,68,35,15].map((h,i)=><i key={i}><b style={{height:h+"%"}}/></i>)}</div><div className="days"><span>س</span><span>ح</span><span>ن</span><span>ث</span><span>ر</span><span>خ</span><span>ج</span></div></div><div className="panel rank"><span>🏆</span><div><b>أنت ضمن أفضل 5%</b><small>حل 24 سؤالًا لتتقدم 8 مراكز</small></div></div></aside></div></main></div>}
-function Course(){const lessons=["مقدمة الباب والخواص العامة","سرعة التفاعل الكيميائي","العوامل المؤثرة في سرعة التفاعل","نظرية التصادم","العامل الحفاز"];return <main className="coursePage"><div className="courseTop"><nav className="wrap courseNav"><Brand/><a href="/dashboard">العودة للوحة التحكم ←</a></nav></div><div className="wrap courseLayout"><section><div className="video"><div className="molecule"><i>H</i><b>O</b><i>H</i></div><button aria-label="تشغيل الدرس">▶</button><div className="videoTools">▶　 18:24 / 46:10　 ━━━━━━━━━━━　 ⚙　 ⛶</div></div><div className="lessonCopy"><small>الكيمياء · الباب الثالث · الدرس ٣</small><h1>العوامل المؤثرة في سرعة التفاعل</h1><p>تعرف على أثر التركيز ودرجة الحرارة ومساحة السطح والعامل الحفاز من خلال تجارب مبسطة.</p><div className="tabs"><a className="active" href="#about">عن الدرس</a><a href="#notes">ملاحظاتي</a><a href="#files">المرفقات</a><a href="#discussion">النقاش</a></div><div className="panel lessonNote"><h3>هتتعلم إيه في الدرس؟</h3><p>بنهاية الدرس هتقدر تفسر تغير سرعة التفاعل وتتوقع أثر العوامل المختلفة وتحل المسائل المرتبطة بقانون السرعة.</p><div className="download"><span>📄 ملخص الدرس — PDF · 2.4 MB</span><a href="/dashboard">فتح الملخص ←</a></div></div></div></section><aside className="panel curriculum"><h2>محتوى الباب الثالث</h2><div className="courseProgress">8 من 15 درسًا · 53%<i><b style={{width:"53%"}}/></i></div><div className="unit">الوحدة الأولى · سرعة التفاعل</div>{lessons.map((l,i)=><a className={"lesson "+(i===2?"active":"")} href={i===2?"/course":"/dashboard"} key={l}><i>{i<2?"✓":i===2?"▶":"🔒"}</i><span>{l}<small>{12+i*4} دقيقة</small></span><b>{i<2?"مكتمل":i===2?"الآن":""}</b></a>)}</aside></div></main>}
-function Parents(){return <div className="appShell parentDash"><Side active=""/><main className="appMain"><AppTop title="متابعة يوسف" sub="آخر تحديث اليوم، 10:42 صباحًا"/><div className="dashGrid"><section><div className="welcome parentWelcome"><span>ملخص الأسبوع</span><h2>أداء يوسف يتحسن باستمرار 👏</h2><p>زاد متوسط الاختبارات 4% والتزم بكل الدروس المجدولة هذا الأسبوع.</p></div><div className="kpis">{[["نسبة الالتزام","84%","+7%"],["وقت المذاكرة","8س 24د","+18%"],["متوسط الاختبارات","91%","+4%"],["الواجبات","7 / 8","واجب متأخر"]].map(x=><div className="kpi" key={x[0]}><span>{x[0]}</span><b>{x[1]}</b><small>{x[2]}</small></div>)}</div><div className="panel"><div className="panelHead"><h2>نتائج الاختبارات الأخيرة</h2><a href="/dashboard">التقرير الكامل</a></div><table className="data"><thead><tr><th>الاختبار</th><th>التاريخ</th><th>الدرجة</th><th>الحالة</th></tr></thead><tbody>{[["الاتزان الكيميائي","18 يوليو","18 / 20"],["سرعة التفاعل","12 يوليو","27 / 30"],["مراجعة الباب الثاني","5 يوليو","44 / 50"]].map(x=><tr key={x[0]}><td>{x[0]}</td><td>{x[1]}</td><td><b>{x[2]}</b></td><td><span className="status">ممتاز</span></td></tr>)}</tbody></table></div></section><aside><div className="panel"><div className="panelHead"><h2>نقاط تحتاج متابعة</h2></div><div className="insight"><i>!</i><div><b>مسائل ثابت الاتزان</b><p>دقة الإجابة 62%. يُنصح بمراجعة الدرس 7.</p><a href="/course">فتح الدرس المقترح ←</a></div></div><div className="insight good"><i>✓</i><div><b>تحسن واضح في الحساب الكيميائي</b><p>ارتفعت الدقة من 74% إلى 89% هذا الشهر.</p></div></div></div><div className="panel"><div className="panelHead"><h2>الحضور</h2><b className="green">96%</b></div>{tasks.slice(0,2).map(x=><div className="task" key={x[1]}><i>{x[0]}</i><span><b>{x[1]}</b><small>حضر في الموعد</small></span><b>✓</b></div>)}</div></aside></div></main></div>}
-function Admin(){return <div className="appShell adminDash"><Side active=""/><main className="appMain"><AppTop title="لوحة إدارة المنصة" sub="نظرة شاملة على أداء اليوم"/><div className="welcome adminWelcome"><span>الإيراد هذا الشهر</span><h2>184,250 ج.م</h2><p>↑ 12.8% مقارنة بالشهر الماضي</p></div><div className="kpis">{[["الطلاب النشطون","8,492","+9.2%"],["مبيعات اليوم","42,680 ج.م","+14%"],["وقت المشاهدة","3,842 س","+11%"],["إكمال الكورسات","94%","+2.1%"]].map(x=><div className="kpi" key={x[0]}><span>{x[0]}</span><b>{x[1]}</b><small>{x[2]}</small></div>)}</div><div className="adminGrid"><div className="panel"><div className="panelHead"><h2>أحدث الاشتراكات</h2><a href="/admin">إدارة الطلاب</a></div><table className="data"><thead><tr><th>الطالب</th><th>الصف</th><th>الباقة</th><th>الحالة</th></tr></thead><tbody>{[["أحمد محمد","الثالث الثانوي"],["نور خالد","الثاني الثانوي"],["مريم علي","الثالث الثانوي"],["عمر حسن","الأول الثانوي"]].map(x=><tr key={x[0]}><td>{x[0]}</td><td>{x[1]}</td><td>الترم الكامل</td><td><span className="status">نشط</span></td></tr>)}</tbody></table></div><div className="panel"><div className="panelHead"><h2>أداء المحتوى</h2></div>{[["العناصر الانتقالية","96%"],["التحليل الكيميائي","91%"],["الاتزان الكيميائي","78%"],["الكيمياء العضوية","72%"]].map(x=><div className="metric" key={x[0]}><span>{x[0]}<b>{x[1]}</b></span><i><b style={{width:x[1]}}/></i></div>)}</div></div></main></div>}
-export default async function View({params}:{params:Promise<{view:string}>}){const {view}=await params;if(view==="dashboard")return <Dashboard/>;if(view==="course")return <Course/>;if(view==="parents")return <Parents/>;if(view==="admin")return <Admin/>;notFound()}
+import Link from "next/link";
+import Image from "next/image";
+import { notFound, redirect } from "next/navigation";
+import { prisma } from "../../lib/prisma";
+import { getAuthContext, requireTenantMember } from "../../lib/auth";
+import { Side, AppTop, Brand } from "../ui";
+import { ActiveAnnouncements } from "../active-announcements";
+import { StudentActivation } from "../student-activation";
+import { CourseThumbnail } from "../course-thumbnail";
+
+import { StudentCourseViewer } from "../course/student-course-viewer";
+
+function Empty({ icon, title, text, action, href }: { icon: string; title: string; text: string; action?: string; href?: string }) {
+  return <div className="emptyState"><span>{icon}</span><h3>{title}</h3><p>{text}</p>{action && href ? <Link className="btn primary" href={href}>{action}</Link> : null}</div>;
+}
+
+const gradeLabels = { FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
+
+async function Dashboard() {
+  const context = await requireTenantMember("STUDENT");
+  const { user, membership } = context;
+  const tenantId = membership.tenantId;
+
+  const [profile, enrollments, attempts, unread] = await Promise.all([
+    prisma.studentProfile.findUnique({
+      where: { tenantId_userId: { tenantId, userId: user.id } },
+      select: { grade: true },
+    }),
+    prisma.enrollment.findMany({
+      where: { tenantId, studentId: user.id, status: { in: ["ACTIVE", "COMPLETED"] } },
+      include: {
+        course: {
+          include: {
+            sections: {
+              include: {
+                lessons: { where: { tenantId, status: "PUBLISHED" }, orderBy: { order: "asc" } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: [{ lastAccessAt: "desc" }, { enrolledAt: "desc" }],
+    }),
+    prisma.examAttempt.findMany({
+      where: { tenantId, studentId: user.id, status: { in: ["SUBMITTED", "GRADED"] } },
+      include: { exam: true },
+      orderBy: { submittedAt: "desc" },
+      take: 5,
+    }),
+    prisma.notification.count({ where: { tenantId, userId: user.id, isRead: false } }),
+  ]);
+
+  const enrolledIds = enrollments.map((item) => item.courseId);
+  const availableCourses = await prisma.course.findMany({
+    where: {
+      tenantId,
+      status: "PUBLISHED",
+      ...(profile ? { grade: profile.grade } : {}),
+      ...(enrolledIds.length ? { id: { notIn: enrolledIds } } : {}),
+    },
+    include: { _count: { select: { sections: true, enrollments: true } } },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  });
+
+  const current = enrollments.find((item) => item.status === "ACTIVE");
+  const progress = current ? Number(current.progressPercentage) : 0;
+  const completed = enrollments.filter(
+    (item) => item.status === "COMPLETED" || Number(item.progressPercentage) === 100
+  ).length;
+  const average = attempts.length
+    ? attempts.reduce((sum, item) => sum + Number(item.score ?? 0), 0) / attempts.length
+    : 0;
+  const firstName = user.fullName.trim().split(" ")[0];
+
+  return (
+    <div className="appShell studentShell">
+      <Side />
+      <main className="appMain">
+        <AppTop
+          title={"أهلًا يا " + firstName + " 👋"}
+          sub={"كل رحلتك داخل " + membership.tenant.name}
+          userName={user.fullName}
+        />
+        <ActiveAnnouncements tenantId={tenantId} audience="student" />
+
+        <section className="dashboardHero studentDashboardHero">
+          <div className="studentHeroCopy">
+            <span>مساحتك التعليمية</span>
+            <h2>
+              {current
+                ? "خطوة صغيرة اليوم تصنع فرقًا كبيرًا."
+                : availableCourses.length
+                ? "كورسات مدرسك جاهزة لك."
+                : "رحلتك تبدأ من هنا."}
+            </h2>
+            <p>
+              {current
+                ? `وصلت إلى ${progress.toLocaleString("en-US")}% في ${current.course.title}. كمّل من حيث توقفت.`
+                : availableCourses.length
+                ? "استكشف الكورسات المناسبة لصفك واختر خطوتك القادمة."
+                : "سيظهر هنا كل كورس جديد ينشره مدرسك."}
+            </p>
+            <div className="studentHeroActions">
+              {current ? (
+                <Link className="btn primary" href={`/course?courseId=${current.courseId}`}>
+                  متابعة التعلّم ←
+                </Link>
+              ) : null}
+              <Link className="studentGhostButton" href={"/t/" + membership.tenant.slug + "#courses"}>
+                زيارة صفحة المدرس
+              </Link>
+            </div>
+          </div>
+          <div className="studentHeroVisual">
+            <span className="orbit orbitOne" />
+            <span className="orbit orbitTwo" />
+            <div className="progressMedal">
+              <small>تقدمك الحالي</small>
+              <b>{progress.toLocaleString("en-US")}%</b>
+              <i>
+                <em style={{ width: `${progress}%` }} />
+              </i>
+            </div>
+            <div className="studentLearningArt" aria-hidden="true">
+              <i className="learningBook bookBack" />
+              <i className="learningBook bookFront">
+                <b>SK</b>
+                <span>تعلم اليوم</span>
+              </i>
+              <span className="learningSpark sparkOne">✦</span>
+              <span className="learningSpark sparkTwo">•</span>
+              <span className="learningAvatar">{firstName.charAt(0)}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="kpis studentKpis">
+          <div className="kpi">
+            <span>كورساتي</span>
+            <b>{enrollments.length.toLocaleString("en-US")}</b>
+            <small>مسجلة على حسابك</small>
+          </div>
+          <div className="kpi">
+            <span>تم إنجازه</span>
+            <b>{completed.toLocaleString("en-US")}</b>
+            <small>كورس مكتمل</small>
+          </div>
+          <div className="kpi">
+            <span>متوسط النتائج</span>
+            <b>{average.toLocaleString("en-US", { maximumFractionDigits: 1 })}%</b>
+            <small>{attempts.length.toLocaleString("en-US")} محاولة</small>
+          </div>
+          <div className="kpi">
+            <span>التنبيهات</span>
+            <b>{unread.toLocaleString("en-US")}</b>
+            <small>تحتاج انتباهك</small>
+          </div>
+        </section>
+
+        <div className="studentContentGrid">
+          <section id="my-courses" className="panel studentPanel">
+            <div className="panelHead rich">
+              <div>
+                <span>واصل التعلّم</span>
+                <h2>كورساتي</h2>
+              </div>
+              <small>{enrollments.length.toLocaleString("en-US")} كورس</small>
+            </div>
+            {enrollments.length ? (
+              <div className="realCourseList">
+                {enrollments.map((item) => (
+                  <Link
+                    className="realCourse enrolledCourse"
+                    href={`/course?courseId=${item.courseId}`}
+                    key={item.id}
+                  >
+                    <div className="courseMonogram">{item.course.subject.slice(0, 2)}</div>
+                    <div className="enrolledCourseCopy">
+                      <small>{gradeLabels[item.course.grade]}</small>
+                      <h3>{item.course.title}</h3>
+                      <p>{item.course.sections.length.toLocaleString("en-US")} وحدات تعليمية</p>
+                      <i>
+                        <em style={{ width: `${Number(item.progressPercentage)}%` }} />
+                      </i>
+                    </div>
+                    <strong>{Number(item.progressPercentage).toLocaleString("en-US")}%</strong>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <Empty
+                icon="📚"
+                title="لم تشترك في كورس بعد"
+                text="الكورسات المنشورة المناسبة لصفك موجودة بالأسفل، ويمكنك معرفة تفاصيل الاشتراك من صفحة المدرس."
+              />
+            )}
+          </section>
+
+          <section id="exam-results" className="panel studentPanel resultsPanel">
+            <div className="panelHead rich">
+              <div>
+                <span>قياس مستواك</span>
+                <h2>آخر النتائج</h2>
+              </div>
+            </div>
+            {attempts.length ? (
+              attempts.map((attempt) => (
+                <div className="task resultTask" key={attempt.id}>
+                  <i>✓</i>
+                  <span>
+                    <b>{attempt.exam.title}</b>
+                    <small>
+                      {attempt.submittedAt?.toLocaleDateString("ar-EG") ?? "قيد التصحيح"}
+                    </small>
+                  </span>
+                  <b>{Number(attempt.score ?? 0).toLocaleString("en-US")}</b>
+                </div>
+              ))
+            ) : (
+              <Empty
+                icon="📊"
+                title="لا توجد نتائج بعد"
+                text="نتائج امتحاناتك ستظهر هنا تلقائيًا."
+              />
+            )}
+          </section>
+        </div>
+
+        <StudentActivation />
+
+        <section className="panel studentPanel discoverPanel">
+          <div className="panelHead rich">
+            <div>
+              <span>مناسب لصفك الدراسي</span>
+              <h2>اكتشف كورسات {membership.tenant.name}</h2>
+            </div>
+            <Link href={"/t/" + membership.tenant.slug + "#courses"}>عرض الكل ←</Link>
+          </div>
+          {availableCourses.length ? (
+            <div className="studentCatalog">
+              {availableCourses.map((course, index) => (
+                <Link
+                  href={"/t/" + membership.tenant.slug + "/courses/" + course.slug}
+                  className={`catalogCourse tone-${index % 3}`}
+                  key={course.id}
+                >
+                  <div className="catalogArt">
+                    {course.thumbnailUrl ? (
+                      <CourseThumbnail src={course.thumbnailUrl} alt={course.title} />
+                    ) : (
+                      <>
+                        <span>{course.subject}</span>
+                        <b>{course.subject.slice(0, 2)}</b>
+                        <i />
+                      </>
+                    )}
+                  </div>
+                  <div>
+                    <small>{gradeLabels[course.grade]}</small>
+                    <h3>{course.title}</h3>
+                    <p>{course.description}</p>
+                    <footer>
+                      <span>{course._count.sections.toLocaleString("en-US")} وحدات</span>
+                      <b>
+                        {Number(course.price) === 0
+                          ? "مجاني"
+                          : Number(course.price).toLocaleString("en-US") + " ج.م"}
+                      </b>
+                    </footer>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="catalogEmpty">
+              <span>✦</span>
+              <div>
+                <h3>
+                  {enrollments.length
+                    ? "أنت مسجل في كل الكورسات المتاحة لصفك"
+                    : "لا توجد كورسات منشورة لصفك بعد"}
+                </h3>
+                <p>أي كورس جديد ينشره المدرس سيظهر هنا تلقائيًا.</p>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}
+
+async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: string }) {
+  const auth = await getAuthContext();
+  if (!auth) redirect("/login");
+  const { user, membership } = auth;
+  const tenantId = membership?.tenantId;
+
+  const isStaffOrAdmin =
+    user.role === "SUPER_ADMIN" ||
+    user.role === "ADMIN" ||
+    user.role === "TEACHER_OWNER" ||
+    user.role === "TEACHER_ADMIN" ||
+    user.role === "TEACHER_EDITOR";
+
+  let courseData: any = null;
+
+  if (isStaffOrAdmin) {
+    courseData = await prisma.course.findFirst({
+      where: {
+        ...(tenantId ? { tenantId } : {}),
+        ...(courseId ? { id: courseId } : {}),
+      },
+      include: {
+        sections: {
+          orderBy: { order: "asc" },
+          include: {
+            lessons: {
+              orderBy: { order: "asc" },
+              include: {
+                progress: { where: { studentId: user.id } },
+              },
+            },
+            exams: {
+              orderBy: { id: "asc" },
+              include: {
+                questions: {
+                  orderBy: { order: "asc" },
+                  select: { id: true, text: true, imageUrl: true, type: true, options: true, points: true },
+                },
+                attempts: {
+                  where: { studentId: user.id, status: { in: ["SUBMITTED", "GRADED"] } },
+                  orderBy: { submittedAt: "desc" },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  } else {
+    const enrollment = await prisma.enrollment.findFirst({
+      where: {
+        tenantId,
+        studentId: user.id,
+        status: { in: ["ACTIVE", "COMPLETED"] },
+        ...(courseId ? { courseId } : {}),
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      },
+      include: {
+        course: {
+          include: {
+            sections: {
+              where: { tenantId, status: "PUBLISHED" },
+              orderBy: { order: "asc" },
+              include: {
+                lessons: {
+                  where: { tenantId, status: "PUBLISHED" },
+                  orderBy: { order: "asc" },
+                  include: {
+                    progress: { where: { tenantId, studentId: user.id } },
+                  },
+                },
+                exams: {
+                  where: { tenantId, status: "PUBLISHED" },
+                  orderBy: { id: "asc" },
+                  include: {
+                    questions: {
+                      where: { tenantId },
+                      orderBy: { order: "asc" },
+                      select: { id: true, text: true, imageUrl: true, type: true, options: true, points: true },
+                    },
+                    attempts: {
+                      where: { tenantId, studentId: user.id, status: { in: ["SUBMITTED", "GRADED"] } },
+                      orderBy: { submittedAt: "desc" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { lastAccessAt: "desc" },
+    });
+    courseData = enrollment?.course ?? null;
+  }
+
+  if (!courseData) {
+    return (
+      <main className="coursePage">
+        <div className="courseTop">
+          <nav className="wrap courseNav">
+            <Brand />
+            <Link href="/dashboard">العودة للوحة التحكم ←</Link>
+          </nav>
+        </div>
+        <div className="wrap standaloneEmpty">
+          <Empty
+            icon="🔒"
+            title="لا يوجد كورس متاح"
+            text="تحتاج إلى اشتراك نشط قبل مشاهدة محتوى هذا الكورس."
+            action="العودة للوحة الطالب"
+            href="/dashboard"
+          />
+        </div>
+      </main>
+    );
+  }
+
+  // Format data for StudentCourseViewer
+  const viewerCourse = {
+    id: courseData.id,
+    title: courseData.title,
+    subject: courseData.subject,
+    sections: courseData.sections.map((sec: any) => ({
+      id: sec.id,
+      title: sec.title,
+      lessons: sec.lessons.map((l: any) => ({
+        id: l.id,
+        sectionId: l.sectionId,
+        sectionTitle: sec.title,
+        title: l.title,
+        description: l.description,
+        content: l.content,
+        type: l.type,
+        videoId: l.videoId,
+        videoUrl: l.videoUrl,
+        attachmentUrl: l.attachmentUrl,
+        thumbnailUrl: l.thumbnailUrl,
+        duration: l.duration,
+        order: l.order,
+        completed: Boolean(l.progress?.[0]?.completed),
+      })),
+      exams: sec.exams.map((e: any) => {
+        const lastAtt = e.attempts?.[0];
+        return {
+          id: e.id,
+          title: e.title,
+          description: e.description,
+          durationMinutes: e.durationMinutes,
+          passingScore: Number(e.passingScore),
+          maxAttempts: e.maxAttempts,
+          showResultImmediately: e.showResultImmediately,
+          showAnswersAfterSubmit: e.showAnswersAfterSubmit,
+          questionsCount: e.questions.length,
+          questions: e.questions.map((q: any) => ({
+            id: q.id,
+            text: q.text,
+            imageUrl: q.imageUrl ?? null,
+            type: q.type,
+            options: (Array.isArray(q.options) ? q.options : []) as string[],
+            points: Number(q.points),
+          })),
+          myAttemptsCount: e.attempts.length,
+          lastAttempt: lastAtt
+            ? {
+                score: Number(lastAtt.score ?? 0),
+                maxScore: Number(lastAtt.maxScore ?? 0),
+                percentage: Number(lastAtt.percentage ?? 0),
+                passed: Boolean(lastAtt.passed),
+                submittedAt: lastAtt.submittedAt?.toISOString() ?? lastAtt.startedAt.toISOString(),
+              }
+            : null,
+        };
+      }),
+    })),
+  };
+
+  const studentUser = {
+    id: user.id,
+    fullName: user.fullName,
+    phone: user.phone,
+  };
+
+  return (
+    <StudentCourseViewer
+      user={studentUser}
+      course={viewerCourse}
+      initialLessonId={lessonId}
+      initialProgress={0}
+    />
+  );
+}
+
+function Parents() {
+  return <main className="parentInfo"><div className="wrap parentInfoGrid"><div><Brand /><span className="tag orange">متابعة مبنية على بيانات حقيقية</span><h1>اعرف مستوى ابنك من نشاطه الفعلي.</h1><p>تقارير المشاهدة والامتحانات والاشتراكات تظهر فقط بعد ربط الطالب بولي الأمر. لا نعرض أي أرقام تجريبية.</p><Link className="btn primary" href="/login">تسجيل الدخول ←</Link></div><Image src="/hero.png" alt="مدرس المنصة" width={700} height={600} /></div></main>;
+}
+
+export default async function View({ params, searchParams }: { params: Promise<{ view: string }>; searchParams: Promise<{ courseId?: string; lessonId?: string }> }) {
+  const [{ view }, query] = await Promise.all([params, searchParams]);
+  if (view === "dashboard") return <Dashboard />;
+  if (view === "course") return <Course courseId={query.courseId} lessonId={query.lessonId} />;
+  if (view === "admin") redirect("/teacher");
+  if (view === "parents") return <Parents />;
+  notFound();
+}
