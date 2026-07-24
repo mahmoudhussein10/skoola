@@ -35,6 +35,13 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
   const nav = kind === "teacher" ? (supportMode ? teacherNav.filter((item) => ["/teacher", "/teacher/courses", "/teacher/students"].includes(item.href)) : teacherNav) : superNav;
   const isActive = (href: string) => pathname === href || (href !== "/teacher" && href !== "/super-admin" && pathname.startsWith(href + "/"));
   useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [mobileOpen]);
+
+  useEffect(() => {
     const hrefs = kind === "teacher"
       ? (supportMode ? ["/teacher", "/teacher/courses", "/teacher/students"] : ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/branding", "/teacher/settings"])
       : ["/super-admin", "/super-admin/teachers", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];

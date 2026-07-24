@@ -162,3 +162,119 @@ html{scrollbar-color:#a9bce2 #edf2fa}body{background:#f5f8fd;color:var(--wow-ink
   .studentContentGrid { grid-template-columns: 1fr !important; }
   .studentCatalog, .tenantCourseGrid, .tenantValueGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
+/* Marketing homepage and teacher command center — dedicated phone layouts. */
+@media (max-width: 760px) {
+  .skoolaHome .skoolaWrap { width: min(100% - 28px, 600px) !important; }
+  .skoolaHeader { position: sticky !important; top: 0; }
+  .skoolaNav { height: 68px !important; padding: 0 !important; gap: 10px; }
+  .skoolaNav .skoolaBrand .skoolaLogoFrame { width: 41px; height: 41px; border-radius: 13px; }
+  .skoolaNav .skoolaWordmark strong { font-size: 19px; }
+  .skoolaNav .skoolaWordmark small { font-size: 7px !important; letter-spacing: 1px !important; }
+  .skoolaNavActions .skoolaBtn { min-height: 43px !important; border-radius: 13px !important; font-size: 12px !important; padding: 0 13px !important; }
+  .skoolaHero { display: grid !important; grid-template-columns: 1fr !important; gap: 30px !important; min-height: auto !important; padding: 42px 0 28px !important; text-align: center; }
+  .skoolaHeroCopy { display: flex; flex-direction: column; align-items: center; }
+  .skoolaHero h1 { font-size: clamp(40px, 12vw, 54px) !important; line-height: 1.12 !important; letter-spacing: -2.1px !important; margin: 17px 0 !important; }
+  .skoolaHeroCopy > p { font-size: 15px !important; line-height: 1.8 !important; max-width: 33rem; }
+  .skoolaHeroActions { width: 100%; display: grid !important; grid-template-columns: 1fr !important; gap: 12px !important; margin-top: 23px !important; }
+  .skoolaHeroActions .skoolaBtn, .skoolaVideoBtn { min-height: 52px; justify-content: center; font-size: 14px !important; }
+  .skoolaProof { justify-content: center; gap: 9px 13px !important; margin-top: 19px !important; }
+  .skoolaProof span { font-size: 11px !important; }
+  .skoolaHeroProduct { order: 2; height: 335px !important; width: 100%; }
+  .productWindow { width: calc(100% - 10px) !important; border-radius: 20px !important; transform: none !important; }
+  .productTop { height: 40px !important; font-size: 8px !important; }
+  .productBody { min-height: 260px !important; grid-template-columns: 46px 1fr !important; }
+  .productCanvas { padding: 17px !important; }
+  .productChart svg { height: 96px !important; }
+  .floatingCard { padding: 10px 11px !important; border-radius: 13px !important; }
+  .floatingCard.students { right: 0 !important; top: 12px !important; }
+  .floatingCard.success { left: 0 !important; bottom: 12px !important; }
+  .floatingCard b { font-size: 10px !important; }.floatingCard small { font-size: 8px !important; }
+  .skoolaStats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; padding: 10px !important; border-radius: 20px !important; gap: 0 !important; }
+  .skoolaStats div { min-height: 94px; justify-content: center; padding: 10px; border-left: 1px solid rgba(255,255,255,.09) !important; border-bottom: 1px solid rgba(255,255,255,.09); }
+  .skoolaStats div:nth-child(2n) { border-left: 0 !important; }.skoolaStats div:nth-last-child(-n+2) { border-bottom: 0; }
+  .skoolaStats b { font-size: 25px !important; }.skoolaStats span { font-size: 11px !important; }
+  .skoolaSection { padding: 66px 0 !important; }
+  .skoolaSectionHead { margin-bottom: 28px !important; }.skoolaSectionHead h2 { font-size: clamp(29px, 9vw, 38px) !important; line-height: 1.25 !important; letter-spacing: -1px !important; }.skoolaSectionHead p { font-size: 14px !important; line-height: 1.8; }
+  .solutionGrid, .pricingGrid, .skoolaFeatureGrid { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .solutionCard { min-height: 0 !important; padding: 25px 22px !important; border-radius: 21px !important; }.solutionCard p { min-height: auto !important; font-size: 14px !important; }.solutionCard h3 { font-size: 23px !important; }.solutionCard > a { min-height: 46px; font-size: 14px !important; }
+  .skoolaFeatureBand { padding: 66px 0 !important; }.skoolaFeatureCard { padding: 21px !important; border-radius: 18px !important; }.skoolaFeatureCard p { font-size: 13px !important; }
+  .priceCard { padding: 25px 21px !important; border-radius: 21px !important; }.priceCard.featured { transform: none !important; margin: 15px 0 !important; }.priceCard ul { min-height: 0 !important; margin: 8px 0 !important; }.priceCard li { font-size: 13px !important; }.priceCard > a { width: 100%; min-height: 50px; }
+  .skoolaFaq { grid-template-columns: 1fr !important; gap: 24px !important; }.faqList details { padding: 0 16px !important; border-radius: 15px !important; }.faqList summary { min-height: 60px; font-size: 14px !important; gap: 10px; }.faqList p { font-size: 13px !important; }
+  .skoolaCta > .skoolaWrap { min-height: auto !important; padding: 48px 0 !important; display: grid !important; gap: 23px !important; }.skoolaCta h2 { font-size: 30px !important; line-height: 1.25; }.skoolaCta p { font-size: 14px !important; }.skoolaCta .skoolaBtn { width: 100%; min-height: 52px; }
+  .skoolaFooter { padding: 52px 0 calc(22px + env(safe-area-inset-bottom)) !important; }.footerGrid { grid-template-columns: 1fr 1fr !important; gap: 28px 18px !important; }.footerGrid > div:first-child { grid-column: 1 / -1; }.footerGrid p,.footerGrid a { font-size: 12px !important; }.footerBottom { margin-top: 32px !important; padding-top: 17px !important; display: grid !important; gap: 7px; font-size: 11px !important; }
+
+  .saasShell { display: block !important; }.saasMain { padding: 0 14px calc(94px + env(safe-area-inset-bottom)) !important; }.saasSide { width: min(88vw, 330px) !important; height: 100dvh !important; min-height: 100dvh !important; padding: 18px 14px !important; z-index: 200 !important; box-shadow: -18px 0 55px rgba(4,20,50,.24) !important; }.saasSide nav a { min-height: 50px; font-size: 15px !important; }.sideCloseMobile { width: 44px !important; height: 44px !important; }.sideOverlay { z-index: 190 !important; backdrop-filter: blur(4px); }.mobileMenuButton { right: 14px !important; bottom: max(16px, env(safe-area-inset-bottom)) !important; width: 54px !important; height: 54px !important; border-radius: 18px !important; z-index: 185 !important; }
+  .saasTop { min-height: auto !important; padding: 18px 0 !important; flex-direction: row !important; gap: 10px !important; align-items: flex-start !important; }.saasBreadcrumb { font-size: 11px !important; }.saasTop h1 { font-size: 22px !important; line-height: 1.3 !important; margin: 4px 0 !important; }.saasTop p { font-size: 13px !important; line-height: 1.55; }.saasTopActions { gap: 7px !important; }.saasTopActions > button { width: 46px !important; height: 46px !important; }.saasUser { padding: 4px !important; border-radius: 14px !important; }.saasUser > span { display: none !important; }.saasUser > b { width: 38px !important; height: 38px !important; }
+  .saasHero, .dashboardHeroCustom { margin-top: 14px !important; padding: 24px 20px !important; border-radius: 21px !important; }.saasHero h2 { font-size: 25px !important; line-height: 1.3 !important; }.saasHero p { font-size: 14px !important; line-height: 1.75 !important; }.quickActions { display: grid !important; grid-template-columns: 1fr !important; gap: 9px !important; width: 100%; margin-top: 18px; }.quickActions a { min-height: 50px; justify-content: center; padding: 12px !important; font-size: 14px !important; }
+  .pendingPaymentsBanner { display: grid !important; gap: 14px !important; padding: 18px !important; border-radius: 18px !important; }.pendingPaymentsBanner .btn { width: 100%; min-height: 48px; }.bannerCopy { align-items: flex-start !important; }.bannerCopy small { font-size: 13px !important; line-height: 1.65; }
+  .teacherKpisGrid, .saasKpis { grid-template-columns: 1fr !important; gap: 11px !important; margin: 16px 0 !important; }.saasKpis article { min-height: 116px; padding: 18px !important; }.saasKpis article b { font-size: 31px !important; }.saasKpis article span { font-size: 14px !important; }.saasKpis article small { font-size: 13px !important; }
+  .teacherMainGrid, .saasGrid { grid-template-columns: 1fr !important; gap: 15px !important; }.saasPanel, .growthChart { padding: 19px !important; border-radius: 20px !important; }.panelTitle { align-items: flex-start !important; gap: 8px; flex-wrap: wrap; }.panelTitle h3 { font-size: 18px !important; }.gradeInfo { align-items: flex-start !important; flex-direction: column; gap: 4px; }.gradeInfo span, .gradeInfo b { font-size: 13px !important; }.gradeBarRow { gap: 9px !important; }.toolsList { gap: 10px !important; }.toolLink { min-height: 68px; padding: 13px !important; }.toolLink b { font-size: 14px !important; }.toolLink small { font-size: 12px !important; }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .skoolaHero { gap: 34px !important; }.skoolaHero h1 { font-size: clamp(48px, 6vw, 64px) !important; }.teacherKpisGrid, .saasKpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }.quickActions { flex-wrap: wrap; }
+}
+/* Unified professional headers across public, academy, dashboard, and learning surfaces. */
+:root { --header-height: 82px; }
+.skoolaHeader, .tenantShowcase .tenantNav, .saasTop, .appTop, .viewerHeader {
+  isolation: isolate;
+}
+.skoolaHeader::before, .tenantShowcase .tenantNav::before, .saasTop::before, .appTop::before, .viewerHeader::before {
+  content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, rgba(255,255,255,.94), rgba(250,252,255,.74));
+}
+.saasTop { min-height: var(--header-height) !important; display: flex !important; align-items: center !important; }
+.saasTop::after { content: ""; position: absolute; inset: auto 0 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(55,104,220,.24), rgba(124,87,247,.24), transparent); }
+.saasBreadcrumb { display: inline-flex; align-items: center; gap: 7px; padding: 5px 9px; border-radius: 999px; background: #eef4ff; color: #2864de !important; font-size: 11px !important; }
+.saasTop h1 { text-wrap: balance; }
+.saasTopActions { margin-inline-start: auto; flex-shrink: 0; }
+.saasUser { min-height: 50px; }
+.saasUser > b { box-shadow: 0 5px 14px rgba(56,100,227,.24); }
+.appTop { min-height: 86px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(144,165,203,.22); }
+.appTop::after { content: ""; position: absolute; inset: auto 0 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(73,119,222,.25), transparent); }
+.appTop h1 { color: #102044; font-weight: 900; letter-spacing: -.5px; }
+.tenantShowcase .tenantNav { position: sticky !important; top: 0; background: rgba(250,252,255,.78) !important; backdrop-filter: blur(18px) saturate(1.2); }
+.tenantShowcase .tenantNav::after { content: ""; position: absolute; inset: auto 0 0; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb,var(--tenant-primary) 35%,transparent), transparent); }
+.viewerHeader { position: sticky; top: 0; z-index: 70; border-bottom-color: rgba(255,255,255,.1) !important; }
+.viewerHeader::before { background: linear-gradient(105deg,rgba(7,19,45,.96),rgba(13,29,62,.78)); }
+
+@media (max-width: 760px) {
+  :root { --header-height: 76px; }
+  .mobileMenuButton { top: max(12px, env(safe-area-inset-top)) !important; bottom: auto !important; right: 14px !important; width: 48px !important; height: 48px !important; border-radius: 15px !important; }
+  .saasTop { min-height: 76px !important; padding: 13px 0 13px 61px !important; margin: 0 !important; background: rgba(255,255,255,.91) !important; backdrop-filter: blur(20px) saturate(1.2); }
+  .saasTop > div:first-child { width: 100%; }
+  .saasBreadcrumb { padding: 3px 7px; font-size: 10px !important; }
+  .saasTop h1 { font-size: 20px !important; line-height: 1.25 !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .saasTop p { display: none; }
+  .saasTopActions { display: none !important; }
+  .saasSide { padding-top: max(18px, env(safe-area-inset-top)) !important; }
+  .saasSideHead { min-height: 54px !important; border-bottom: 1px solid rgba(255,255,255,.11); padding-bottom: 10px; margin-bottom: 8px; }
+  .saasSide .skoolaBrand { max-width: calc(100% - 54px); overflow: hidden; }
+  .saasSide nav { overflow-y: auto; padding-bottom: 12px; }
+  .saasSide nav a { min-height: 52px !important; border-radius: 16px !important; }
+  .saasSide .sideUpgrade { display: none; }
+  .saasMain { padding-top: 0 !important; }
+  .saasHero, .dashboardHeroCustom { margin-top: 16px !important; }
+
+  .skoolaHeader { min-height: 68px; }
+  .skoolaHeader::before { background: rgba(255,255,255,.94); }
+  .skoolaNav { min-height: 68px !important; }
+  .skoolaNav .skoolaBrand { min-width: 0; }
+  .skoolaNav .skoolaWordmark { max-width: 112px; overflow: hidden; }
+  .skoolaNavActions { margin-inline-start: auto; }
+  .skoolaNavActions .skoolaBtn { white-space: nowrap; }
+
+  .tenantShowcase .tenantNav { min-height: 72px !important; padding-block: 9px !important; }
+  .tenantShowcase .tenantBrand { min-width: 0; max-width: 58%; }
+  .tenantShowcase .tenantBrand > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tenantShowcase .tenantNavLinks .btn { white-space: nowrap; }
+
+  .appTop { min-height: 74px !important; padding: 12px 0 !important; background: rgba(247,249,253,.94); }
+  .appTop::before { background: rgba(247,249,253,.94); }
+  .appTop h1 { font-size: 20px !important; }
+  .appTop p { font-size: 12px !important; }
+  .appTop .user { display: none !important; }
+
+  .viewerHeader { min-height: 64px; padding-top: max(10px, env(safe-area-inset-top)) !important; }
+  .viewerHeader :where(h1,h2) { font-size: 16px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
