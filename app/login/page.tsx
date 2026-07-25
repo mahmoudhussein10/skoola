@@ -1,15 +1,27 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { AuthVisual } from "../auth-visual";
 import { Brand } from "../ui";
 import { LoginForm } from "../auth-form";
-import { getAuthContext, homeForRole } from "../../lib/auth";
 
 export const metadata = { title: "تسجيل الدخول" };
 
-export default async function LoginPage() {
-  const auth = await getAuthContext();
-  if (auth) {
-    redirect(homeForRole(auth.user.role));
-  }
-  return <main className="authPage skoolaAuthPage"><AuthVisual/><section className="authCard"><div className="authMobileBrand"><Brand/></div><div className="authCardInner"><span className="skoolaPill">مرحبًا بعودتك</span><h1>سجّل دخولك إلى Skoola</h1><p>واصل التدريس أو التعلّم من حيث توقفت.</p><LoginForm/></div></section></main>;
+type LoginRole = "student" | "teacher";
+
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
+  const query = await searchParams;
+  const role: LoginRole = query.role === "teacher" ? "teacher" : "student";
+  const isTeacher = role === "teacher";
+  return <main className="authPage skoolaAuthPage">
+    <AuthVisual variant={isTeacher ? "default" : "student"}/>
+    <section className="authCard"><div className="authMobileBrand"><Brand/></div><div className="authCardInner">
+      <span className="skoolaPill">{isTeacher ? "مساحة المدرس" : "مساحة الطالب"}</span>
+      <h1>{isTeacher ? "دخول المدرس إلى منصته" : "دخول الطالب إلى منصته"}</h1>
+      <p>{isTeacher ? "أدر كورساتك وطلابك ومحتواك من لوحة الأكاديمية." : "واصل دروسك وامتحاناتك ونتائجك من حيث توقفت."}</p>
+      <div className="authRoleTabs" aria-label="اختيار نوع الحساب">
+        <Link className={!isTeacher ? "active" : ""} href="/login?role=student">طالب</Link>
+        <Link className={isTeacher ? "active" : ""} href="/login?role=teacher">مدرس</Link>
+      </div>
+      <LoginForm portal={role}/>
+    </div></section>
+  </main>;
 }

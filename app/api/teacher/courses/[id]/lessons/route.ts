@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
+import { isBunnyStorageUrl, isBunnyVideoUrl } from "../../../../../../lib/media/trusted-url";
 
 const lessonSchema = z.object({
   sectionId: z.string().cuid(),
@@ -11,15 +12,9 @@ const lessonSchema = z.object({
   description: z.string().trim().max(1000).optional().transform((v) => v || null),
   content: z.string().trim().max(10000).optional().transform((v) => v || null),
   type: z.enum(["VIDEO", "TEXT", "FILE", "VIDEO_WITH_ATTACHMENT"]).default("VIDEO"),
-  videoUrl: z
-    .union([z.string().trim().url().refine((url) => /^https?:\/\//i.test(url), "رابط الفيديو يجب أن يبدأ بـ http:// أو https://"), z.literal("")])
-    .transform((v) => v || null),
-  attachmentUrl: z
-    .union([z.string().trim().url().refine((url) => /^https?:\/\//i.test(url), "رابط المرفق يجب أن يبدأ بـ http:// أو https://"), z.literal("")])
-    .transform((v) => v || null),
-  thumbnailUrl: z
-    .union([z.string().trim().url().refine((url) => /^https?:\/\//i.test(url), "رابط الصورة المصغرة يجب أن يبدأ بـ http:// أو https://"), z.literal("")])
-    .transform((v) => v || null),
+  videoUrl: z.union([z.string().trim().url().refine(isBunnyVideoUrl, "ارفع الفيديو عبر Bunny Stream"), z.literal("")]).transform((v) => v || null),
+  attachmentUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع المرفق عبر Bunny Storage"), z.literal("")]).transform((v) => v || null),
+  thumbnailUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع صورة الدرس عبر Bunny Storage"), z.literal("")]).transform((v) => v || null),
   duration: z.coerce.number().int().min(0).default(0),
   isPreview: z.boolean().default(false),
   status: z.enum(["DRAFT", "PUBLISHED", "HIDDEN"]).default("PUBLISHED"),

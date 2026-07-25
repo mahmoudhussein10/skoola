@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "../../lib/prisma";
-import { getAuthContext, requireTenantMember } from "../../lib/auth";
+import { getAuthContext, homeForRole, requireTenantMember } from "../../lib/auth";
 import { Side, AppTop, Brand } from "../ui";
 import { ActiveAnnouncements } from "../active-announcements";
 import { StudentActivation } from "../student-activation";
@@ -17,6 +17,19 @@ function Empty({ icon, title, text, action, href }: { icon: string; title: strin
 const gradeLabels = { FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
 
 async function Dashboard() {
+  const auth = await getAuthContext();
+  if (!auth) redirect("/login?role=student&next=/dashboard");
+  if (auth.user.role !== "STUDENT") {
+    const roleLabel = auth.user.role === "SUPER_ADMIN" || auth.user.role === "ADMIN" ? "الإدارة العليا" : "إدارة الأكاديمية";
+    return (
+      <main className="roleMismatchPage" dir="rtl"><section className="roleMismatchCard">
+        <div className="roleMismatchIcon" aria-hidden="true">↔</div><span className="roleMismatchEyebrow">حساب مختلف مسجّل حاليًا</span>
+        <h1>هذه لوحة الطالب</h1><p>أنت مسجّل الدخول بحساب <strong>{roleLabel}</strong> باسم {auth.user.fullName}. حفاظًا على الصلاحيات والبيانات، استخدم حساب طالب لفتح هذه اللوحة.</p>
+        <div className="roleMismatchActions"><form action="/api/auth/logout" method="post"><input type="hidden" name="next" value="/login?role=student&next=/dashboard" /><button className="btn primary" type="submit">تبديل الحساب والدخول كطالب</button></form><Link className="btn roleMismatchSecondary" href={homeForRole(auth.user.role)}>العودة إلى لوحة {roleLabel}</Link></div>
+        <small>لن يتم دمج صلاحيات الإدارة مع بيانات الطلاب.</small>
+      </section></main>
+    );
+  }
   const context = await requireTenantMember("STUDENT");
   const { user, membership } = context;
   const tenantId = membership.tenantId;
@@ -485,7 +498,7 @@ async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: st
 }
 
 function Parents() {
-  return <main className="parentInfo"><div className="wrap parentInfoGrid"><div><Brand /><span className="tag orange">متابعة مبنية على بيانات حقيقية</span><h1>اعرف مستوى ابنك من نشاطه الفعلي.</h1><p>تقارير المشاهدة والامتحانات والاشتراكات تظهر فقط بعد ربط الطالب بولي الأمر. لا نعرض أي أرقام تجريبية.</p><Link className="btn primary" href="/login">تسجيل الدخول ←</Link></div><Image src="/hero.png" alt="مدرس المنصة" width={700} height={600} /></div></main>;
+  return <main className="parentInfo"><div className="wrap parentInfoGrid"><div><Brand /><span className="tag orange">متابعة مبنية على بيانات حقيقية</span><h1>اعرف مستوى ابنك من نشاطه الفعلي.</h1><p>تقارير المشاهدة والامتحانات والاشتراكات تظهر فقط بعد ربط الطالب بولي الأمر. لا نعرض أي أرقام تجريبية.</p><Link className="btn primary" href="/login?role=student">دخول الطالب ←</Link></div><Image src="/hero.png" alt="مدرس المنصة" width={700} height={600} /></div></main>;
 }
 
 export default async function View({ params, searchParams }: { params: Promise<{ view: string }>; searchParams: Promise<{ courseId?: string; lessonId?: string }> }) {

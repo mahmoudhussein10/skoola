@@ -4,12 +4,15 @@ import { prisma } from "../../../../lib/prisma";
 import { createSession, homeForRole, requestFingerprint } from "../../../../lib/auth";
 import { loginSchema } from "../../../../lib/validation";
 import { isSameOrigin } from "../../../../lib/api-auth";
+import { tenantStaffRoles } from "../../../../lib/permissions";
 
 const GENERIC_ERROR = "بيانات الدخول غير صحيحة";
 
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
-  const parsed = loginSchema.safeParse(await request.json().catch(() => null));
+  const body = await request.json().catch(() => null);
+  const portal = body && typeof body === "object" && "portal" in body ? body.portal : undefined;
+  const parsed = loginSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false, message: "تحقق من البيانات المدخلة" }, { status: 400 });
 
   const identifier = parsed.data.identifier.toLowerCase();
@@ -33,12 +36,14 @@ export async function POST(request: Request) {
   await prisma.loginAttempt.create({ data: { identifier, ipHash, successful: Boolean(valid), userId: user?.id } });
 
   if (!user || !valid) return NextResponse.json({ ok: false, message: GENERIC_ERROR }, { status: 401 });
+  if (portal === "student" && user.role !== "STUDENT") return NextResponse.json({ ok: false, message: "هذا الحساب ليس حساب طالب. استخدم بوابة الدخول المناسبة لنوع حسابك." }, { status: 403 });
+  if (portal === "teacher" && !tenantStaffRoles.includes(user.role)) return NextResponse.json({ ok: false, message: "هذا الحساب ليس حساب مدرس. استخدم بوابة الدخول المناسبة لنوع حسابك." }, { status: 403 });
+  if (portal === "super-admin" && user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") return NextResponse.json({ ok: false, message: "هذا الحساب غير مصرح له بدخول الإدارة العليا." }, { status: 403 });
   if (platform.maintenanceMode && user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") return NextResponse.json({ ok: false, message: "المنصة في وضع الصيانة مؤقتًا" }, { status: 503 });
   if (user.status === "SUSPENDED") return NextResponse.json({ ok: false, message: "الحساب موقوف. تواصل مع الدعم" }, { status: 403 });
   if (user.status !== "ACTIVE") return NextResponse.json({ ok: false, message: "الحساب قيد المراجعة" }, { status: 403 });
 
   let activeTenantId: string | undefined = undefined;
-  let targetSlug: string | undefined = undefined;
 
   if (user.role === "STUDENT") {
     const studentMembership = user.memberships.find(
@@ -48,7 +53,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, message: "حساب الطالب غير مرتبط بمدرس نشط حاليًا" }, { status: 403 });
     }
     activeTenantId = studentMembership.tenantId;
-    targetSlug = studentMembership.tenant.slug;
   } else if (user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") {
     const availableMemberships = user.memberships.filter(
       (membership) => membership.tenant.status !== "SUSPENDED" && membership.tenant.status !== "DISABLED" && membership.tenant.status !== "ARCHIVED"
@@ -72,6 +76,6 @@ export async function POST(request: Request) {
   }
 
   await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
-  const redirectTo = targetSlug ? `/t/${targetSlug}` : homeForRole(user.role);
+  const redirectTo = user.role === "STUDENT" ? "/dashboard" : homeForRole(user.role);
   return NextResponse.json({ ok: true, redirectTo });
 }

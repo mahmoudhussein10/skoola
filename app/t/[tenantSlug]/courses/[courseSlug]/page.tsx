@@ -1,9 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
-  Award,
   BookOpen,
   CheckCircle2,
   Clock,
@@ -22,6 +20,7 @@ import { getAuthContext } from "../../../../../lib/auth";
 import { CourseThumbnail } from "../../../../course-thumbnail";
 import { visiblePaymentMethods } from "../../../../../lib/payment-settings";
 import { StudentCheckoutClient } from "./student-checkout-client";
+import { TenantPublicHeader } from "../../../../components/tenant-public-header";
 
 export const dynamic = "force-dynamic";
 
@@ -138,39 +137,7 @@ export default async function CourseDetailPage({
 
   return (
     <main className="tenantPublic courseDetailPage">
-      {/* Top Navbar */}
-      <nav className="tenantNav wrap">
-        <Link className="brand tenantBrand" href={`/t/${tenant.slug}`}>
-          <b className="tenantLogo">
-            {tenant.logoUrl ? (
-              <Image src={tenant.logoUrl} alt="" width={44} height={44} />
-            ) : (
-              tenant.name.slice(0, 1)
-            )}
-          </b>
-          <span>
-            {tenant.settings?.platformName ?? tenant.name}
-            <small>{tenant.subject ?? "أكاديمية تعليمية"}</small>
-          </span>
-        </Link>
-        <div className="tenantNavLinks">
-          <Link href={`/t/${tenant.slug}#courses`}>جميع الكورسات</Link>
-          {isLoggedInStudent ? (
-            <Link className="btn tenantPrimary" href="/dashboard">
-              لوحتي التعليمية <ArrowLeft size={16} />
-            </Link>
-          ) : (
-            <div className="navAuthGroup">
-              <Link className="btn text" href={`/t/${tenant.slug}/login?redirect=${redirectParam}`}>
-                تسجيل الدخول
-              </Link>
-              <Link className="btn tenantPrimary" href={`/t/${tenant.slug}/register?redirect=${redirectParam}`}>
-                حساب جديد <ArrowLeft size={16} />
-              </Link>
-            </div>
-          )}
-        </div>
-      </nav>
+      <TenantPublicHeader tenant={{ slug: tenant.slug, name: tenant.name, subject: tenant.subject, logoUrl: tenant.logoUrl, platformName: tenant.settings?.platformName }} isLoggedInStudent={isLoggedInStudent} />
 
       {/* Hero Header Section */}
       <section className="courseHeroSection wrap">

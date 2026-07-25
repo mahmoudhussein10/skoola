@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "الغربية", "المنوفية", "القليوبية", "البحيرة", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "بورسعيد", "السويس", "الإسماعيلية", "دمياط", "كفر الشيخ", "مطروح", "الوادي الجديد", "البحر الأحمر", "شمال سيناء", "جنوب سيناء"];
 
-export function LoginForm({ variant = "default", tenantSlug }: { variant?: "default" | "super-admin"; tenantSlug?: string } = {}) {
+export function LoginForm({ variant = "default", tenantSlug, portal }: { variant?: "default" | "super-admin"; tenantSlug?: string; portal?: "student" | "teacher" } = {}) {
   const router = useRouter();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export function LoginForm({ variant = "default", tenantSlug }: { variant?: "defa
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ identifier: data.get("identifier"), password: data.get("password"), remember: data.get("remember") === "on", tenantSlug }),
+        body: JSON.stringify({ identifier: data.get("identifier"), password: data.get("password"), remember: data.get("remember") === "on", tenantSlug, portal: variant === "super-admin" ? "super-admin" : (tenantSlug ? "student" : portal) }),
       });
       const result = await response.json();
       if (!response.ok) setMessage(result.message ?? "تعذر تسجيل الدخول");
@@ -40,7 +40,7 @@ export function LoginForm({ variant = "default", tenantSlug }: { variant?: "defa
     <div className="formRow"><label className="check"><input name="remember" type="checkbox" /> تذكرني</label><Link href="/forgot-password">نسيت كلمة المرور؟</Link></div>
     {message && <p className="formError" role="alert">{message}</p>}
     <button className="btn primary authSubmit" disabled={loading}>{loading ? "جارٍ تسجيل الدخول…" : variant === "super-admin" ? "دخول الإدارة العليا ←" : "تسجيل الدخول ←"}</button>
-    {variant === "super-admin" ? <p className="authSwitch">هذا المدخل مخصص لحسابات الإدارة العليا فقط.</p> : <p className="authSwitch">ليس لديك حساب؟ <Link href={tenantSlug ? `/t/${tenantSlug}/register` : "/register"}>أنشئ حساب طالب</Link>{tenantSlug ? null : <> أو <Link href="/teacher-register">أنشئ منصة مدرس</Link></>}</p>}
+    {variant === "super-admin" ? <p className="authSwitch">هذا المدخل مخصص لحسابات الإدارة العليا فقط.</p> : tenantSlug ? <div className="authAccountPrompt"><span>طالب جديد في المنصة؟</span><Link className="authCreateAccount" href={`/t/${tenantSlug}/register`}>أنشئ حساب طالب جديد</Link><small>التسجيل يستغرق دقائق ويحفظ تقدمك ونتائجك.</small></div> : portal === "teacher" ? <p className="authSwitch">مدرس جديد؟ <Link href="/teacher-register">أنشئ منصتك التعليمية</Link></p> : <p className="authSwitch">طالب جديد؟ <Link href="/register">اختر أكاديميتك وأنشئ حسابك</Link></p>}
   </form>;
 }
 
@@ -80,6 +80,6 @@ export function RegisterForm({ tenantSlug }: { tenantSlug?: string } = {}) {
     <label className="check terms"><input name="acceptedTerms" type="checkbox" required /> أوافق على شروط الاستخدام وسياسة الخصوصية</label>
     {message && <p className="formError" role="alert">{message}</p>}
     <button className="btn primary authSubmit" disabled={loading}>{loading ? "جارٍ إنشاء الحساب…" : "إنشاء حساب الطالب ←"}</button>
-    <p className="authSwitch">لديك حساب بالفعل؟ <Link href="/login">سجّل الدخول</Link></p>
+    <p className="authSwitch">لديك حساب بالفعل؟ <Link href={tenantSlug ? `/t/${tenantSlug}/login` : "/login"}>سجّل الدخول إلى حسابك</Link></p>
   </form>;
 }

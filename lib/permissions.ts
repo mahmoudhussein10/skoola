@@ -6,6 +6,7 @@ export const permissions = [
   "tenant.branding.manage",
   "courses.view",
   "courses.manage",
+  "media.manage",
   "students.view",
   "students.manage",
   "staff.view",
@@ -23,7 +24,7 @@ export type Permission = (typeof permissions)[number];
 const rolePermissions: Partial<Record<UserRole, readonly Permission[]>> = {
   TEACHER_OWNER: permissions,
   TEACHER_ADMIN: permissions.filter((permission) => permission !== "tenant.settings.manage"),
-  TEACHER_EDITOR: ["tenant.view", "courses.view", "courses.manage", "assignments.manage", "exams.manage"],
+  TEACHER_EDITOR: ["tenant.view", "courses.view", "courses.manage", "media.manage", "assignments.manage", "exams.manage"],
   SUPPORT_STAFF: ["tenant.view", "courses.view", "students.view"],
   STUDENT: ["tenant.view", "courses.view"],
 };

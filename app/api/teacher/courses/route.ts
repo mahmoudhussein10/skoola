@@ -4,8 +4,9 @@ import { z } from "zod";
 import { prisma } from "../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../lib/auth";
+import { isBunnyStorageUrl } from "../../../../lib/media/trusted-url";
 
-const schema = z.object({ title: z.string().trim().min(3).max(120), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), description: z.string().trim().min(10).max(2000), grade: z.enum(["FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]), subject: z.string().trim().min(2).max(80), price: z.coerce.number().min(0).max(100000), thumbnailUrl: z.union([z.string().trim().url().refine((url) => /^https?:\/\//i.test(url), "رابط الصورة يجب أن يبدأ بـ http:// أو https://"), z.literal("")]).transform((value) => value || null), status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED") });
+const schema = z.object({ title: z.string().trim().min(3).max(120), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), description: z.string().trim().min(10).max(2000), grade: z.enum(["FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]), subject: z.string().trim().min(2).max(80), price: z.coerce.number().min(0).max(100000), thumbnailUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع غلاف الكورس من خلال Bunny"), z.literal("")]).transform((value) => value || null), status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED") });
 const statusSchema = z.object({ courseId: z.string().cuid(), status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]) });
 const updateSchema = schema.extend({ courseId: z.string().cuid(), status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]) });
 
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
     } else if (issues.some((i) => i.path.includes("title"))) {
       msg = "عنوان الكورس يجب أن يكون بين 3 و 120 حرفًا";
     } else if (issues.some((i) => i.path.includes("thumbnailUrl"))) {
-      msg = "رابط صورة الكورس غير صحيح؛ استخدم رابطًا مباشرًا يبدأ بـ http:// أو https://";
+      msg = "ارفع غلاف الكورس من جهازك عبر Bunny بدل إدخال رابط مباشر";
     } else if (issues.some((i) => i.path.includes("description"))) {
       msg = "وصف الكورس يجب أن يكون 10 أحرف على الأقل";
     }
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
   const { ipHash } = await requestFingerprint();
   const course = await prisma.$transaction(async (tx) => {
     const created = await tx.course.create({ data: { tenantId, createdById: auth.context.user.id, ...parsed.data } });
+    if (created.thumbnailUrl) await tx.mediaAsset.updateMany({ where: { tenantId, publicUrl: created.thumbnailUrl, courseId: null }, data: { courseId: created.id } });
     if (created.status === "PUBLISHED") await tx.tenantSettings.updateMany({ where: { tenantId }, data: { publicPageLive: true } });
     await tx.auditLog.create({ data: { tenantId, actorId: auth.context.user.id, action: "COURSE_CREATED", entityType: "Course", entityId: created.id, after: { title: created.title, slug: created.slug }, ipHash } });
     await tx.activityLog.create({ data: { tenantId, actorId: auth.context.user.id, action: "إنشاء كورس", entityType: "Course", entityId: created.id } });

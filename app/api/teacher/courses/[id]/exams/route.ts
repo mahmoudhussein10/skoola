@@ -4,12 +4,13 @@ import { z } from "zod";
 import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
+import { isBunnyStorageUrl } from "../../../../../../lib/media/trusted-url";
 
 const stringOrNull = z.union([z.string(), z.null(), z.undefined()]);
 
 const questionSchema = z.object({
   text: stringOrNull.transform((v) => (v ? String(v).trim() : "")),
-  imageUrl: stringOrNull.transform((v) => (v ? String(v).trim() : null)),
+  imageUrl: stringOrNull.transform((v) => (v ? String(v).trim() : null)).refine(isBunnyStorageUrl, "ارفع صورة السؤال عبر Bunny بدل إدخال رابط مباشر"),
   type: z.enum(["MCQ", "TRUE_FALSE"]).default("MCQ"),
   options: z.array(stringOrNull).transform((opts) => opts.map((o) => (o ? String(o).trim() : "")).filter(Boolean)),
   correctAnswer: stringOrNull.transform((v) => (v ? String(v).trim() : "")),
@@ -17,7 +18,7 @@ const questionSchema = z.object({
   points: z.coerce.number().min(0.5).default(1),
 }).refine(
   (q) => (q.text.length >= 1 || Boolean(q.imageUrl && q.imageUrl.length > 3)),
-  { message: "يرجى كتابة نص السؤال أو إضافة رابط صورة للسؤال" }
+  { message: "يرجى كتابة نص السؤال أو رفع صورة للسؤال عبر Bunny" }
 ).refine(
   (q) => q.options.length >= 2,
   { message: "السؤال يتطلب خيارين غير فارغين على الأقل" }

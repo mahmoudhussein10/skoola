@@ -2,23 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
   ArrowUp,
-  BookOpen,
-  Check,
   ChevronDown,
   ChevronUp,
   Clock,
-  Copy,
   Edit3,
   Eye,
   EyeOff,
   FileText,
   HelpCircle,
+  ClipboardCheck,
+  PlayCircle,
+  Paperclip,
+  ImageIcon,
   Layers,
   Lock,
   Plus,
@@ -28,6 +29,7 @@ import {
   X,
 } from "lucide-react";
 import { CourseThumbnail } from "../../../course-thumbnail";
+import { MediaUploader } from "../../../components/media-uploader";
 
 type Question = {
   id?: string;
@@ -414,10 +416,8 @@ export function CourseContentManager({ course }: { course: Course }) {
     setLoading(true);
 
     const sanitizedQuestions = examQuestions.map((q) => {
-      let img = (q.imageUrl ?? "").trim();
-      if (img && !img.startsWith("http://") && !img.startsWith("https://") && !img.startsWith("/")) {
-        img = `https://${img}`;
-      }
+      const img = (q.imageUrl ?? "").trim();
+
       const cleanOpts = q.options.map((o) => o.trim()).filter(Boolean);
       const finalOpts = cleanOpts.length >= 2 ? cleanOpts : (q.type === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"]);
       const finalCorrect = finalOpts.includes(q.correctAnswer) ? q.correctAnswer : finalOpts[0];
@@ -570,14 +570,14 @@ export function CourseContentManager({ course }: { course: Course }) {
             </div>
           </div>
           <div className="metric">
-            <Video size={18} />
+            <PlayCircle size={20} />
             <div>
               <b>{totalLessons.toLocaleString("en-US")}</b>
               <small>دروس مضافة</small>
             </div>
           </div>
           <div className="metric">
-            <HelpCircle size={18} />
+            <ClipboardCheck size={20} />
             <div>
               <b>{totalExams.toLocaleString("en-US")}</b>
               <small>امتحانات أونلاين</small>
@@ -692,13 +692,13 @@ export function CourseContentManager({ course }: { course: Course }) {
                             setLessonModal({ open: true, sectionId: section.id, data: null })
                           }
                         >
-                          <Plus size={16} /> إضافة درس للقسم
+                          <PlayCircle size={16} /> إضافة درس للقسم
                         </button>
                         <button
                           className="btn sm secondary"
                           onClick={() => openExamModal(section.id, null)}
                         >
-                          <Plus size={16} /> إضافة امتحان للقسم
+                          <ClipboardCheck size={16} /> إضافة امتحان للقسم
                         </button>
                       </div>
 
@@ -706,8 +706,8 @@ export function CourseContentManager({ course }: { course: Course }) {
                       {section.lessons.length === 0 && section.exams.length === 0 ? (
                         <div className="sectionEmptyActions">
                           <div><strong>القسم جاهز لإضافة المحتوى</strong><span>ابدأ بفيديو المحاضر، ثم أضف كويزًا لقياس الاستيعاب.</span></div>
-                          <button className="contentChoice videoChoice" onClick={() => setLessonModal({ open: true, sectionId: section.id, data: null })}><i><Video size={21}/></i><span><b>إضافة فيديو أو درس</b><small>الصق رابط الفيديو وأضف الشرح</small></span><ArrowLeft size={18}/></button>
-                          <button className="contentChoice quizChoice" onClick={() => openExamModal(section.id, null)}><i><HelpCircle size={21}/></i><span><b>إنشاء كويز</b><small>أسئلة اختيار من متعدد أو صح وخطأ</small></span><ArrowLeft size={18}/></button>
+                          <button className="contentChoice videoChoice" onClick={() => setLessonModal({ open: true, sectionId: section.id, data: null })}><i><Video size={21}/></i><span><b>إضافة فيديو أو درس</b><small>ارفع الفيديو عبر Bunny وأضف الشرح</small></span><ArrowLeft size={18}/></button>
+                          <button className="contentChoice quizChoice" onClick={() => openExamModal(section.id, null)}><i><ClipboardCheck size={22}/></i><span><b>إنشاء كويز</b><small>أسئلة اختيار من متعدد أو صح وخطأ</small></span><ArrowLeft size={18}/></button>
                         </div>
                       ) : (
                         <div className="itemsList">
@@ -717,7 +717,7 @@ export function CourseContentManager({ course }: { course: Course }) {
                               <div className="itemLead">
                                 <span className="itemIcon">
                                   {lesson.type === "VIDEO" || lesson.type === "VIDEO_WITH_ATTACHMENT" ? (
-                                    <Video size={18} />
+                                    <PlayCircle size={20} />
                                   ) : (
                                     <FileText size={18} />
                                   )}
@@ -792,7 +792,7 @@ export function CourseContentManager({ course }: { course: Course }) {
                             <div key={exam.id} className="itemCard examCard">
                               <div className="itemLead">
                                 <span className="itemIcon purple">
-                                  <HelpCircle size={18} />
+                                  <ClipboardCheck size={20} />
                                 </span>
                                 <div>
                                   <h4>{exam.title}</h4>
@@ -934,7 +934,7 @@ export function CourseContentManager({ course }: { course: Course }) {
                 <select name="type" defaultValue={lessonModal.data?.type ?? "VIDEO"}>
                   <option value="VIDEO">فيديو</option>
                   <option value="TEXT">شرح نصي / ملاحظات</option>
-                  <option value="FILE">ملف / رابط خارجي</option>
+                  <option value="FILE">ملف مرفوع عبر Bunny</option>
                   <option value="VIDEO_WITH_ATTACHMENT">فيديو مع مرفقات</option>
                 </select>
               </label>
@@ -949,36 +949,14 @@ export function CourseContentManager({ course }: { course: Course }) {
                 />
               </label>
 
-              <label className="full">
-                رابط فيديو المحاضر
-                <input
-                  name="videoUrl"
-                  dir="ltr"
-                  defaultValue={lessonModal.data?.videoUrl ?? lessonModal.data?.videoId ?? ""}
-                  placeholder="https://youtube.com/watch?v=... أو رابط Vimeo / MP4"
-                />
-                <small className="fieldHint"><Video size={14}/> افتح الفيديو، انسخ رابطه من المتصفح، ثم الصقه هنا. يدعم روابط YouTube وVimeo والفيديو المباشر MP4.</small>
-              </label>
+              <div className="full lessonBunnyUploads">
+  <div><b>رفع وسائط الدرس على Bunny</b><small>الفيديو يُرفع مباشرةً إلى Bunny Stream ويمكن استكماله إذا انقطع الإنترنت.</small></div>
+  {lessonModal.data?.id ? <div className="lessonUploadGrid"><div className="bunnyUploadKind"><Video size={17}/><b>فيديو الدرس</b><MediaUploader resourceType="video" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={() => window.location.reload()} /></div><div className="bunnyUploadKind"><Paperclip size={17}/><b>ملف أو PDF</b><MediaUploader resourceType="attachment" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={() => window.location.reload()} /></div><div className="bunnyUploadKind"><ImageIcon size={17}/><b>صورة الدرس</b><MediaUploader resourceType="image" courseId={course.id} lessonId={lessonModal.data.id} aspectRatio={16/9} onUploadComplete={() => window.location.reload()} /></div></div> : <p className="managerNotice">احفظ الدرس أولًا، ثم افتحه للتعديل وارفع الفيديو أو المرفق.</p>}
+</div>
 
-              <label className="full">
-                رابط الملف أو المرفقات الإضافية (اختياري)
-                <input
-                  name="attachmentUrl"
-                  dir="ltr"
-                  defaultValue={lessonModal.data?.attachmentUrl ?? ""}
-                  placeholder="https://... PDF or Attachment link"
-                />
-              </label>
-
-              <label className="full">
-                رابط صورة مصغرة للدرس (اختياري)
-                <input
-                  name="thumbnailUrl"
-                  dir="ltr"
-                  defaultValue={lessonModal.data?.thumbnailUrl ?? ""}
-                  placeholder="https://... Direct Image URL"
-                />
-              </label>
+                            <input type="hidden" name="videoUrl" defaultValue={lessonModal.data?.videoUrl ?? ""} />
+              <input type="hidden" name="attachmentUrl" defaultValue={lessonModal.data?.attachmentUrl ?? ""} />
+              <input type="hidden" name="thumbnailUrl" defaultValue={lessonModal.data?.thumbnailUrl ?? ""} />
 
               <label className="full">
                 نص الشرح أو ملاحظات الدرس (لنوع الشرح النصي)
@@ -1126,20 +1104,15 @@ export function CourseContentManager({ course }: { course: Course }) {
                       />
                     </label>
 
-                    <label>
-                      رابط صورة السؤال (اختياري - Direct Link)
-                      <input
-                        type="text"
-                        dir="ltr"
-                        value={q.imageUrl ?? ""}
-                        onChange={(e) => updateQuestion(qIdx, { imageUrl: e.target.value })}
-                        placeholder="https://example.com/question-image.jpg"
-                      />
-                    </label>
+                                        <div className="questionBunnyImage">
+                      <div className="bunnyFieldHeading"><ImageIcon size={17}/><span><b>صورة السؤال عبر Bunny</b><small>ارفع الصورة من جهازك؛ لا توجد روابط مباشرة.</small></span></div>
+                      <MediaUploader resourceType="image" courseId={course.id} onUploadComplete={(asset) => updateQuestion(qIdx, { imageUrl: asset.publicUrl ?? "" })} />
+                      {q.imageUrl ? <button type="button" className="removeQuestionImage" onClick={() => updateQuestion(qIdx, { imageUrl: "" })}>حذف صورة السؤال</button> : null}
+                    </div>
 
                     {q.imageUrl ? (
                       <div className="questionImagePreview" style={{ marginBlock: "8px", borderRadius: "12px", overflow: "hidden", border: "1px solid #e2e8f0", maxWidth: "420px", maxHeight: "220px" }}>
-                        <img src={q.imageUrl} alt="معاينة صورة السؤال" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} onError={(e) => (e.currentTarget.style.display = "none")} />
+                        <Image src={q.imageUrl} alt="معاينة صورة السؤال" width={900} height={500} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
                       </div>
                     ) : null}
 

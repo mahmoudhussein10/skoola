@@ -4,7 +4,8 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useState } from "react";
-import { BookOpen } from "lucide-react";
+import { BookOpen, ImagePlus } from "lucide-react";
+import { MediaUploader } from "./components/media-uploader";
 
 export function CourseThumbnail({ src, alt, className = "" }: { src?: string | null; alt: string; className?: string }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
@@ -16,11 +17,12 @@ export function CourseThumbnail({ src, alt, className = "" }: { src?: string | n
   return <div className={"courseThumbnail " + className}><img src={src} alt={alt} loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedSrc(src)} /></div>;
 }
 
-export function CourseImageField({ initialUrl = "" }: { initialUrl?: string | null }) {
+export function CourseImageField({ initialUrl = "", courseId }: { initialUrl?: string | null; courseId?: string }) {
   const [url, setUrl] = useState(initialUrl ?? "");
-  return <label className="courseImageField">رابط صورة الكورس
-    <input name="thumbnailUrl" type="url" dir="ltr" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://example.com/course-image.jpg" />
-    <small>استخدم رابط صورة مباشر يبدأ بـ http:// أو https://</small>
-    <CourseThumbnail src={url} alt="معاينة صورة الكورس" className="courseImagePreview" />
-  </label>;
+  return <div className="courseImageField bunnyCourseImageField">
+    <input name="thumbnailUrl" type="hidden" value={url} />
+    <div className="bunnyFieldHeading"><ImagePlus size={18}/><span><b>غلاف الكورس عبر Bunny</b><small>اختر الصورة من جهازك؛ سيتم تحسينها وحفظها تلقائيًا داخل مساحة أكاديميتك.</small></span></div>
+    <MediaUploader resourceType="course_cover" courseId={courseId} aspectRatio={16/9} onUploadComplete={(asset) => setUrl(asset.publicUrl ?? "")} />
+    {url ? <CourseThumbnail src={url} alt="معاينة غلاف الكورس" className="courseImagePreview" /> : null}
+  </div>;
 }

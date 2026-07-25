@@ -92,7 +92,7 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
       <label>عنوان الكورس<input name="title" defaultValue={editing.title} minLength={3} required /></label><label>الرابط المختصر<input name="slug" dir="ltr" defaultValue={editing.slug} pattern="[a-z0-9-]+" required /></label>
       <label>الصف<select name="grade" defaultValue={editing.grade}>{Object.entries(grades).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label>المادة<input name="subject" defaultValue={editing.subject} required /></label>
       <label>السعر<input name="price" type="number" min="0" defaultValue={editing.price} required /></label><label>الحالة<select name="status" defaultValue={editing.status}><option value="PUBLISHED">منشور</option><option value="DRAFT">مسودة</option><option value="ARCHIVED">مؤرشف</option></select></label>
-      <CourseImageField initialUrl={editing.thumbnailUrl} /><label className="wide">وصف الكورس<textarea name="description" defaultValue={editing.description} minLength={10} required /></label>
+      <CourseImageField initialUrl={editing.thumbnailUrl} courseId={editing.id} /><label className="wide">وصف الكورس<textarea name="description" defaultValue={editing.description} minLength={10} required /></label>
     </div><footer><button type="button" className="cancel" onClick={() => setEditing(null)}>إلغاء</button><button className="save" disabled={busyId === editing.id}>{busyId === editing.id ? "جارٍ الحفظ..." : "حفظ التعديلات"}</button></footer></form></div> : null}
   </section>;
 }

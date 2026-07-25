@@ -235,6 +235,17 @@ export function StudentCourseViewer({
     const url = lesson.videoUrl ?? "";
     const videoId = lesson.videoId ?? "";
 
+    if (url.includes("iframe.mediadelivery.net")) {
+      return (
+        <iframe
+          title={lesson.title}
+          src={url}
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      );
+    }
     if (videoId) {
       return (
         <iframe

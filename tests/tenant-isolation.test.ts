@@ -4,6 +4,7 @@ import { assertTenantAccess, tenantStoragePath, tenantWhere } from "../lib/tenan
 import { hasPermission } from "../lib/permissions.ts";
 import { themeSchema } from "../lib/validation.ts";
 import { paymentSettingsSchema, visiblePaymentMethods } from "../lib/payment-settings.ts";
+import { normalizeRuntimeDatabaseUrl } from "../lib/database-url.ts";
 
 test("tenant scope always overrides a tenantId supplied by the browser", () => {
   const scoped = tenantWhere("tenant-a", { tenantId: "tenant-b", status: "PUBLISHED" });
@@ -61,4 +62,14 @@ test("students only receive payment methods enabled by their tenant", () => {
   const methods = visiblePaymentMethods({ vodafoneCashEnabled: false, vodafoneCashNumber: "01012345678", instaPayEnabled: true, instaPayAddress: "teacher@instapay" });
   assert.deepEqual(methods, [{ type: "instapay", title: "InstaPay", value: "teacher@instapay", holder: undefined }]);
   assert.deepEqual(visiblePaymentMethods(null), []);
+});
+test("Supabase transaction pooler URLs are made Prisma-safe", () => {
+  const transactionUrl = normalizeRuntimeDatabaseUrl("postgresql://user:pass@aws-0-eu-west-1.pooler.supabase.com:6543/postgres");
+  assert.ok(transactionUrl);
+  const parsed = new URL(transactionUrl);
+  assert.equal(parsed.searchParams.get("pgbouncer"), "true");
+  assert.equal(parsed.searchParams.get("connection_limit"), "1");
+
+  const sessionUrl = "postgresql://user:pass@aws-0-eu-west-1.pooler.supabase.com:5432/postgres";
+  assert.equal(normalizeRuntimeDatabaseUrl(sessionUrl), sessionUrl);
 });

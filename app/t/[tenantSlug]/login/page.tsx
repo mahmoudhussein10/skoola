@@ -1,20 +1,38 @@
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import type { CSSProperties } from "react";
+import { BookOpenCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { LoginForm } from "../../../auth-form";
+import { TenantPublicHeader } from "../../../components/tenant-public-header";
 import { requirePublicTenant } from "../../../../lib/tenant";
-import { getAuthContext } from "../../../../lib/auth";
 
 export default async function TenantLoginPage({ params }: { params: Promise<{ tenantSlug: string }> }) {
   const { tenantSlug } = await params;
-  const [tenant, auth] = await Promise.all([requirePublicTenant(tenantSlug), getAuthContext()]);
+  const tenant = await requirePublicTenant(tenantSlug);
 
-  if (auth) {
-    const { user, membership } = auth;
-    if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") redirect("/super-admin");
-    if (user.role === "STUDENT" && membership?.tenantId === tenant.id) redirect("/dashboard");
-    if (membership?.tenantId === tenant.id) redirect("/teacher");
-    if (user.role.startsWith("TEACHER")) redirect("/teacher");
-  }
+  const teacherImage = tenant.theme?.teacherPortraitUrl || tenant.theme?.loginCoverUrl || tenant.theme?.heroImageUrl || "/hero.png";
+  const style = {
+    "--tenant-primary": tenant.theme?.primaryColor || "#2563eb",
+    "--tenant-accent": tenant.theme?.accentColor || "#7c3aed",
+    "--tenant-text": tenant.theme?.textColor || "#0f172a",
+  } as CSSProperties;
 
-  return <main className="authPage"><section className="authVisual"><a className="brand" href={"/t/" + tenant.slug}><b>{tenant.name.slice(0, 1)}</b><span>{tenant.name}<small>{tenant.subject ?? "منصة تعليمية"}</small></span></a><div className="authPortrait"><div className="portraitGlow" /><Image src={tenant.theme?.loginCoverUrl || "/hero.png"} alt={tenant.name} width={700} height={600} priority /></div><div className="authQuote"><b>“</b><p>{tenant.settings?.heroTitle ?? "خطوة جديدة في رحلتك التعليمية."}</p><span>{tenant.name}</span></div></section><section className="authCard"><div className="authCardInner"><span className="tag orange">مرحبًا بعودتك</span><h1>سجّل الدخول إلى {tenant.name}</h1><p>استخدم البريد أو اسم المستخدم أو رقم الهاتف.</p><LoginForm tenantSlug={tenant.slug} /></div></section></main>;
+  return <div className="tenantStudentAuthPage" style={style}>
+    <TenantPublicHeader tenant={{ slug: tenant.slug, name: tenant.name, subject: tenant.subject, logoUrl: tenant.logoUrl, platformName: tenant.settings?.platformName }} />
+    <main className="tenantStudentAuthStage">
+      <section className="tenantAuthTeacherVisual">
+        <div className="tenantAuthImageGlow" />
+        <div className="tenantAuthImageFrame"><Image src={teacherImage} alt={`المدرس في منصة ${tenant.name}`} width={900} height={1050} priority /></div>
+        <div className="tenantAuthVisualBrand"><Sparkles size={17} /><span><small>تعلّم مع</small><strong>{tenant.name}</strong></span></div>
+        <div className="tenantAuthVisualQuote"><BookOpenCheck size={22} /><div><b>مكان واحد لكل رحلتك التعليمية</b><p>{tenant.settings?.heroTitle || "دروس منظمة، متابعة واضحة، ونتائج محفوظة داخل حسابك."}</p></div></div>
+      </section>
+      <section className="tenantAuthFormSide">
+        <div className="tenantAuthFormCard tenantReveal">
+          <span className="tenantAuthKicker"><ShieldCheck size={16} /> دخول آمن للطلاب</span>
+          <h1>مرحبًا بعودتك 👋</h1>
+          <p>سجّل دخولك إلى <b>{tenant.settings?.platformName || tenant.name}</b> وواصل التعلّم من حيث توقفت.</p>
+          <LoginForm tenantSlug={tenant.slug} />
+        </div>
+      </section>
+    </main>
+  </div>;
 }

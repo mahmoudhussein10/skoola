@@ -175,6 +175,7 @@ model Tenant {
   billingSettings   TeacherBillingSettings?
   billingStatements BillingStatement[]
   teacherPayments   TeacherPaymentRecord[]
+  mediaAssets       MediaAsset[]
 
   @@index([status, createdAt])
   @@index([ownerId])
@@ -232,6 +233,7 @@ model User {
   staffInvitations StaffInvitation[]    @relation("InvitationCreator")
   submissions      Submission[]         @relation("StudentSubmissions")
   supportSessions  SupportSession[]     @relation("SupportActor")
+  uploadedMedia    MediaAsset[]          @relation("MediaUploadedBy")
 
   @@index([role, status])
   @@index([createdAt])
@@ -285,6 +287,7 @@ model Course {
   payments        Payment[]
   activationCodes ActivationCode[]
   assignments     Assignment[]
+  mediaAssets     MediaAsset[]
 
   @@unique([tenantId, slug])
   @@index([tenantId, status, grade])
@@ -333,6 +336,7 @@ model Lesson {
   progress      VideoProgress[]
   exams         Exam[]
   assignments   Assignment[]
+  mediaAssets   MediaAsset[]
 
   @@unique([sectionId, order])
   @@index([tenantId, sectionId, status])
@@ -603,11 +607,55 @@ model TenantSettings {
   locale         String   @default("ar-EG")
   timezone       String   @default("Africa/Cairo")
   publicPageLive Boolean  @default(false)
+  bunnyStreamCollectionId String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
+model MediaAsset {
+  id                 String   @id @default(cuid())
+  tenantId           String
+  uploadedById       String
+  courseId           String?
+  lessonId           String?
+  resourceType       String
+  provider           String
+  originalFileName   String
+  storedFileName     String?
+  mimeType           String
+  fileExtension      String
+  fileSizeBytes      BigInt   @db.BigInt
+  title              String?
+  altText            String?
+  bunnyVideoId       String?  @unique
+  bunnyCollectionId  String?
+  bunnyStoragePath   String?
+  publicUrl          String?
+  thumbnailUrl       String?
+  playbackUrl        String?
+  embedUrl           String?
+  uploadStatus       String   @default("PENDING")
+  processingStatus   String   @default("WAITING")
+  uploadProgress     Int      @default(0)
+  width              Int?
+  height             Int?
+  durationSeconds    Int?
+  errorMessage       String?
+  metadata           Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  deletedAt          DateTime?
+  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  uploadedBy         User     @relation("MediaUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
+  course             Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  lesson             Lesson?  @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, resourceType, createdAt])
+  @@index([tenantId, provider, processingStatus])
+  @@index([tenantId, courseId])
+  @@index([uploadedById, createdAt])
+}
 model StaffInvitation {
   id          String           @id @default(cuid())
   tenantId    String
