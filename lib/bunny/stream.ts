@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { prisma } from "../prisma";
 import { getBunnyStreamConfig } from "./config";
 import type { BunnyStreamCollection, BunnyStreamVideo, TusUploadCredentials } from "./types";
+export { mapStreamState } from "./status";
 
 async function streamRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const config = getBunnyStreamConfig();
@@ -70,8 +71,3 @@ export function streamThumbnailUrl(videoId: string, fileName = "thumbnail.jpg") 
   return `https://${getBunnyStreamConfig().cdnHostname}/${videoId}/${encodeURIComponent(fileName)}`;
 }
 
-export function mapStreamState(status?: number) {
-  if (status === 4) return { processingStatus: "READY", uploadStatus: "COMPLETED" } as const;
-  if (status === 5) return { processingStatus: "FAILED", uploadStatus: "FAILED" } as const;
-  return { processingStatus: "PROCESSING", uploadStatus: "COMPLETED" } as const;
-}

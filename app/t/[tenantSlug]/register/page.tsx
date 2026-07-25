@@ -9,7 +9,7 @@ export default async function TenantRegisterPage({ params }: { params: Promise<{
   const { tenantSlug } = await params;
   const tenant = await requirePublicTenant(tenantSlug);
 
-  const teacherImage = tenant.theme?.teacherPortraitUrl || tenant.theme?.loginCoverUrl || tenant.theme?.heroImageUrl || "/hero.png";
+  const teacherImage = tenant.theme?.teacherPortraitUrl || tenant.theme?.loginCoverUrl || tenant.theme?.heroImageUrl || null;
   const style = {
     "--tenant-primary": tenant.theme?.primaryColor || "#2563eb",
     "--tenant-accent": tenant.theme?.accentColor || "#7c3aed",
@@ -21,7 +21,7 @@ export default async function TenantRegisterPage({ params }: { params: Promise<{
     <main className="tenantStudentAuthStage">
       <section className="tenantAuthTeacherVisual">
         <div className="tenantAuthImageGlow" />
-        <div className="tenantAuthImageFrame"><Image src={teacherImage} alt={`المدرس في منصة ${tenant.name}`} width={900} height={1050} priority /></div>
+        <div className={`tenantAuthImageFrame${teacherImage ? "" : " empty"}`}>{teacherImage ? <Image src={teacherImage} alt={`المدرس في منصة ${tenant.name}`} width={900} height={1050} priority /> : <div className="tenantAuthEmptyVisual"><span><GraduationCap size={54} /></span><small>ابدأ رحلتك التعليمية</small><strong>{tenant.settings?.platformName || tenant.name}</strong><p>أنشئ حسابك واحفظ دروسك وتقدمك ونتائجك بأمان</p></div>}</div>
         <div className="tenantAuthVisualBrand"><Sparkles size={17} /><span><small>انضم إلى</small><strong>{tenant.name}</strong></span></div>
         <div className="tenantAuthVisualQuote"><GraduationCap size={23} /><div><b>ابدأ رحلتك بخطوة بسيطة</b><p>حساب واحد يحفظ دروسك وتقدمك وامتحاناتك ونتائجك بأمان.</p></div></div>
       </section>

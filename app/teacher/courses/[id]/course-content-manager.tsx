@@ -29,7 +29,7 @@ import {
   X,
 } from "lucide-react";
 import { CourseThumbnail } from "../../../course-thumbnail";
-import { MediaUploader } from "../../../components/media-uploader";
+import { MediaUploader, type UploadedAsset } from "../../../components/media-uploader";
 
 type Question = {
   id?: string;
@@ -144,6 +144,21 @@ export function CourseContentManager({ course }: { course: Course }) {
   function showMessage(text: string, type: "success" | "error" = "success") {
     setNotice({ type, text });
     setTimeout(() => setNotice(null), 5000);
+  }
+
+  function applyLessonAsset(kind: "video" | "attachment" | "thumbnail", asset: UploadedAsset) {
+    const lessonId = lessonModal.data?.id;
+    if (!lessonId) return;
+
+    const patch: Partial<Lesson> = kind === "video"
+      ? { videoUrl: asset.embedUrl ?? asset.playbackUrl ?? null, thumbnailUrl: asset.thumbnailUrl ?? lessonModal.data?.thumbnailUrl ?? null, ...(asset.durationSeconds ? { duration: Math.max(1, Math.ceil(asset.durationSeconds / 60)) } : {}) }
+      : kind === "attachment"
+        ? { attachmentUrl: asset.publicUrl ?? null }
+        : { thumbnailUrl: asset.publicUrl ?? null };
+
+    setLessonModal((current) => current.data?.id === lessonId ? { ...current, data: { ...current.data, ...patch } } : current);
+    setSections((items) => items.map((section) => ({ ...section, lessons: section.lessons.map((lesson) => lesson.id === lessonId ? { ...lesson, ...patch } : lesson) })));
+    showMessage(kind === "video" ? "تم تجهيز الفيديو وربطه بالدرس" : kind === "attachment" ? "تم رفع المرفق وربطه بالدرس" : "تم رفع صورة الدرس وربطها بنجاح");
   }
 
   // Toggle Course Publish status
@@ -951,12 +966,12 @@ export function CourseContentManager({ course }: { course: Course }) {
 
               <div className="full lessonBunnyUploads">
   <div><b>رفع وسائط الدرس على Bunny</b><small>الفيديو يُرفع مباشرةً إلى Bunny Stream ويمكن استكماله إذا انقطع الإنترنت.</small></div>
-  {lessonModal.data?.id ? <div className="lessonUploadGrid"><div className="bunnyUploadKind"><Video size={17}/><b>فيديو الدرس</b><MediaUploader resourceType="video" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={() => window.location.reload()} /></div><div className="bunnyUploadKind"><Paperclip size={17}/><b>ملف أو PDF</b><MediaUploader resourceType="attachment" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={() => window.location.reload()} /></div><div className="bunnyUploadKind"><ImageIcon size={17}/><b>صورة الدرس</b><MediaUploader resourceType="image" courseId={course.id} lessonId={lessonModal.data.id} aspectRatio={16/9} onUploadComplete={() => window.location.reload()} /></div></div> : <p className="managerNotice">احفظ الدرس أولًا، ثم افتحه للتعديل وارفع الفيديو أو المرفق.</p>}
+  {lessonModal.data?.id ? <div className="lessonUploadGrid"><div className="bunnyUploadKind"><Video size={17}/><b>فيديو الدرس</b><MediaUploader resourceType="video" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={(asset) => applyLessonAsset("video", asset)} onUploadError={(message) => showMessage(message, "error")} /></div><div className="bunnyUploadKind"><Paperclip size={17}/><b>ملف أو PDF</b><MediaUploader resourceType="attachment" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={(asset) => applyLessonAsset("attachment", asset)} onUploadError={(message) => showMessage(message, "error")} /></div><div className="bunnyUploadKind"><ImageIcon size={17}/><b>صورة الدرس</b><MediaUploader resourceType="image" courseId={course.id} lessonId={lessonModal.data.id} aspectRatio={16/9} onUploadComplete={(asset) => applyLessonAsset("thumbnail", asset)} onUploadError={(message) => showMessage(message, "error")} /></div></div> : <p className="managerNotice">احفظ الدرس أولًا، ثم افتحه للتعديل وارفع الفيديو أو المرفق.</p>}
 </div>
 
-                            <input type="hidden" name="videoUrl" defaultValue={lessonModal.data?.videoUrl ?? ""} />
-              <input type="hidden" name="attachmentUrl" defaultValue={lessonModal.data?.attachmentUrl ?? ""} />
-              <input type="hidden" name="thumbnailUrl" defaultValue={lessonModal.data?.thumbnailUrl ?? ""} />
+                            <input type="hidden" name="videoUrl" value={lessonModal.data?.videoUrl ?? ""} readOnly />
+              <input type="hidden" name="attachmentUrl" value={lessonModal.data?.attachmentUrl ?? ""} readOnly />
+              <input type="hidden" name="thumbnailUrl" value={lessonModal.data?.thumbnailUrl ?? ""} readOnly />
 
               <label className="full">
                 نص الشرح أو ملاحظات الدرس (لنوع الشرح النصي)

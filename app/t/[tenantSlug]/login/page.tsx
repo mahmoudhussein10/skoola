@@ -9,7 +9,7 @@ export default async function TenantLoginPage({ params }: { params: Promise<{ te
   const { tenantSlug } = await params;
   const tenant = await requirePublicTenant(tenantSlug);
 
-  const teacherImage = tenant.theme?.teacherPortraitUrl || tenant.theme?.loginCoverUrl || tenant.theme?.heroImageUrl || "/hero.png";
+  const teacherImage = tenant.theme?.teacherPortraitUrl || tenant.theme?.loginCoverUrl || tenant.theme?.heroImageUrl || null;
   const style = {
     "--tenant-primary": tenant.theme?.primaryColor || "#2563eb",
     "--tenant-accent": tenant.theme?.accentColor || "#7c3aed",
@@ -21,7 +21,7 @@ export default async function TenantLoginPage({ params }: { params: Promise<{ te
     <main className="tenantStudentAuthStage">
       <section className="tenantAuthTeacherVisual">
         <div className="tenantAuthImageGlow" />
-        <div className="tenantAuthImageFrame"><Image src={teacherImage} alt={`المدرس في منصة ${tenant.name}`} width={900} height={1050} priority /></div>
+        <div className={`tenantAuthImageFrame${teacherImage ? "" : " empty"}`}>{teacherImage ? <Image src={teacherImage} alt={`المدرس في منصة ${tenant.name}`} width={900} height={1050} priority /> : <div className="tenantAuthEmptyVisual"><span><BookOpenCheck size={54} /></span><small>منصة تعليمية متكاملة</small><strong>{tenant.settings?.platformName || tenant.name}</strong><p>كل دروسك وتقدمك ونتائجك في مكان واحد</p></div>}</div>
         <div className="tenantAuthVisualBrand"><Sparkles size={17} /><span><small>تعلّم مع</small><strong>{tenant.name}</strong></span></div>
         <div className="tenantAuthVisualQuote"><BookOpenCheck size={22} /><div><b>مكان واحد لكل رحلتك التعليمية</b><p>{tenant.settings?.heroTitle || "دروس منظمة، متابعة واضحة، ونتائج محفوظة داخل حسابك."}</p></div></div>
       </section>

@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         embedUrl, playbackUrl, thumbnailUrl, errorMessage: state.processingStatus === "FAILED" ? "فشل ترميز الفيديو" : null,
         metadata: payload as Prisma.InputJsonValue,
       } });
-      if (asset.lessonId && state.processingStatus === "READY") await tx.lesson.updateMany({ where: { id: asset.lessonId, tenantId: asset.tenantId }, data: { videoId: null, videoUrl: embedUrl, videoProvider: "BUNNY_STREAM", thumbnailUrl, duration: Number.isFinite(duration) ? Math.round(duration) : undefined } });
+      if (asset.lessonId && state.processingStatus === "READY") await tx.lesson.updateMany({ where: { id: asset.lessonId, tenantId: asset.tenantId }, data: { videoId: null, videoUrl: embedUrl, videoProvider: "BUNNY_STREAM", thumbnailUrl, duration: Number.isFinite(duration) ? Math.max(1, Math.ceil(duration / 60)) : undefined } });
     });
     return NextResponse.json({ ok: true });
   } catch {

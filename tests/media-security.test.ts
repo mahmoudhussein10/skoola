@@ -5,6 +5,7 @@ import { resolveVerifiedMimeType, validateDescriptor, validateMagicBytes } from 
 import { createHmac } from "node:crypto";
 import { verifyBunnyWebhookSignature } from "../lib/bunny/webhook.ts";
 import { isBunnyStorageUrl, isBunnyVideoUrl } from "../lib/media/trusted-url.ts";
+import { mapStreamState } from "../lib/bunny/status.ts";
 
 test("media paths remain isolated to the authenticated academy", () => {
   const path = createBunnyStoragePath("tenant-a", "course_cover", "webp", "course-a");
@@ -31,6 +32,14 @@ test("verified MIME resolves Safari canvas format fallback without weakening fil
   assert.equal(resolveVerifiedMimeType(pngBytes, "image/webp"), "image/png");
   assert.throws(() => resolveVerifiedMimeType(new TextEncoder().encode("<html>not an image</html>"), "image/webp"));
   assert.throws(() => resolveVerifiedMimeType(new TextEncoder().encode("%PDF-1.7"), "image/png"));
+});
+
+test("Bunny Stream finished and playable statuses are treated as ready", () => {
+  assert.equal(mapStreamState(3).processingStatus, "READY");
+  assert.equal(mapStreamState(4).processingStatus, "READY");
+  assert.equal(mapStreamState(5).processingStatus, "FAILED");
+  assert.equal(mapStreamState(8).processingStatus, "FAILED");
+  assert.equal(mapStreamState(2).processingStatus, "PROCESSING");
 });
 
 test("Bunny Stream webhook signatures reject unsigned bodies and accept exact signed bodies", () => {
