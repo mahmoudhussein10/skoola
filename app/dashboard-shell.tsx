@@ -33,8 +33,9 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
   const superNav: NavItem[] = [
     { href: "/super-admin", label: "نظرة عامة", icon: BarChart3 }, { href: "/super-admin/teachers", label: "المدرسون", icon: Users }, { href: "/super-admin/audit-logs", label: "سجل التدقيق", icon: ShieldCheck }, { href: "/super-admin/announcements", label: "الإعلانات", icon: Megaphone }, { href: "/super-admin/settings", label: "إعدادات النظام", icon: Settings },
   ];
-  const nav = kind === "teacher" ? (supportMode ? teacherNav.filter((item) => ["/teacher", "/teacher/courses", "/teacher/students"].includes(item.href)) : teacherNav) : superNav;
+  const nav = kind === "teacher" ? teacherNav : superNav;
   const isActive = (href: string) => pathname === href || (href !== "/teacher" && href !== "/super-admin" && pathname.startsWith(href + "/"));
+  const activeItem = nav.find((item) => isActive(item.href));
   useEffect(() => {
     if (!mobileOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -55,22 +56,22 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
 
   useEffect(() => {
     const hrefs = kind === "teacher"
-      ? (supportMode ? ["/teacher", "/teacher/courses", "/teacher/students"] : ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/settings"])
+      ? ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/settings"]
       : ["/super-admin", "/super-admin/teachers", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
     hrefs.forEach((href) => router.prefetch(href));
-  }, [kind, supportMode, router]);
+  }, [kind, router]);
   return <div className={`saasShell ${kind}${collapsed ? " isCollapsed" : ""}`}>
 
     <AnimatePresence>{mobileOpen && <motion.button className="sideOverlay" aria-label="إغلاق القائمة" onClick={() => setMobileOpen(false)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} />}</AnimatePresence>
-    <motion.aside className={`saasSide${mobileOpen ? " mobileOpen" : ""}`} animate={reduceMotion ? undefined : { width: collapsed ? 92 : 280 }} transition={{type:"spring",stiffness:260,damping:28}}>
-      <div className="saasSideHead"><Brand compact={collapsed}/><button className="sideCloseMobile" onClick={() => setMobileOpen(false)} aria-label="إغلاق"><X size={19}/></button><button className="sideCollapse" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "توسيع القائمة" : "طي القائمة"}>{collapsed ? <ChevronRight size={18}/> : <PanelRightClose size={18}/>}</button></div>
+    <motion.aside id="dashboard-navigation" aria-label="التنقل الرئيسي" aria-modal={mobileOpen ? "true" : undefined} className={`saasSide${mobileOpen ? " mobileOpen" : ""}`} animate={reduceMotion ? undefined : { width: collapsed ? 92 : 280 }} transition={{type:"spring",stiffness:260,damping:28}}>
+      <div className="saasSideHead"><Brand compact={collapsed}/><button className="sideCloseMobile" onClick={() => setMobileOpen(false)} aria-label="إغلاق القائمة"><X size={21}/></button><button className="sideCollapse" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "توسيع القائمة" : "طي القائمة"}>{collapsed ? <ChevronRight size={18}/> : <PanelRightClose size={18}/>}</button></div>
+      {!collapsed && <div className="sideMobileProfile"><b>{userName.slice(0, 1)}</b><span><strong dir="auto">{userName}</strong><small>{kind === "super" ? "الإدارة العليا" : "مسؤول الأكاديمية"}</small></span></div>}
       {!collapsed && <span className="workspaceLabel">{kind === "super" ? "إدارة Skoola" : "مساحة الأكاديمية"}</span>}
-      <nav>{nav.map((item) => { const Icon = item.icon; const active = isActive(item.href); return <Link href={item.href} key={item.href} className={active ? "active" : ""} onClick={() => setMobileOpen(false)} prefetch>{active && <motion.i className="activeRail" layoutId="active-nav" />}<Icon size={20} strokeWidth={1.9}/>{!collapsed && <span>{item.label}</span>}</Link>; })}</nav>
-      {tenantSlug && !collapsed ? <Link className="publicTenantLink" href={`/t/${tenantSlug}`} target="_blank">عرض الأكاديمية العامة <ChevronRight size={16}/></Link> : null}
-      <div className="sideSpacer"/><form action="/api/auth/logout" method="post"><button className="saasLogout"><LogOut size={19}/>{!collapsed && <span>تسجيل الخروج</span>}</button></form>
+      <nav aria-label={kind === "super" ? "أقسام الإدارة العليا" : "أقسام لوحة المدرس"}>{nav.map((item) => { const Icon = item.icon; const active = isActive(item.href); return <Link href={item.href} key={item.href} className={active ? "active" : ""} aria-current={active ? "page" : undefined} onClick={() => setMobileOpen(false)} prefetch>{active && <motion.i className="activeRail" layoutId="active-nav" />}<Icon size={20} strokeWidth={1.9}/>{!collapsed && <span>{item.label}</span>}</Link>; })}</nav>
+      <div className="sideFooter">{tenantSlug && !collapsed ? <Link className="publicTenantLink" href={`/t/${tenantSlug}`} target="_blank">عرض الأكاديمية للطلاب <ChevronRight size={16}/></Link> : null}<form action="/api/auth/logout" method="post"><button className="saasLogout"><LogOut size={19}/>{!collapsed && <span>تسجيل الخروج</span>}</button></form></div>
       {!collapsed && kind === "super" && <div className="sideUpgrade"><SparkleIcon/><b>إدارة النظام</b><p>تحكم في إعدادات وأمان Skoola.</p><Link href="/super-admin/settings">إعدادات النظام</Link></div>}
     </motion.aside>
-    <main className="saasMain">{supportMode ? <div className="supportModeBanner"><span><b>وضع دعم آمن</b> — قراءة فقط، وينتهي تلقائيًا خلال 30 دقيقة.</span><form action="/api/super-admin/support/end" method="post"><button>إنهاء وضع الدعم</button></form></div> : null}<header className="saasTop"><div className="saasTopIdentity"><button className="mobileMenuButton" onClick={() => setMobileOpen(true)} aria-label="فتح قائمة التنقل" aria-expanded={mobileOpen}><Menu size={22}/><span>القائمة</span></button><div className="saasTopCopy"><span className="saasBreadcrumb">Skoola / {kind === "super" ? "الإدارة العليا" : "لوحة المدرس"}</span><h1>{title}</h1><p>{subtitle}</p></div></div><div className="saasTopActions"><Link className="saasTopIconLink" aria-label={kind === "super" ? "إدارة الإعلانات" : "الإشعارات"} href={kind === "super" ? "/super-admin/announcements" : "/teacher/notifications"}><Megaphone size={19}/><i/></Link><span className="saasUser"><b>{userName.slice(0, 1)}</b><span>{userName}<small>{kind === "super" ? "Super Admin" : "مسؤول الأكاديمية"}</small></span></span></div></header>{children}</main>
+    <main className="saasMain">{supportMode ? <div className="supportModeBanner"><span><b>وضع دعم آمن</b> — قراءة فقط، وينتهي تلقائيًا خلال 30 دقيقة.</span><form action="/api/super-admin/support/end" method="post"><button>إنهاء وضع الدعم</button></form></div> : null}<header className="saasTop"><div className="saasTopIdentity"><button className="mobileMenuButton" onClick={() => setMobileOpen(true)} aria-label="فتح قائمة التنقل" aria-controls="dashboard-navigation" aria-expanded={mobileOpen}><Menu size={21}/><span>القائمة</span></button><div className="saasTopCopy"><span className="saasBreadcrumb">Skoola / {kind === "super" ? "الإدارة العليا" : "لوحة المدرس"}</span><span className="saasMobileSection">{activeItem?.label ?? (kind === "super" ? "الإدارة العليا" : "لوحة التحكم")}</span><strong className="saasMobileGreeting">أهلاً، <b dir="auto">{userName}</b></strong><h1 dir="auto">{title}</h1><p>{subtitle}</p></div></div><div className="saasTopActions"><Link className="saasTopIconLink" aria-label={kind === "super" ? "إدارة الإعلانات" : "الإشعارات"} href={kind === "super" ? "/super-admin/announcements" : "/teacher/notifications"}><Megaphone size={19}/><i/></Link><span className="saasUser"><b>{userName.slice(0, 1)}</b><span dir="auto">{userName}<small>{kind === "super" ? "Super Admin" : "مسؤول الأكاديمية"}</small></span></span></div></header>{children}</main>
   </div>;
 }
 

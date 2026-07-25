@@ -2,7 +2,8 @@ import { z } from "zod";
 import { mediaResourceTypes, type MediaResourceType } from "../bunny/types.ts";
 
 export const videoMimeTypes = new Set(["video/mp4", "video/webm", "video/quicktime", "video/x-matroska"]);
-export const imageMimeTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"]);
+export const rasterImageMimeTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+export const imageMimeTypes = new Set([...rasterImageMimeTypes, "image/svg+xml"]);
 export const documentMimeTypes = new Set(["application/pdf"]);
 
 const limitsMb: Record<MediaResourceType, number> = {
@@ -21,7 +22,7 @@ export const mediaDescriptorSchema = z.object({
   lessonId: z.string().cuid().optional(),
 });
 
-const extensionForMime: Record<string, string> = {
+export const extensionForMime: Record<string, string> = {
   "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov", "video/x-matroska": "mkv",
   "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/avif": "avif", "image/svg+xml": "svg",
   "application/pdf": "pdf",
@@ -50,6 +51,30 @@ export function validateDescriptor(input: z.infer<typeof mediaDescriptorSchema>)
 function startsWith(bytes: Uint8Array, values: number[]) { return values.every((value, index) => bytes[index] === value); }
 function ascii(bytes: Uint8Array, start: number, length: number) { return new TextDecoder("ascii").decode(bytes.slice(start, start + length)); }
 
+export function detectMediaMimeType(bytes: Uint8Array) {
+  if (startsWith(bytes, [0xff, 0xd8, 0xff])) return "image/jpeg";
+  if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return "image/png";
+  if (ascii(bytes, 0, 4) === "RIFF" && ascii(bytes, 8, 4) === "WEBP") return "image/webp";
+  if (ascii(bytes, 4, 4) === "ftyp" && ["avif", "avis"].includes(ascii(bytes, 8, 4))) return "image/avif";
+  if (ascii(bytes, 0, 5) === "%PDF-") return "application/pdf";
+  return null;
+}
+
+export function resolveVerifiedMimeType(bytes: Uint8Array, declaredMimeType: string) {
+  const detectedMimeType = detectMediaMimeType(bytes);
+  if (detectedMimeType === declaredMimeType) {
+    validateMagicBytes(bytes, declaredMimeType);
+    return declaredMimeType;
+  }
+  // Safari may return PNG/JPEG bytes when WebP canvas encoding is unavailable.
+  // Accept only a verified raster image fallback; executable or document content still fails closed.
+  if (detectedMimeType && rasterImageMimeTypes.has(declaredMimeType) && rasterImageMimeTypes.has(detectedMimeType)) {
+    validateMagicBytes(bytes, detectedMimeType);
+    return detectedMimeType;
+  }
+  validateMagicBytes(bytes, declaredMimeType);
+  return declaredMimeType;
+}
 export function validateMagicBytes(bytes: Uint8Array, mimeType: string) {
   if (!bytes.length) throw new Error("EMPTY_FILE");
   if (mimeType === "image/jpeg" && !startsWith(bytes, [0xff, 0xd8, 0xff])) throw new Error("INVALID_FILE_SIGNATURE");

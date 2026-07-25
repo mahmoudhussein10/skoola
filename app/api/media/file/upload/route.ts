@@ -5,7 +5,7 @@ import { configurationMessage } from "../../../../../lib/bunny/config";
 import { deleteStorageFile, uploadStorageFile } from "../../../../../lib/bunny/storage";
 import { createBunnyStoragePath } from "../../../../../lib/media/paths";
 import { processImage } from "../../../../../lib/media/image";
-import { mediaDescriptorSchema, mediaErrorMessage, imageMimeTypes, validateDescriptor, validateMagicBytes } from "../../../../../lib/media/validation";
+import { mediaDescriptorSchema, mediaErrorMessage, imageMimeTypes, extensionForMime, resolveVerifiedMimeType, validateDescriptor } from "../../../../../lib/media/validation";
 import { mediaJson, verifyMediaRelations } from "../../../../../lib/media/permissions";
 
 export const runtime = "nodejs";
@@ -30,7 +30,12 @@ export async function POST(request: Request) {
     const tenantId = auth.context.membership.tenantId;
     await verifyMediaRelations(tenantId, descriptor.courseId, descriptor.lessonId);
     const originalBytes = new Uint8Array(await file.arrayBuffer());
-    validateMagicBytes(originalBytes, descriptor.mimeType);
+    const verifiedMimeType = resolveVerifiedMimeType(originalBytes, descriptor.mimeType);
+    if (verifiedMimeType !== descriptor.mimeType) {
+      const verifiedExtension = extensionForMime[verifiedMimeType];
+      if (!verifiedExtension) throw new Error("UNSUPPORTED_FILE");
+      descriptor = { ...descriptor, mimeType: verifiedMimeType, extension: verifiedExtension };
+    }
     let bytes: Uint8Array<ArrayBufferLike> = originalBytes;
     let mimeType = descriptor.mimeType;
     let extension = descriptor.extension;

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createBunnyStoragePath } from "../lib/media/paths.ts";
-import { validateDescriptor, validateMagicBytes } from "../lib/media/validation.ts";
+import { resolveVerifiedMimeType, validateDescriptor, validateMagicBytes } from "../lib/media/validation.ts";
 import { createHmac } from "node:crypto";
 import { verifyBunnyWebhookSignature } from "../lib/bunny/webhook.ts";
 import { isBunnyStorageUrl, isBunnyVideoUrl } from "../lib/media/trusted-url.ts";
@@ -24,6 +24,13 @@ test("magic byte validation rejects disguised files and unsafe SVG", () => {
   assert.doesNotThrow(() => validateMagicBytes(new Uint8Array([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]), "image/png"));
   assert.throws(() => validateMagicBytes(new TextEncoder().encode("<html>not a png</html>"), "image/png"));
   assert.throws(() => validateMagicBytes(new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'), "image/svg+xml"));
+});
+
+test("verified MIME resolves Safari canvas format fallback without weakening file checks", () => {
+  const pngBytes = new Uint8Array([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]);
+  assert.equal(resolveVerifiedMimeType(pngBytes, "image/webp"), "image/png");
+  assert.throws(() => resolveVerifiedMimeType(new TextEncoder().encode("<html>not an image</html>"), "image/webp"));
+  assert.throws(() => resolveVerifiedMimeType(new TextEncoder().encode("%PDF-1.7"), "image/png"));
 });
 
 test("Bunny Stream webhook signatures reject unsigned bodies and accept exact signed bodies", () => {
