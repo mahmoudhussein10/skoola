@@ -559,6 +559,31 @@ model ThemeSettings {
   borderRadius      Int      @default(16)
   buttonRadius      Int      @default(14)
   fontFamily        String   @default("Tajawal")
+  headingFont       String   @default("Tajawal")
+  bodyFont          String   @default("Tajawal")
+  buttonFont        String   @default("Tajawal")
+  buttonColor       String   @default("#1565f5")
+  successColor      String   @default("#15803d")
+  warningColor      String   @default("#b45309")
+  dangerColor       String   @default("#dc2626")
+  navbarColor       String   @default("#ffffff")
+  footerColor       String   @default("#081b3a")
+  linkColor         String   @default("#1565f5")
+  hoverColor        String   @default("#0f4ed8")
+  sidebarColor      String   @default("#081b3a")
+  cardStyle         String   @default("ELEVATED")
+  buttonStyle       String   @default("GRADIENT")
+  animationStyle    String   @default("SMOOTH")
+  heroLayout        String   @default("SPLIT")
+  heroImageUrl      String?
+  teacherPortraitUrl String?
+  heroImagePosition String   @default("50% 50%")
+  heroOverlay       Int      @default(18)
+  heroTitle         String?
+  heroSubtitle      String?
+  heroCtaLabel      String   @default("أنشئ حسابك مجانًا")
+  heroSecondaryLabel String  @default("استكشف الكورسات")
+  homepageSections  Json?
   loginCoverUrl     String?
   preset            String   @default("SKOOLA")
   createdAt         DateTime @default(now())
