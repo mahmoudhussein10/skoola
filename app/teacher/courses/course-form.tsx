@@ -2,11 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
+
 import { CourseImageField } from "../../course-thumbnail";
 
 export function CourseForm() {
-  const router = useRouter();
+
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,6 +14,8 @@ export function CourseForm() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    const payload = Object.fromEntries(new FormData(form));
     setLoading(true);
     setMessage("");
     setSuccess(false);
@@ -21,19 +23,21 @@ export function CourseForm() {
       const response = await fetch("/api/teacher/courses", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))),
+        body: JSON.stringify(payload),
       });
       const result = await response.json().catch(() => null);
-      setSuccess(response.ok);
-      setMessage(result?.message ?? (response.ok ? "تم إنشاء الكورس" : "تعذر إنشاء الكورس"));
-      if (response.ok) {
-        window.dispatchEvent(new CustomEvent("course-created", { detail: result.course }));
-        event.currentTarget.reset();
-        setImageVersion((version) => version + 1);
-        router.refresh();
+      if (!response.ok) {
+        setMessage(result?.message ?? "تعذر إنشاء الكورس. راجع البيانات وحاول مرة أخرى.");
+        return;
       }
+      setSuccess(true);
+      const published = result?.course?.status === "PUBLISHED";
+      setMessage(published ? "تم إنشاء الكورس ونشره للطلاب بنجاح." : "تم إنشاء الكورس وحفظه كمسودة بنجاح.");
+      window.dispatchEvent(new CustomEvent("course-created", { detail: result.course }));
+      form.reset();
+      setImageVersion((version) => version + 1);
     } catch {
-      setMessage("تعذر الاتصال بالخادم");
+      setMessage("تعذر الاتصال بالخادم. بياناتك ما زالت موجودة؛ حاول مرة أخرى.");
     } finally {
       setLoading(false);
     }

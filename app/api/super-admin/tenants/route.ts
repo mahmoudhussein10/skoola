@@ -202,6 +202,8 @@ export async function POST(request: Request) {
     });
 
     const publicUrl = `/t/${result.tenant.slug}`;
+    const teacherLoginUrl = `/login/${result.tenant.slug}`;
+    const studentLoginUrl = `/t/${result.tenant.slug}/login`;
 
     return NextResponse.json({
       ok: true,
@@ -210,6 +212,8 @@ export async function POST(request: Request) {
         name: result.tenant.name,
         slug: result.tenant.slug,
         publicUrl,
+        teacherLoginUrl,
+        studentLoginUrl,
         username: isEmail ? result.teacherUser.email : result.teacherUser.username,
         tempPassword: data.tempPassword,
         teacherName: result.teacherUser.fullName,

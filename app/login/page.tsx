@@ -1,13 +1,17 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AuthVisual } from "../auth-visual";
 import { Brand } from "../ui";
 import { LoginForm } from "../auth-form";
+import { getAuthContext, homeForRole } from "../../lib/auth";
 
 export const metadata = { title: "تسجيل الدخول" };
 
 type LoginRole = "student" | "teacher";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
+  const auth = await getAuthContext();
+  if (auth) redirect(homeForRole(auth.user.role));
   const query = await searchParams;
   const role: LoginRole = query.role === "teacher" ? "teacher" : "student";
   const isTeacher = role === "teacher";

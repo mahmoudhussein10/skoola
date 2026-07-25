@@ -28,6 +28,8 @@ export function CreateTeacherClient() {
   const [createdData, setCreatedData] = useState<{
     name: string;
     publicUrl: string;
+    teacherLoginUrl: string;
+    studentLoginUrl: string;
     username: string;
     tempPassword: string;
     teacherName: string;
@@ -142,21 +144,21 @@ export function CreateTeacherClient() {
             </div>
 
             <div>
-              <small style={{ color: "#64748b", fontWeight: 700, fontSize: "0.8rem" }}>الرابط العام للمنصة (Public URL)</small>
+              <small style={{ color: "#64748b", fontWeight: 700, fontSize: "0.8rem" }}>رابط دخول المدرس المخصص</small>
               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.35rem" }}>
                 <input
                   dir="ltr"
                   readOnly
-                  value={`${typeof window !== "undefined" ? window.location.origin : ""}${createdData.publicUrl}`}
+                  value={`${typeof window !== "undefined" ? window.location.origin : ""}${createdData.teacherLoginUrl}`}
                   style={{ flex: 1, padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", background: "#ffffff", fontSize: "0.9rem", fontWeight: 600 }}
                 />
                 <button
                   type="button"
                   className="btn primary"
-                  onClick={() => copyToClipboard(`${window.location.origin}${createdData.publicUrl}`, "link")}
+                  onClick={() => copyToClipboard(`${window.location.origin}${createdData.teacherLoginUrl}`, "link")}
                   style={{ padding: "0.65rem 1.25rem", fontSize: "0.85rem" }}
                 >
-                  {copiedLink ? "تم النسخ ✓" : "نسخ الرابط 🔗"}
+                  {copiedLink ? "تم النسخ ✓" : "نسخ رابط دخول المدرس 🔗"}
                 </button>
               </div>
             </div>
@@ -178,10 +180,11 @@ export function CreateTeacherClient() {
                 type="button"
                 className="btn secondary"
                 style={{ marginTop: "0.75rem", width: "100%", padding: "0.65rem", fontSize: "0.85rem" }}
-                onClick={() => copyToClipboard(`اسم المستخدم: ${createdData.username}\nكلمة المرور: ${createdData.tempPassword}\nرابط المنصة: ${window.location.origin}${createdData.publicUrl}`, "creds")}
+                onClick={() => copyToClipboard(`اسم المستخدم: ${createdData.username}\nكلمة المرور: ${createdData.tempPassword}\nرابط دخول لوحة التحكم: ${window.location.origin}${createdData.teacherLoginUrl}`, "creds")}
               >
                 {copiedCreds ? "تم النسخ ✓" : "📋 نسخ الرسالة النصية الكاملة للمدرس"}
               </button>
+              <p className="managedTeacherDeliveryNote">هذا هو الرابط الذي ترسله للمدرس. رابط الطلاب موجود داخل لوحة التحكم وجاهز للنسخ والمشاركة.</p>
             </div>
           </div>
 

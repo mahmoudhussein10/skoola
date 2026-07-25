@@ -18,7 +18,7 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
   const [editing, setEditing] = useState<CourseItem | null>(null);
   const [query, setQuery] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     const created = (event: Event) => {
@@ -34,15 +34,15 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
 
   async function toggle(course: CourseItem) {
     const nextStatus = course.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
-    setBusyId(course.id); setNotice("");
+    setBusyId(course.id); setNotice(null);
     setCourses((items) => items.map((item) => item.id === course.id ? { ...item, status: nextStatus } : item));
     const response = await fetch("/api/teacher/courses", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ courseId: course.id, status: nextStatus }) });
     if (!response.ok) {
       const result = await response.json().catch(() => null);
       setCourses((items) => items.map((item) => item.id === course.id ? course : item));
-      setNotice(result?.message ?? "تعذر تغيير حالة الكورس");
+      setNotice({ type: "error", text: result?.message ?? "تعذر تغيير حالة الكورس" });
     } else {
-      setNotice(nextStatus === "PUBLISHED" ? "تم نشر الكورس للطلاب فورًا" : "تم إخفاء الكورس من صفحة الطلاب");
+      setNotice({ type: "success", text: nextStatus === "PUBLISHED" ? "تم نشر الكورس للطلاب بنجاح وأصبح ظاهرًا على المنصة." : "تم إخفاء الكورس من صفحة الطلاب وحفظه كمسودة." });
       router.refresh();
     }
     setBusyId(null);
@@ -51,15 +51,15 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editing) return;
-    setBusyId(editing.id); setNotice("");
+    setBusyId(editing.id); setNotice(null);
     const data = Object.fromEntries(new FormData(event.currentTarget));
     const payload = { ...data, courseId: editing.id, price: Number(data.price) };
     const response = await fetch("/api/teacher/courses", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
     const result = await response.json().catch(() => null);
-    if (!response.ok) setNotice(result?.message ?? "تعذر حفظ التعديلات");
+    if (!response.ok) setNotice({ type: "error", text: result?.message ?? "تعذر حفظ التعديلات" });
     else {
       setCourses((items) => items.map((item) => item.id === editing.id ? { ...item, ...result.course, price: Number(result.course.price) } : item));
-      setNotice("تم حفظ تعديلات الكورس");
+      setNotice({ type: "success", text: result.course.status === "PUBLISHED" ? "تم حفظ التعديلات ونشر الكورس للطلاب بنجاح." : "تم حفظ تعديلات الكورس كمسودة بنجاح." });
       setEditing(null);
       router.refresh();
     }
@@ -74,7 +74,7 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
       <article><i className="orange"><Layers3 /></i><span>الوحدات التعليمية<b>{totals.lessons.toLocaleString("en-US")}</b></span></article>
     </div>
     <div className="courseToolbar"><div><h2>مكتبة الكورسات</h2><p>عدّل وانشر وتابع أداء كل كورس من مكان واحد.</p></div><label><Search size={17}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ابحث عن كورس..." /></label></div>
-    {notice ? <div className="courseNotice"><Check size={16}/>{notice}<button onClick={() => setNotice("")} aria-label="إغلاق"><X size={15}/></button></div> : null}
+    {notice ? <div className={`courseNotice ${notice.type}`} role="status" aria-live="polite"><Check size={16}/><span>{notice.text}</span><button onClick={() => setNotice(null)} aria-label="إغلاق"><X size={15}/></button></div> : null}
     {visible.length ? <div className="courseAdminGrid">{visible.map((course, index) => <article className="courseAdminCard" key={course.id}>
       <div className={`courseAdminArt tone${index % 4}`}><span className={`courseStatusBadge ${course.status.toLowerCase()}`}>{statusText[course.status]}</span>{course.thumbnailUrl ? <CourseThumbnail src={course.thumbnailUrl} alt={course.title} /> : <><div className="courseAdminGlyph">{course.subject.slice(0, 2)}</div><small>{course.subject}</small><i/><em/></>}</div>
       <div className="courseAdminBody"><span className="courseGrade">{grades[course.grade]}</span><h3>{course.title}</h3><p>{course.description}</p>

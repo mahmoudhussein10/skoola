@@ -20,6 +20,7 @@ import {
   PlayCircle,
   Paperclip,
   ImageIcon,
+  ShieldCheck,
   Layers,
   Lock,
   Plus,
@@ -173,7 +174,7 @@ export function CourseContentManager({ course }: { course: Course }) {
     setLoading(false);
     if (res.ok) {
       setCourseStatus(nextStatus);
-      showMessage(nextStatus === "PUBLISHED" ? "تم نشر الكورس للطلاب" : "تم تحويل الكورس إلى مسودة");
+      showMessage(nextStatus === "PUBLISHED" ? "تم نشر الكورس للطلاب بنجاح وأصبح متاحًا على المنصة." : "تم إخفاء الكورس من الطلاب وحفظه كمسودة.");
     } else {
       const err = await res.json().catch(() => null);
       showMessage(err?.message ?? "تعذر تغيير حالة الكورس", "error");
@@ -337,7 +338,7 @@ export function CourseContentManager({ course }: { course: Course }) {
           return s;
         })
       );
-      showMessage(lessonModal.data ? "تم تحديث الدرس بنجاح" : "تم إضافة الدرس بنجاح");
+      showMessage(payload.status === "PUBLISHED" ? (lessonModal.data ? "تم تحديث الدرس ونشره للطلاب بنجاح." : "تم إنشاء الدرس ونشره للطلاب بنجاح.") : (lessonModal.data ? "تم تحديث الدرس وحفظه كمسودة." : "تم إنشاء الدرس وحفظه كمسودة."));
       setLessonModal({ open: false });
     }
   }
@@ -452,7 +453,7 @@ export function CourseContentManager({ course }: { course: Course }) {
       description: String(form.get("description") ?? "").trim(),
       durationMinutes: Number(form.get("durationMinutes") ?? 30) || 30,
       passingScore: Number(form.get("passingScore") ?? 50) || 50,
-      maxAttempts: Number(form.get("maxAttempts") ?? 1) || 1,
+      maxAttempts: 1,
       shuffleQuestions: form.get("shuffleQuestions") === "on",
       shuffleOptions: form.get("shuffleOptions") === "on",
       showResultImmediately: form.get("showResultImmediately") === "on",
@@ -497,7 +498,7 @@ export function CourseContentManager({ course }: { course: Course }) {
         }
       }
 
-      showMessage(examModal.data ? "تم تحديث الامتحان بنجاح" : "تم إنشاء الامتحان بنجاح");
+      showMessage(payload.status === "PUBLISHED" ? (examModal.data ? "تم تحديث الاختبار ونشره للطلاب بنجاح." : "تم إنشاء الاختبار ونشره للطلاب بنجاح.") : (examModal.data ? "تم تحديث الاختبار وحفظه كمسودة." : "تم إنشاء الاختبار وحفظه كمسودة."));
       setExamModal({ open: false });
     }
   }
@@ -763,6 +764,7 @@ export function CourseContentManager({ course }: { course: Course }) {
                               </div>
 
                               <div className="itemActions">
+                                <Link className="btn text lessonViewersLink" href={`/teacher/courses/${course.id}/lessons/${lesson.id}/viewers`}><Eye size={15} /> المشاهدات</Link>
                                 <button
                                   title="تحريك لأعلى"
                                   disabled={lIndex === 0}
@@ -1057,17 +1059,11 @@ export function CourseContentManager({ course }: { course: Course }) {
                 />
               </label>
 
-              <label>
-                عدد المحاولات المسموحة للطالب
-                <input
-                  name="maxAttempts"
-                  type="number"
-                  min="1"
-                  max="100"
-                  defaultValue={examModal.data?.maxAttempts ?? 1}
-                  required
-                />
-              </label>
+              <div className="singleAttemptRule">
+                <ShieldCheck size={20} />
+                <div><b>محاولة واحدة فقط لكل طالب</b><small>بعد تسليم الاختبار لا يمكن للطالب إعادته، لضمان عدالة التقييم.</small></div>
+                <input type="hidden" name="maxAttempts" value="1" />
+              </div>
 
               <div className="full checkboxGrid">
                 <label className="checkboxLabel">

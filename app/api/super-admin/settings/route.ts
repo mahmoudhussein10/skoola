@@ -29,8 +29,8 @@ export async function PUT(request: Request) {
   const after = await prisma.$transaction(async (tx) => {
     const settings = await tx.platformSettings.upsert({
       where: { id: "default" },
-      create: { ...parsed.data, supportEmail: parsed.data.supportEmail || null, supportPhone: parsed.data.supportPhone || null },
-      update: { ...parsed.data, supportEmail: parsed.data.supportEmail || null, supportPhone: parsed.data.supportPhone || null },
+      create: { ...parsed.data, teacherRegistrationEnabled: false, supportEmail: parsed.data.supportEmail || null, supportPhone: parsed.data.supportPhone || null },
+      update: { ...parsed.data, teacherRegistrationEnabled: false, supportEmail: parsed.data.supportEmail || null, supportPhone: parsed.data.supportPhone || null },
     });
     await tx.auditLog.create({ data: { actorId: auth.context.user.id, action: "PLATFORM_SETTINGS_UPDATED", entityType: "PlatformSettings", entityId: "default", before: before ?? undefined, after: settings, ipHash } });
     return settings;

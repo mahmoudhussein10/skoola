@@ -10,7 +10,7 @@ export function Brand({ compact = false, inverse = false }: { compact?: boolean;
 }
 
 export function Top() {
-  return <header><nav className="wrap nav"><Brand /><div className="links"><Link href="/#features">المميزات</Link><Link href="/#solutions">الحلول</Link><Link href="/#pricing">الأسعار</Link><Link href="/#faq">الأسئلة</Link></div><div className="actions"><Link href="/login?role=teacher">دخول المدرس</Link><Link className="btn primary" href="/teacher-register">ابدأ مجانًا</Link></div></nav></header>;
+  return <header><nav className="wrap nav"><Brand /><div className="links"><Link href="/#features">المميزات</Link><Link href="/#solutions">الحلول</Link><Link href="/#pricing">الأسعار</Link><Link href="/#faq">الأسئلة</Link></div><div className="actions"><Link href="/#pricing">خطط المنصة</Link><Link className="btn primary" href="/login?role=teacher">دخول المدرس</Link></div></nav></header>;
 }
 export function Side({ active = "الرئيسية" }: { active?: string }) {
   const items = [["الرئيسية", "/dashboard"], ["كورساتي", "/dashboard#my-courses"], ["تفعيل كورس", "/dashboard#activate-course"], ["الاختبارات", "/dashboard#exam-results"]];

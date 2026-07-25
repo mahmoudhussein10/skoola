@@ -16,7 +16,7 @@ export async function POST(
 ) {
   const { id: examId } = await params;
   const auth = await getAuthContext();
-  if (!auth || !auth.membership) {
+  if (!auth || !auth.membership || auth.user.role !== "STUDENT") {
     return NextResponse.json({ ok: false, message: "يرجى تسجيل الدخول أولاً لتأدية الامتحان" }, { status: 401 });
   }
   if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
@@ -67,13 +67,13 @@ export async function POST(
     }
   }
 
-  // Check attempts count
-  const existingAttemptsCount = await prisma.examAttempt.count({
+  // Every student gets exactly one submitted attempt, regardless of legacy exam settings.
+  const existingAttempt = await prisma.examAttempt.findFirst({
     where: { tenantId, examId, studentId, status: { in: ["SUBMITTED", "GRADED"] } },
+    select: { id: true },
   });
-
-  if (existingAttemptsCount >= exam.maxAttempts) {
-    return NextResponse.json({ ok: false, message: `استنفدت الحد الأقصى للمحاولات المسموحة (${exam.maxAttempts})` }, { status: 403 });
+  if (existingAttempt) {
+    return NextResponse.json({ ok: false, message: "لقد استخدمت محاولتك الوحيدة لهذا الاختبار، ولا يمكن إعادته مرة أخرى." }, { status: 403 });
   }
 
   const studentAnswers = parsed.data.answers;
@@ -115,37 +115,52 @@ export async function POST(
 
   const startTime = parsed.data.startedAt ? new Date(parsed.data.startedAt) : now;
 
-  // Save ExamAttempt in transaction
-  const attempt = await prisma.$transaction(async (tx) => {
-    const record = await tx.examAttempt.create({
-      data: {
-        tenantId,
-        examId,
-        studentId,
-        score: earnedScore,
-        maxScore: totalMaxScore,
-        percentage,
-        passed,
-        startedAt: startTime,
-        submittedAt: now,
-        status: "GRADED",
-        answers: studentAnswers,
-      },
-    });
+  // Serializable isolation closes the double-submit race without changing the database model.
+  let attempt: { id: string };
+  try {
+    attempt = await prisma.$transaction(async (tx) => {
+      const alreadySubmitted = await tx.examAttempt.findFirst({
+        where: { tenantId, examId, studentId, status: { in: ["SUBMITTED", "GRADED"] } },
+        select: { id: true },
+      });
+      if (alreadySubmitted) throw new Error("EXAM_ATTEMPT_ALREADY_USED");
 
-    await tx.activityLog.create({
-      data: {
-        tenantId,
-        actorId: studentId,
-        action: "حل امتحان",
-        entityType: "Exam",
-        entityId: examId,
-        metadata: { score: earnedScore, percentage, passed },
-      },
-    });
+      const record = await tx.examAttempt.create({
+        data: {
+          tenantId,
+          examId,
+          studentId,
+          score: earnedScore,
+          maxScore: totalMaxScore,
+          percentage,
+          passed,
+          startedAt: startTime,
+          submittedAt: now,
+          status: "GRADED",
+          answers: studentAnswers,
+        },
+        select: { id: true },
+      });
 
-    return record;
-  });
+      await tx.activityLog.create({
+        data: {
+          tenantId,
+          actorId: studentId,
+          action: "حل امتحان",
+          entityType: "Exam",
+          entityId: examId,
+          metadata: { score: earnedScore, percentage, passed },
+        },
+      });
+      return record;
+    }, { isolationLevel: "Serializable" });
+  } catch (error) {
+    const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
+    if ((error instanceof Error && error.message === "EXAM_ATTEMPT_ALREADY_USED") || code === "P2034") {
+      return NextResponse.json({ ok: false, message: "لقد استخدمت محاولتك الوحيدة لهذا الاختبار، ولا يمكن إعادته مرة أخرى." }, { status: 403 });
+    }
+    throw error;
+  }
 
   const responseData: Record<string, unknown> = {
     ok: true,
@@ -164,7 +179,7 @@ export async function POST(
       wrongCount,
       totalQuestions: exam.questions.length,
       submittedAt: now.toISOString(),
-      attemptsRemaining: exam.maxAttempts - (existingAttemptsCount + 1),
+      attemptsRemaining: 0,
     };
 
     if (exam.showAnswersAfterSubmit) {

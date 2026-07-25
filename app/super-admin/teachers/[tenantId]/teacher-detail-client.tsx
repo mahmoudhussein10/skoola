@@ -107,6 +107,10 @@ export function TeacherDetailClient({ tenant, stats, financial }: TeacherDetailP
   // Printable Statement State
   const [activePrintStatement, setActivePrintStatement] = useState<PrintableStatement | null>(null);
 
+  async function copyTeacherLoginLink() {
+    await navigator.clipboard.writeText(`${window.location.origin}/login/${tenant.slug}`);
+    setMsg({ type: "success", text: "تم نسخ رابط دخول المدرس. أرسله مع بيانات الحساب." });
+  }
   // Status toggle handler
   async function handleStatusChange(newStatus: string) {
     setLoadingAction(true);
@@ -314,7 +318,8 @@ export function TeacherDetailClient({ tenant, stats, financial }: TeacherDetailP
               <div><dt>اسم المنصة</dt><dd>{tenant.name}</dd></div>
               <div><dt>رقم الهاتف</dt><dd dir="ltr">{tenant.owner?.phone ?? "—"}</dd></div>
               <div><dt>البريد الإلكتروني / المستخدم</dt><dd dir="ltr">{tenant.owner?.email ?? tenant.owner?.username ?? "—"}</dd></div>
-              <div><dt>الرابط الفريد (Slug)</dt><dd dir="ltr">/t/{tenant.slug}</dd></div>
+              <div><dt>رابط دخول المدرس</dt><dd dir="ltr">/login/{tenant.slug}</dd></div>
+              <div><dt>رابط دخول الطلاب</dt><dd dir="ltr">/t/{tenant.slug}/login</dd></div>
               <div><dt>تاريخ الإنشاء</dt><dd>{new Date(tenant.createdAt).toLocaleDateString("ar-EG")}</dd></div>
               <div><dt>آخر تسجيل دخول للمدرس</dt><dd>{tenant.owner?.lastLoginAt ? new Date(tenant.owner.lastLoginAt).toLocaleString("ar-EG") : "لم يدخل بعد"}</dd></div>
             </dl>
@@ -334,6 +339,9 @@ export function TeacherDetailClient({ tenant, stats, financial }: TeacherDetailP
               <a href={`/t/${tenant.slug}`} target="_blank" rel="noreferrer" className="btn secondary">
                 معاينة المنصة العامة ↗
               </a>
+              <button type="button" onClick={copyTeacherLoginLink} className="btn secondary">
+                نسخ رابط دخول المدرس
+              </button>
               <button type="button" onClick={handleStartSupport} disabled={loadingAction} className="btn primary">
                 دخول المنصة بوضع الدعم 🛠
               </button>
@@ -533,8 +541,9 @@ export function TeacherDetailClient({ tenant, stats, financial }: TeacherDetailP
             </div>
 
             <div style={{ padding: "1rem", borderRadius: "8px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-              <small style={{ color: "#64748b" }}>الرابط العام</small>
-              <div style={{ fontWeight: 700, marginTop: "0.25rem" }}>/t/{tenant.slug}</div>
+              <small style={{ color: "#64748b" }}>روابط الوصول</small>
+              <div style={{ fontWeight: 700, marginTop: "0.25rem" }} dir="ltr">مدرس: /login/{tenant.slug}</div>
+              <div style={{ fontWeight: 700, marginTop: "0.25rem" }} dir="ltr">طلاب: /t/{tenant.slug}/login</div>
             </div>
           </div>
         </section>

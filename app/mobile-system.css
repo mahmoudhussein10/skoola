@@ -151,3 +151,265 @@
   .courseWorkspace .courseMetrics article{min-height:84px!important;padding:13px!important}.courseWorkspace .courseMetrics i{width:40px!important;height:40px!important}.courseWorkspace .courseMetrics span{font-size:10px!important}.courseWorkspace .courseMetrics b{font-size:21px!important}.courseWorkspace .courseAdminGrid{grid-template-columns:1fr!important;gap:16px!important}.courseWorkspace .courseAdminCard{border-radius:21px!important}.courseWorkspace .courseAdminBody{padding:17px!important}.courseWorkspace .courseAdminBody h3{font-size:20px!important}.courseWorkspace .courseCardStats{grid-template-columns:1fr 1fr!important}.courseWorkspace .courseCardStats span:last-child{grid-column:1/-1!important}.courseWorkspace .courseActionSubRow{grid-template-columns:1fr 1fr!important}.createCourseDrawer>summary{padding:13px!important}.createCourseDrawer>summary>span{grid-template-columns:42px minmax(0,1fr)!important}.premiumCreateForm{padding:15px!important}.premiumCreateForm .createFormIntro{align-items:flex-start!important;padding:13px!important}.courseFormActions{align-items:stretch!important;flex-direction:column!important}.createCourseSubmit{width:100%!important;justify-content:center!important}.bunnyCourseImageField{padding:13px!important}
   .courseEditSheet>header{padding:16px!important}.courseEditSheet>header h2{max-width:260px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:20px!important}.courseEditSheet>footer{grid-template-columns:1fr 1.45fr!important}.courseContentManager{width:calc(100% - 20px)!important;padding-top:10px!important}.courseContentManager .managerHeader{padding:15px!important;border-radius:21px!important}.courseContentManager .backBtn{padding-inline:9px!important;font-size:12px!important}.courseContentManager .statusBadge{font-size:10px!important;white-space:nowrap!important}.courseContentManager .courseMeta{align-items:center!important;gap:12px!important}.courseContentManager .courseHeroPoster{flex-basis:88px!important;width:88px!important;height:68px!important;border-radius:14px!important}.courseContentManager .courseMetaInfo h1{font-size:21px!important}.courseContentManager .courseMetaInfo p{display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;font-size:12px!important}.courseContentManager .managerActions{grid-template-columns:1fr!important}.courseContentManager .managerMetrics{gap:8px!important}.courseContentManager .metric{min-height:68px!important;padding:10px!important}.courseContentManager .metric svg{display:block!important;width:18px!important}.courseContentManager .metric b{font-size:18px!important}.courseContentManager .metric small{font-size:9px!important}.tenantHeroPlaceholder>span,.tenantAuthEmptyVisual>span{width:72px;height:72px;border-radius:23px}.tenantHeroPlaceholder strong,.tenantAuthEmptyVisual strong{font-size:26px}.tenantHeroPlaceholder p,.tenantAuthEmptyVisual p{font-size:11px!important}
 }
+/* Focused publishing feedback and exam results v1. */
+.courseNotice{min-height:50px!important;padding:12px 14px!important;border-radius:15px!important;font-size:13px!important;line-height:1.65!important;box-shadow:0 10px 28px rgba(18,91,61,.08)!important}.courseNotice>span{flex:1}.courseNotice.success{border-color:#bcebd5!important;background:#edfbf5!important;color:#087552!important}.courseNotice.error{border-color:#fecaca!important;background:#fff1f1!important;color:#b4232c!important}.courseNotice.error>svg{transform:rotate(45deg)}
+.premiumCreateForm .courseFormActions>span{display:flex!important;align-items:center!important;min-height:46px!important;padding:10px 13px!important;border:1px solid currentColor!important;border-radius:13px!important;font-size:12px!important;font-weight:900!important;line-height:1.6!important}.premiumCreateForm .courseFormActions>span.success{background:#edfbf5!important;color:#087552!important}.premiumCreateForm .courseFormActions>span.error{background:#fff1f1!important;color:#b4232c!important}
+.contentImageNotice,.contentImageWarning{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;padding:11px 12px;border-radius:13px;line-height:1.55}.contentImageNotice{border:1px solid #d6e5ff;background:#eff5ff;color:#245ab9}.contentImageNotice>svg,.contentImageWarning>svg{flex:0 0 auto;margin-top:2px}.contentImageNotice>span{display:flex;min-width:0;flex-direction:column}.contentImageNotice b{color:#173e82!important;font-size:12px!important}.contentImageNotice small{margin-top:2px;color:#58729e!important;font-size:10px!important}.contentImageWarning{border:1px solid #f6dda1;background:#fff9e9;color:#8a5a00;font-size:11px;font-weight:800}.contentImageUploader .mediaDropzone{min-height:0!important;aspect-ratio:16/9!important;padding:14px!important}.contentImageUploader .mediaDropzone>img{width:min(320px,58%)!important;height:auto!important;max-height:none!important;aspect-ratio:16/9!important;object-fit:cover!important;object-position:center!important}.bunnyCourseImageField .courseImagePreview,.bunnyCourseImageField .courseImagePreview img{width:100%!important;aspect-ratio:16/9!important}.bunnyCourseImageField .courseImagePreview{max-height:none!important}.bunnyCourseImageField .courseImagePreview img{display:block!important;height:auto!important;object-fit:cover!important}
+.examResultCard{position:relative;overflow:hidden;width:100%;padding:clamp(16px,3vw,28px)!important;border:1px solid rgba(127,149,187,.18);border-radius:28px;background:linear-gradient(145deg,#fff,#f7f9ff);box-shadow:0 26px 70px rgba(8,27,64,.16);color:#14233e}.examResultCard::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#1bb7d6,#276cf3,#743df0)}.examResultCard .resultHeader{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:330px;padding:34px 28px!important;border:1px solid #dce6f3;border-radius:24px;text-align:center;background:radial-gradient(circle at 50% 0,rgba(54,119,244,.14),transparent 38%),#fff}.examResultCard .resultHeader::after{content:"";position:absolute;width:250px;height:250px;top:-170px;right:-100px;border:1px solid rgba(67,112,222,.13);border-radius:50%;box-shadow:0 0 0 35px rgba(67,112,222,.035),0 0 0 70px rgba(67,112,222,.025)}.examResultCard .resultHeader.pass{border-color:#c7eadb;background:radial-gradient(circle at 50% 0,rgba(25,185,126,.16),transparent 40%),linear-gradient(145deg,#fff,#f2fcf7)}.examResultCard .resultHeader.fail{border-color:#f1d2ce;background:radial-gradient(circle at 50% 0,rgba(230,112,85,.14),transparent 40%),linear-gradient(145deg,#fff,#fff7f5)}.examResultCard .resultIcon{position:relative;z-index:1;width:70px;height:70px;display:grid;place-items:center;border:1px solid #fff;border-radius:23px;background:linear-gradient(135deg,#276cf3,#743df0);box-shadow:0 17px 38px rgba(64,77,218,.25);font-size:33px}.examResultCard .resultHeader.pass .resultIcon{background:linear-gradient(135deg,#13a976,#35c98f)}.examResultCard .resultHeader.fail .resultIcon{background:linear-gradient(135deg,#e45f55,#f09a59)}.examResultCard .resultHeader h2{position:relative;z-index:1;max-width:650px;margin:16px 0 9px;color:#12213b;font-size:clamp(24px,4vw,37px);line-height:1.35}.examResultCard .scorePercent{position:relative;z-index:1;display:block;color:#2468ef;font-size:clamp(48px,8vw,76px);font-weight:950;line-height:1}.examResultCard .resultHeader.pass .scorePercent{color:#10966c}.examResultCard .resultHeader.fail .scorePercent{color:#d7584d}.examResultCard .resultHeader>p{position:relative;z-index:1;margin:10px 0 0;color:#68778e;font-size:13px!important;line-height:1.7}.resultQuickStats{position:relative;z-index:1;width:min(680px,100%);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:22px}.resultQuickStats>span{min-width:0;padding:13px 10px;border:1px solid #e1e8f2;border-radius:15px;background:rgba(255,255,255,.82)}.resultQuickStats small,.resultQuickStats b{display:block}.resultQuickStats small{color:#75849a;font-size:10px!important}.resultQuickStats b{margin-top:3px;color:#172945;font-size:14px;overflow-wrap:anywhere}.questionsReview{display:grid;gap:11px;margin-top:22px}.reviewHeading{padding:8px 4px 5px}.reviewHeading>span{color:#2869eb;font-size:11px;font-weight:900}.reviewHeading h3{margin:3px 0;color:#14243e;font-size:23px}.reviewHeading p{margin:0;color:#718097;font-size:12px!important}.reviewItem{position:relative;padding:18px 19px;border:1px solid #e1e8f1;border-right:4px solid #94a3b8;border-radius:17px;background:#fff;box-shadow:0 9px 26px rgba(12,35,74,.045)}.reviewItem.correct{border-right-color:#1eb27e;background:linear-gradient(110deg,#fff,#f3fcf8)}.reviewItem.wrong{border-right-color:#e16b5d;background:linear-gradient(110deg,#fff,#fff7f5)}.reviewState{width:max-content;display:flex;align-items:center;gap:6px;margin-bottom:10px;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900}.reviewItem.correct .reviewState{background:#ddf8ec;color:#087552}.reviewItem.wrong .reviewState{background:#ffebe8;color:#b84135}.reviewItem>p:not(.expl){margin:0 0 10px;color:#182944;font-size:14px!important;line-height:1.75}.reviewItem>small{display:block;margin-top:5px;color:#65758d;font-size:12px!important}.reviewItem .correctTxt{color:#087552;font-weight:800}.reviewItem .expl{margin:12px 0 0;padding:11px 12px;border-radius:12px;background:#eef4ff;color:#35557f;font-size:12px!important;line-height:1.75}.examResultCard>.btn{width:100%;min-height:52px;margin-top:18px;border-radius:15px}
+.courseEditSheet :is(input,textarea,select),.modalSheet :is(input,textarea,select),.premiumCreateForm :is(input,textarea,select){scroll-margin-block:120px}
+@media(max-width:900px){.courseEditSheet :is(input,textarea,select),.modalSheet :is(input,textarea,select),.premiumCreateForm :is(input,textarea,select){font-size:16px!important}.modalSheet.wide,.modalSheet.extraWide{height:min(100dvh,100svh)!important;max-height:100dvh!important;display:flex!important;flex-direction:column!important;border-radius:0!important}.modalSheet .modalBody{min-height:0!important;max-height:none!important;flex:1 1 auto!important;overflow-y:auto!important;padding-bottom:calc(110px + env(safe-area-inset-bottom))!important}.modalSheet>footer{position:sticky!important;bottom:0!important;z-index:12!important;padding-bottom:calc(14px + env(safe-area-inset-bottom))!important;background:rgba(255,255,255,.97)!important;backdrop-filter:blur(16px)!important}.contentImageUploader .mediaDropzone{min-height:150px!important}.contentImageUploader .mediaDropzone>img{width:52%!important}.examResultCard .resultHeader{min-height:0;padding:28px 18px!important}.resultQuickStats{grid-template-columns:1fr 1fr}.resultQuickStats>span:last-child{grid-column:1/-1}}
+@media(max-width:480px){.courseNotice{align-items:flex-start!important}.premiumCreateForm .courseFormActions>span{width:100%!important}.contentImageNotice,.contentImageWarning{padding:10px!important}.contentImageUploader .mediaDropzone{display:flex!important;flex-direction:column!important;aspect-ratio:auto!important;min-height:215px!important}.contentImageUploader .mediaDropzone>img{width:100%!important;max-width:300px!important}.examResultCard{padding:10px!important;border-radius:22px}.examResultCard .resultHeader{border-radius:19px}.examResultCard .resultIcon{width:61px;height:61px;border-radius:20px;font-size:28px}.examResultCard .resultHeader h2{font-size:23px}.examResultCard .scorePercent{font-size:52px}.resultQuickStats{grid-template-columns:1fr 1fr;gap:7px}.resultQuickStats>span{padding:10px 8px}.questionsReview{margin-top:15px}.reviewHeading h3{font-size:20px}.reviewItem{padding:15px;border-radius:15px}.reviewItem>p:not(.expl){font-size:13px!important}}
+/* Student oversight and account recovery v1. */
+.singleAttemptRule{grid-column:1/-1;display:flex;align-items:flex-start;gap:12px;padding:14px 15px;border:1px solid #cfe0ff;border-radius:16px;background:linear-gradient(135deg,#f6f9ff,#eef3ff);color:#244b8f}.singleAttemptRule>svg{flex:0 0 auto;margin-top:2px;color:#286bf0}.singleAttemptRule span{display:grid;gap:3px}.singleAttemptRule b{color:#172e59;font-size:13px}.singleAttemptRule small{color:#61769b;font-size:11px;line-height:1.7}.lessonViewersLink{color:#1265e7!important;background:#edf5ff!important}
+.lessonViewersPage{display:grid;gap:18px}.lessonViewersTop{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:22px 24px;border:1px solid #dfe7f2;border-radius:23px;background:radial-gradient(circle at 95% 0,rgba(57,113,242,.12),transparent 38%),#fff;box-shadow:0 16px 44px rgba(13,39,81,.07)}.lessonViewersTop>div>span{display:flex;align-items:center;gap:7px;color:#1e67e8;font-size:11px;font-weight:900}.lessonViewersTop h2{margin:5px 0 3px;color:#122341;font-size:clamp(22px,3vw,31px)}.lessonViewersTop p{margin:0;color:#6d7c92;font-size:13px;line-height:1.7}.lessonViewerKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.lessonViewerKpis article{min-width:0;min-height:105px;display:flex;align-items:center;gap:13px;padding:17px;border:1px solid #e0e7f1;border-radius:19px;background:#fff;box-shadow:0 11px 30px rgba(18,44,86,.05)}.lessonViewerKpis article>svg,.viewerRate{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;padding:11px;border-radius:14px;background:#edf4ff;color:#2369ed}.viewerRate{padding:0;font-size:13px;font-weight:950}.lessonViewerKpis article>span:last-child{min-width:0;display:grid;gap:3px}.lessonViewerKpis small{color:#7a899e;font-size:10px}.lessonViewerKpis b{color:#172945;font-size:20px;overflow-wrap:anywhere}.lessonViewersPanel{overflow:hidden;border:1px solid #dfe7f2;border-radius:23px;background:#fff;box-shadow:0 18px 50px rgba(13,39,81,.07)}.lessonViewersPanel>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 22px;border-bottom:1px solid #e7edf5;background:#f9fbff}.lessonViewersPanel>header span{color:#286aeb;font-size:10px;font-weight:900}.lessonViewersPanel>header h3{margin:3px 0 0;color:#172945;font-size:19px}.lessonViewersPanel>header>small{padding:6px 10px;border-radius:999px;background:#eaf2ff;color:#245fca;font-weight:900}.lessonViewerList{display:grid}.lessonViewerRow{display:grid;grid-template-columns:minmax(180px,1fr) minmax(260px,1.35fr) minmax(190px,.8fr);align-items:center;gap:15px;padding:16px 21px;border-bottom:1px solid #edf1f6}.lessonViewerRow:last-child{border-bottom:0}.lessonViewerIdentity{min-width:0;display:flex;align-items:center;gap:11px}.lessonViewerIdentity>i{width:43px;height:43px;flex:0 0 43px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#236cf3,#7040ec);color:#fff;font-style:normal;font-weight:950}.lessonViewerIdentity>span{min-width:0;display:grid;gap:2px}.lessonViewerIdentity a{color:#152743;font-weight:900}.lessonViewerIdentity small{color:#8491a5;font-size:10px}.lessonViewerContact,.lessonViewerState{display:grid;gap:6px}.lessonViewerContact span{display:flex;align-items:center;gap:6px;color:#63738a;font-size:11px}.lessonViewerContact a{color:#195ec8;font-weight:800}.lessonViewerContact b{color:#9a6d28;font-size:11px}.lessonViewerState>span{width:max-content;display:flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:900}.lessonViewerState .completed{background:#e0f8ed;color:#087653}.lessonViewerState .viewed{background:#eaf2ff;color:#245fc9}.lessonViewerState>small{display:flex;align-items:center;gap:5px;color:#7a899e;font-size:10px}.lessonViewerEmpty{padding:48px 20px;text-align:center;color:#78869b}.lessonViewerEmpty>svg{color:#4b7fe9}.lessonViewerEmpty h3{margin:10px 0 4px;color:#263a58}.lessonViewerEmpty p{margin:0;font-size:12px}
+.studentResetCard{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:22px 24px;border:1px solid #d9e4f2;border-radius:23px;background:radial-gradient(circle at 100% 0,rgba(49,110,241,.1),transparent 38%),#fff;box-shadow:0 16px 44px rgba(14,40,80,.07)}.studentResetIntro{min-width:0;display:flex;align-items:flex-start;gap:13px}.studentResetIntro>i{width:47px;height:47px;flex:0 0 47px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#236cf3,#7540ee);color:#fff}.studentResetIntro span{color:#2869e7;font-size:10px;font-weight:900}.studentResetIntro h3{margin:3px 0;color:#172945;font-size:19px}.studentResetIntro p{max-width:690px;margin:0;color:#6c7b91;font-size:12px;line-height:1.75}.resetPasswordTrigger{flex:0 0 auto;min-height:48px}.temporaryPasswordResult{flex:1;display:flex;align-items:flex-start;gap:10px;padding:14px;border:1px solid #bcead3;border-radius:16px;background:#edfbf4;color:#087451}.temporaryPasswordResult>div{min-width:0;flex:1}.temporaryPasswordResult p{margin:3px 0 9px;color:#3e755f;font-size:11px}.temporaryPasswordResult>div>div{display:flex;gap:7px}.temporaryPasswordResult code{min-width:170px;padding:10px 12px;border:1px dashed #7fcba8;border-radius:10px;background:#fff;color:#173f32;font-size:15px;font-weight:900;text-align:center}.temporaryPasswordResult button{min-height:42px;display:flex;align-items:center;gap:5px;padding:0 12px;border:0;border-radius:10px;background:#0b8b62;color:#fff;font-weight:900;cursor:pointer}.temporaryPasswordResult small{display:block;margin-top:8px;line-height:1.6}.studentResetError{flex-basis:100%;margin:0;padding:10px 12px;border-radius:12px;background:#fff0f0;color:#b4232c;font-size:12px}.resetConfirmBox{flex:1;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:15px 46px 15px 15px;border:1px solid #f2d292;border-radius:17px;background:#fff9e9;color:#7b510d}.resetConfirmBox>div:nth-of-type(1) b{font-size:13px}.resetConfirmBox p{margin:3px 0 0;font-size:11px;line-height:1.6}.resetConfirmBox>div:last-child{display:flex;gap:7px}.resetConfirmBox .btn{min-height:43px;font-size:11px}.resetConfirmClose{position:absolute;top:9px;right:9px;width:31px;height:31px;display:grid;place-items:center;border:0;border-radius:9px;background:#fff;color:#725322;cursor:pointer}.studentTableName{display:grid;color:#152945;font-weight:900}.studentTableName small{color:#8290a3;font-size:10px;font-weight:600}.studentPhoneLink,.parentPhoneLink{color:#1d61cc;font-weight:800}.missingParentPhone{color:#a76e20;font-size:11px;font-weight:800}.studentDetailsLink{min-height:38px!important;white-space:nowrap}
+@media(max-width:900px){.lessonViewersTop{align-items:stretch;flex-direction:column}.lessonViewersTop .btn{width:100%;justify-content:center}.lessonViewerKpis{grid-template-columns:1fr 1fr}.lessonViewerRow{grid-template-columns:1fr 1fr}.lessonViewerState{grid-column:1/-1}.studentResetCard{align-items:stretch;flex-direction:column}.resetPasswordTrigger{width:100%;justify-content:center}.resetConfirmBox{grid-template-columns:auto minmax(0,1fr)}.resetConfirmBox>div:last-child{grid-column:1/-1}.temporaryPasswordResult{width:100%}.studentsDirectoryTable table{min-width:900px!important}}
+@media(max-width:560px){.lessonViewerKpis{grid-template-columns:1fr}.lessonViewerKpis article{min-height:88px}.lessonViewerRow{grid-template-columns:1fr;padding:15px}.lessonViewerState{grid-column:auto}.lessonViewerContact{padding:10px 0;border-block:1px solid #edf1f6}.studentResetCard{padding:17px}.studentResetIntro>i{width:42px;height:42px;flex-basis:42px}.studentResetIntro h3{font-size:17px}.temporaryPasswordResult>div>div,.resetConfirmBox>div:last-child{align-items:stretch;flex-direction:column}.temporaryPasswordResult code{width:100%;min-width:0}.temporaryPasswordResult button,.resetConfirmBox .btn{width:100%;justify-content:center}.resetConfirmBox{grid-template-columns:1fr;padding:45px 13px 13px}.resetConfirmBox>svg{display:none}.resetConfirmBox>div:last-child{grid-column:auto}.singleAttemptRule{padding:12px}.lessonViewersPanel>header{padding:16px}.lessonViewersTop{padding:18px}}
+/* Managed teacher onboarding v1. */
+.managedTeacherAccount{border-color:#cddfff!important;background:linear-gradient(135deg,#f5f8ff,#edf3ff)!important}.managedTeacherAccount span{color:#1f67e7!important}.managedTeacherAccount strong{display:block;margin-top:4px;color:#172b4d;font-size:13px;line-height:1.7}.managedTeacherAccount small{display:block;margin-top:4px;color:#657a9e!important}.managedTeacherPolicy{display:grid;gap:3px;padding:12px 14px;border:1px solid #cfe0ff;border-radius:14px;background:#f0f5ff;color:#1d4e9d}.managedTeacherPolicy b{font-size:12px}.managedTeacherPolicy small{color:#60769b;font-size:10px;line-height:1.65}
+.managedTeacherDeliveryNote{margin:10px 0 0;padding:10px 12px;border:1px solid #cfe1ff;border-radius:11px;background:#f1f6ff;color:#315f9f;font-size:11px;font-weight:700;line-height:1.7}.teacherManagedLogin .authCardInner>.skoolaPill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.teacherManagedLogin .authCardInner>p b{color:#2368ee}
+@media(max-width:560px){.managedTeacherAccount{padding:13px!important}.managedTeacherPolicy{display:grid;gap:3px;padding:12px 14px;border:1px solid #cfe0ff;border-radius:14px;background:#f0f5ff;color:#1d4e9d}.managedTeacherPolicy b{font-size:12px}.managedTeacherPolicy small{color:#60769b;font-size:10px;line-height:1.65}
+.managedTeacherDeliveryNote{text-align:right}.teacherManagedLogin .authCardInner>h1{font-size:27px!important}}
+/* UI/UX Pro Max shared resilience pass. */
+html {
+  max-inline-size: 100%;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body,
+.routeMotion,
+#main-content {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
+.skipLink {
+  position: fixed;
+  inset-block-start: max(8px, env(safe-area-inset-top));
+  inset-inline-start: max(12px, env(safe-area-inset-left));
+  z-index: 10000;
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  background: #12213f;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, .24);
+  transform: translateY(-180%);
+  transition: transform .2s ease;
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+:where(button, a, summary, [role="button"], input, select, textarea) {
+  touch-action: manipulation;
+}
+
+:where(button, .btn, summary, [role="button"]):disabled,
+:where(button, .btn, summary, [role="button"])[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: .52;
+  box-shadow: none;
+}
+
+:is(.saasMain, .appMain, .courseContentManager, .studentViewerPage, .tenantShowcase, .authPage, .modalSheet, .modalContent),
+:is(.saasMain, .appMain, .courseContentManager, .studentViewerPage, .tenantShowcase, .authPage, .modalSheet, .modalContent) > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+pre,
+code {
+  max-inline-size: 100%;
+  overflow: auto;
+}
+
+:where([dir="rtl"], html[dir="rtl"]) :is(label, th, td, .panelTitle, .formError, .formNotice, .compactEmpty, .emptyState) {
+  text-align: start;
+}
+
+:where([dir="rtl"], html[dir="rtl"]) :is(input[type="email"], input[type="tel"], input[inputmode="numeric"], code) {
+  unicode-bidi: plaintext;
+}
+
+:where(.saasMain, .appMain, .authPage, .modalSheet, .modalContent, .courseContentManager) :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-block-size: 44px;
+}
+
+:where(.saasMain, .appMain, .authPage, .modalSheet, .modalContent, .courseContentManager) textarea {
+  line-height: 1.65;
+  resize: vertical;
+}
+
+fieldset,
+.fieldGrid,
+.formGrid,
+.editorGrid,
+.modalBody {
+  min-inline-size: 0;
+}
+
+.modalOverlay,
+.checkoutPortalOverlay {
+  inset: 0 !important;
+  inline-size: auto !important;
+  block-size: 100dvh !important;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(8px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(8px, env(safe-area-inset-left)) !important;
+}
+
+.modalSheet,
+.modalContent,
+.checkoutPortal {
+  min-inline-size: 0;
+  max-inline-size: min(100%, 1100px);
+  max-block-size: calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
+}
+
+.modalBody,
+.modalContent,
+.checkoutPortalBody {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+  scroll-padding-block: 96px 140px;
+}
+
+:is(.modalBody, .modalContent, .checkoutPortalBody) :is(input, select, textarea) {
+  scroll-margin-block: 112px;
+}
+
+.modalFooter,
+.modalActions,
+.formActions {
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+.responsiveTable,
+.tablePanel {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+.responsiveTable table,
+.tablePanel table {
+  inline-size: max-content;
+  min-inline-size: 100%;
+  max-inline-size: none;
+}
+
+.responsiveTable :is(th, td),
+.tablePanel :is(th, td) {
+  text-align: start;
+  vertical-align: middle;
+}
+
+:where(.compactEmpty, .emptyState, .lessonViewerEmpty, .catalogEmpty, .systemStateCard) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+:where(.formError, .formNotice, .courseNotice, .studentResetError, .fieldError) {
+  max-inline-size: 100%;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+.studentShell .appTopIdentity > div,
+.saasTopCopy {
+  min-inline-size: 0;
+}
+
+.studentShell .appTop :is(h1, p),
+.saasTopCopy :is(h1, p) {
+  max-inline-size: 100% !important;
+  overflow-wrap: anywhere;
+}
+
+@media (pointer: coarse) {
+  :where(button, .btn, summary, [role="button"]) {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
+
+  :where(.saasSide nav, .appNav, .tenantNav, .mobileNav) a {
+    min-block-size: 44px;
+  }
+}
+
+@media (max-width: 900px) {
+  :where(.saasMain, .appMain, .authPage, .modalSheet, .modalContent, .courseContentManager) :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 16px;
+  }
+
+  .modalOverlay,
+  .checkoutPortalOverlay {
+    align-items: flex-start !important;
+  }
+
+  .modalSheet,
+  .modalContent,
+  .checkoutPortal {
+    inline-size: 100% !important;
+    max-block-size: calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom))) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .responsiveTable::after {
+    inset-inline-start: 0;
+    right: auto !important;
+    font-size: 12px;
+  }
+
+  .modalFooter > *,
+  .modalActions > *,
+  .formActions > * {
+    flex: 1 1 100%;
+    inline-size: 100%;
+  }
+
+  .catalogCourse p,
+  .tenantCourseBody > p {
+    block-size: auto !important;
+    min-block-size: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skipLink {
+    transition: none;
+  }
+
+  .skoolaNavProgress {
+    display: none;
+  }
+}

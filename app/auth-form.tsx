@@ -12,6 +12,7 @@ export function LoginForm({ variant = "default", tenantSlug, portal }: { variant
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const resolvedPortal = variant === "super-admin" ? "super-admin" : (portal ?? (tenantSlug ? "student" : undefined));
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -22,7 +23,7 @@ export function LoginForm({ variant = "default", tenantSlug, portal }: { variant
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ identifier: data.get("identifier"), password: data.get("password"), remember: data.get("remember") === "on", tenantSlug, portal: variant === "super-admin" ? "super-admin" : (tenantSlug ? "student" : portal) }),
+        body: JSON.stringify({ identifier: data.get("identifier"), password: data.get("password"), remember: data.get("remember") === "on", tenantSlug, portal: resolvedPortal }),
       });
       const result = await response.json();
       if (!response.ok) setMessage(result.message ?? "تعذر تسجيل الدخول");
@@ -40,7 +41,7 @@ export function LoginForm({ variant = "default", tenantSlug, portal }: { variant
     <div className="formRow"><label className="check"><input name="remember" type="checkbox" /> تذكرني</label><Link href="/forgot-password">نسيت كلمة المرور؟</Link></div>
     {message && <p className="formError" role="alert">{message}</p>}
     <button className="btn primary authSubmit" disabled={loading}>{loading ? "جارٍ تسجيل الدخول…" : variant === "super-admin" ? "دخول الإدارة العليا ←" : "تسجيل الدخول ←"}</button>
-    {variant === "super-admin" ? <p className="authSwitch">هذا المدخل مخصص لحسابات الإدارة العليا فقط.</p> : tenantSlug ? <div className="authAccountPrompt"><span>طالب جديد في المنصة؟</span><Link className="authCreateAccount" href={`/t/${tenantSlug}/register`}>أنشئ حساب طالب جديد</Link><small>التسجيل يستغرق دقائق ويحفظ تقدمك ونتائجك.</small></div> : portal === "teacher" ? <p className="authSwitch">مدرس جديد؟ <Link href="/teacher-register">أنشئ منصتك التعليمية</Link></p> : <p className="authSwitch">طالب جديد؟ <Link href="/register">اختر أكاديميتك وأنشئ حسابك</Link></p>}
+    {variant === "super-admin" ? <p className="authSwitch">هذا المدخل مخصص لحسابات الإدارة العليا فقط.</p> : resolvedPortal === "teacher" ? <div className="authAccountPrompt managedTeacherAccount"><span>دخول المدرسين المعتمدين فقط</span><strong>حساب المدرس يتم إنشاؤه وتفعيله بواسطة إدارة Skoola.</strong><small>استخدم بيانات الدخول والرابط اللذين استلمتهما من الإدارة.</small></div> : tenantSlug ? <div className="authAccountPrompt"><span>طالب جديد في المنصة؟</span><Link className="authCreateAccount" href={`/t/${tenantSlug}/register`}>أنشئ حساب طالب جديد</Link><small>التسجيل يستغرق دقائق ويحفظ تقدمك ونتائجك.</small></div> : <p className="authSwitch">طالب جديد؟ <Link href="/register">اختر أكاديميتك وأنشئ حسابك</Link></p>}
   </form>;
 }
 

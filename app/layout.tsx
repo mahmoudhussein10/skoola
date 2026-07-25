@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./skoola.css";
 import "./product-polish.css";
@@ -15,6 +15,14 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "Skoola — Teach. Learn. Grow.", description: "منصة التعليم الحديثة للمدرسين والطلاب.", images: ["/skoola-logo.png"] },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
+  themeColor: "#f8fafc",
+};
+
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <html lang="ar" dir="rtl" data-scroll-behavior="smooth"><body><SkoolaExperience>{children}</SkoolaExperience></body></html>;
+  return <html lang="ar" dir="rtl" data-scroll-behavior="smooth"><body><a className="skipLink" href="#main-content">تخطَّ إلى المحتوى الرئيسي</a><SkoolaExperience>{children}</SkoolaExperience></body></html>;
 }

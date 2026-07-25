@@ -34,7 +34,7 @@ const examSchema = z.object({
   description: stringOrNull.transform((v) => (v ? String(v).trim() : null)),
   durationMinutes: z.coerce.number().int().min(1, "المدة يجب أن تكون دقيقة واحدة على الأقل").max(300).default(30),
   passingScore: z.coerce.number().min(0).max(100).default(50),
-  maxAttempts: z.coerce.number().int().min(1).max(100).default(1),
+  maxAttempts: z.coerce.number().optional().transform(() => 1),
   shuffleQuestions: z.boolean().default(false),
   shuffleOptions: z.boolean().default(false),
   showResultImmediately: z.boolean().default(true),

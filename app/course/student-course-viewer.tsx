@@ -179,6 +179,19 @@ export function StudentCourseViewer({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examStarted, timeRemaining]);
 
+  // Record an actual lesson view without marking the lesson as completed.
+  useEffect(() => {
+    if (!activeLessonId) return;
+    const controller = new AbortController();
+    void fetch(`/api/student/lessons/${activeLessonId}/progress`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({}),
+      signal: controller.signal,
+    }).catch(() => undefined);
+    return () => controller.abort();
+  }, [activeLessonId]);
+
   // Mark lesson complete
   async function toggleLessonComplete(lessonId: string) {
     const nextState = !completedLessons[lessonId];
@@ -379,9 +392,9 @@ export function StudentCourseViewer({
                     </div>
                   </div>
 
-                  {activeExam.myAttemptsCount >= activeExam.maxAttempts ? (
+                  {activeExam.myAttemptsCount >= 1 ? (
                     <div className="attemptLimitNotice">
-                      استنفدت الحد الأقصى للمحاولات المسموحة ({activeExam.maxAttempts}).
+                      لقد استخدمت محاولتك الوحيدة لهذا الاختبار، ولا يمكن إعادته مرة أخرى.
                     </div>
                   ) : (
                     <button className="btn primary lg" onClick={() => startExam(activeExam)}>
@@ -456,7 +469,7 @@ export function StudentCourseViewer({
                   </footer>
                 </div>
               ) : examResult ? (
-                <div className="examResultCard">
+                <div className="examResultCard" aria-live="polite">
                   {examResult.result ? (
                     <>
                       <div
@@ -476,18 +489,24 @@ export function StudentCourseViewer({
                           {examResult.result.percentage}%
                         </strong>
                         <p>
-                          درجتك: {examResult.result.score} من {examResult.result.maxScore} (نسبة النجاح: {examResult.result.passingScore}%)
+                          درجتك: {examResult.result.score} من {examResult.result.maxScore} — نسبة النجاح المطلوبة {examResult.result.passingScore}%
                         </p>
+                        <div className="resultQuickStats">
+                          <span><small>الدرجة</small><b>{examResult.result.score} / {examResult.result.maxScore}</b></span>
+                          <span><small>الإجابات الصحيحة</small><b>{examResult.questions?.filter((question) => question.isCorrect).length ?? "—"} / {examResult.questions?.length ?? "—"}</b></span>
+                          <span><small>الحالة</small><b>{examResult.result.passed ? "ناجح" : "لم تجتز الاختبار"}</b></span>
+                        </div>
                       </div>
 
                       {examResult.questions ? (
                         <div className="questionsReview">
-                          <h3>مراجعة الإجابات والشرح:</h3>
+                          <div className="reviewHeading"><span>مراجعة الاختبار</span><h3>إجاباتك والشرح</h3><p>راجع كل سؤال لتعرف نقاط قوتك وما يحتاج إلى تدريب إضافي.</p></div>
                           {examResult.questions.map((q, i: number) => (
                             <div
                               key={q.id}
                               className={`reviewItem ${q.isCorrect ? "correct" : "wrong"}`}
                             >
+                              <span className="reviewState">{q.isCorrect ? <><CheckCircle2 size={16} /> إجابة صحيحة</> : <><X size={16} /> تحتاج مراجعة</>}</span>
                               <p>
                                 <b>س{i + 1}:</b> {q.text}
                               </p>

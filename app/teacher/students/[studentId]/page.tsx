@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "../../../../lib/prisma";
 import { requirePermission } from "../../../../lib/auth";
+import { hasPermission } from "../../../../lib/permissions";
 import { DashboardShell } from "../../../dashboard-shell";
+import { StudentPasswordReset } from "./student-password-reset";
 
 export default async function StudentDetailPage({ params }: { params: Promise<{ studentId: string }> }) {
   const context = await requirePermission("students.view");
@@ -48,6 +50,11 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
 
   const user = member.user;
   const profile = user.studentProfiles[0];
+  const canManageStudents = !context.supportMode && hasPermission(
+    context.membership.role,
+    "students.manage",
+    context.membership.permissions,
+  );
 
   const totalExams = user.examAttempts.length;
   const avgScore = totalExams
@@ -118,6 +125,10 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
             )}
           </div>
         </section>
+
+        {canManageStudents ? (
+          <StudentPasswordReset studentId={user.id} studentName={user.fullName} />
+        ) : null}
 
         {/* Exams Results & Assignments */}
         <section className="saasGrid">

@@ -35,7 +35,7 @@ export function PlatformSettingsForm({ initial }: { initial: Settings }) {
     event.preventDefault();
     setSaving(true);
     setMessage("");
-    const response = await fetch("/api/super-admin/settings", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(form) });
+    const response = await fetch("/api/super-admin/settings", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, teacherRegistrationEnabled: false }) });
     const data = await response.json().catch(() => null);
     setSaving(false);
     setMessage(response.ok ? "تم حفظ إعدادات النظام" : data?.message ?? "تعذر حفظ الإعدادات");
@@ -51,7 +51,7 @@ export function PlatformSettingsForm({ initial }: { initial: Settings }) {
     </div>
     <fieldset className="settingsChecks"><legend>سياسات التسجيل والتشغيل</legend>
       <label><input type="checkbox" checked={form.registrationEnabled} onChange={(event) => setForm({ ...form, registrationEnabled: event.target.checked })} />السماح بتسجيل الطلاب</label>
-      <label><input type="checkbox" checked={form.teacherRegistrationEnabled} onChange={(event) => setForm({ ...form, teacherRegistrationEnabled: event.target.checked })} />السماح بتسجيل المدرسين</label>
+      <div className="managedTeacherPolicy"><b>إنشاء المدرسين من الإدارة العليا فقط</b><small>لا يوجد تسجيل ذاتي للمدرسين؛ أنشئ كل منصة من صفحة المدرسين لضمان المراجعة والعزل الصحيح.</small></div>
       <label><input type="checkbox" checked={form.requireAdminApproval} onChange={(event) => setForm({ ...form, requireAdminApproval: event.target.checked })} />مراجعة حسابات الطلاب قبل التفعيل</label>
       <label><input type="checkbox" checked={form.maintenanceMode} onChange={(event) => setForm({ ...form, maintenanceMode: event.target.checked })} />وضع الصيانة</label>
     </fieldset>

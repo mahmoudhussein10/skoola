@@ -2,12 +2,13 @@
 
 import { AnimatePresence, motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 export function SkoolaExperience({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
   const [targetPath, setTargetPath] = useState<string | null>(null);
+  const previousPath = useRef(pathname);
   const navigating = Boolean(targetPath && targetPath !== pathname);
 
   useEffect(() => {
@@ -24,9 +25,17 @@ export function SkoolaExperience({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("click", onClick, true);
   }, [pathname]);
 
+  useEffect(() => {
+    if (previousPath.current === pathname) return;
+    previousPath.current = pathname;
+    window.requestAnimationFrame(() => {
+      document.getElementById("main-content")?.focus({ preventScroll: true });
+    });
+  }, [pathname]);
+
   return <>
     <AnimatePresence>{navigating && <motion.div className="skoolaNavProgress" initial={{ scaleX: .08, opacity: 0 }} animate={{ scaleX: .82, opacity: 1 }} exit={{ scaleX: 1, opacity: 0 }} transition={{ duration: .22 }} />}</AnimatePresence>
-    <motion.div key={pathname} className="routeMotion" initial={reduceMotion ? false : { opacity: .82, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .14, ease: "easeOut" }}>{children}</motion.div>
+    <motion.div id="main-content" tabIndex={-1} key={pathname} className="routeMotion" initial={reduceMotion ? false : { opacity: .82, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .14, ease: "easeOut" }}>{children}</motion.div>
   </>;
 }
 

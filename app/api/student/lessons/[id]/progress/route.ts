@@ -5,8 +5,8 @@ import { getAuthContext } from "../../../../../../lib/auth";
 import { isSameOrigin } from "../../../../../../lib/api-auth";
 
 const schema = z.object({
-  completed: z.boolean().default(true),
-  watchedSeconds: z.number().int().min(0).optional().default(0),
+  completed: z.boolean().optional(),
+  watchedSeconds: z.number().int().min(0).optional(),
 });
 
 export async function POST(
@@ -24,7 +24,8 @@ export async function POST(
   const studentId = auth.user.id;
 
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  const completed = parsed.success ? parsed.data.completed : true;
+  if (!parsed.success) return NextResponse.json({ ok: false, message: "بيانات التقدم غير صالحة" }, { status: 400 });
+  const completed = parsed.data.completed;
 
   const lesson = await prisma.lesson.findFirst({
     where: { id: lessonId, tenantId, status: "PUBLISHED" },
@@ -61,11 +62,21 @@ export async function POST(
     return NextResponse.json({ ok: false, message: "يلزم اشتراك نشط لتسجيل التقدم" }, { status: 403 });
   }
 
-  // Update or insert VideoProgress
-  await prisma.videoProgress.upsert({
+  // Opening a lesson records a view without marking the lesson completed.
+  const progress = await prisma.videoProgress.upsert({
     where: { tenantId_studentId_lessonId: { tenantId, studentId, lessonId } },
-    update: { completed, updatedAt: new Date() },
-    create: { tenantId, studentId, lessonId, completed },
+    update: {
+      ...(completed === undefined ? {} : { completed }),
+      ...(parsed.data.watchedSeconds === undefined ? {} : { watchedSeconds: parsed.data.watchedSeconds }),
+      updatedAt: new Date(),
+    },
+    create: {
+      tenantId,
+      studentId,
+      lessonId,
+      completed: completed ?? false,
+      watchedSeconds: parsed.data.watchedSeconds ?? 0,
+    },
   });
 
   let progressPercentage = 0;
@@ -101,5 +112,5 @@ export async function POST(
     });
   }
 
-  return NextResponse.json({ ok: true, completed, progressPercentage });
+  return NextResponse.json({ ok: true, completed: progress.completed, progressPercentage });
 }
