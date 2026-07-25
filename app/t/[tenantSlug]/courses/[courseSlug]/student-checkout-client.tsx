@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +10,6 @@ import {
   CreditCard,
   KeyRound,
   Landmark,
-  ShieldCheck,
   Smartphone,
   Sparkles,
   X,
@@ -41,7 +40,7 @@ export function StudentCheckoutClient({
   paymentInstructions?: string | null;
 }) {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(() => () => undefined, () => true, () => false);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"transfer" | "code">(
     paymentMethods.length > 0 ? "transfer" : "code"
@@ -60,9 +59,6 @@ export function StudentCheckoutClient({
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
   const [activationSuccess, setActivationSuccess] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   function copyToClipboard(text: string, key: string) {
     navigator.clipboard.writeText(text);
@@ -297,7 +293,7 @@ export function StudentCheckoutClient({
               ) : (
                 <div className="compactEmpty" style={{ margin: "20px" }}>
                   <h3>لم يقم المدرس بإضافة وسائل تحويل إلكترونية بعد.</h3>
-                  <p>يمكنك استخدام تبويب "تفعيل باستخدام كود" بالأعلى إذا حصلت على كود تفعيل من المدرس.</p>
+                  <p>يمكنك استخدام تبويب «تفعيل باستخدام كود» بالأعلى إذا حصلت على كود تفعيل من المدرس.</p>
                 </div>
               )
             ) : (

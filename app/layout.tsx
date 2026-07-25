@@ -3,6 +3,7 @@ import "./globals.css";
 import "./skoola.css";
 import "./product-polish.css";
 import "./visual-wow.css";
+import "./mobile-system.css";
 import { SkoolaExperience } from "./skoola-motion";
 
 export const metadata: Metadata = {

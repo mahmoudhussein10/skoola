@@ -16,6 +16,57 @@ function Empty({ icon, title, text, action, href }: { icon: string; title: strin
 
 const gradeLabels = { FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
 
+type ViewerCourseRecord = {
+  id: string;
+  title: string;
+  subject: string;
+  sections: Array<{
+    id: string;
+    title: string;
+    lessons: Array<{
+      id: string;
+      sectionId: string;
+      title: string;
+      description: string | null;
+      content: string | null;
+      type: "VIDEO" | "TEXT" | "FILE" | "VIDEO_WITH_ATTACHMENT";
+      videoId: string | null;
+      videoUrl: string | null;
+      attachmentUrl: string | null;
+      thumbnailUrl: string | null;
+      duration: number;
+      order: number;
+      progress: Array<{ completed: boolean }>;
+    }>;
+    exams: Array<{
+      id: string;
+      title: string;
+      description: string | null;
+      durationMinutes: number;
+      passingScore: unknown;
+      maxAttempts: number;
+      showResultImmediately: boolean;
+      showAnswersAfterSubmit: boolean;
+      questions: Array<{
+        id: string;
+        text: string;
+        imageUrl: string | null;
+        type: "MCQ" | "TRUE_FALSE";
+        options: unknown;
+        points: unknown;
+      }>;
+      attempts: Array<{
+        score: unknown;
+        maxScore: unknown;
+        percentage: unknown;
+        passed: boolean | null;
+        submittedAt: Date | null;
+        startedAt: Date;
+      }>;
+    }>;
+  }>;
+};
+
 async function Dashboard() {
   const auth = await getAuthContext();
   if (!auth) redirect("/login?role=student&next=/dashboard");
@@ -317,7 +368,7 @@ async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: st
     user.role === "TEACHER_ADMIN" ||
     user.role === "TEACHER_EDITOR";
 
-  let courseData: any = null;
+  let courseData: ViewerCourseRecord | null = null;
 
   if (isStaffOrAdmin) {
     courseData = await prisma.course.findFirst({
@@ -427,10 +478,10 @@ async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: st
     id: courseData.id,
     title: courseData.title,
     subject: courseData.subject,
-    sections: courseData.sections.map((sec: any) => ({
+    sections: courseData.sections.map((sec) => ({
       id: sec.id,
       title: sec.title,
-      lessons: sec.lessons.map((l: any) => ({
+      lessons: sec.lessons.map((l) => ({
         id: l.id,
         sectionId: l.sectionId,
         sectionTitle: sec.title,
@@ -446,7 +497,7 @@ async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: st
         order: l.order,
         completed: Boolean(l.progress?.[0]?.completed),
       })),
-      exams: sec.exams.map((e: any) => {
+      exams: sec.exams.map((e) => {
         const lastAtt = e.attempts?.[0];
         return {
           id: e.id,
@@ -458,7 +509,7 @@ async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: st
           showResultImmediately: e.showResultImmediately,
           showAnswersAfterSubmit: e.showAnswersAfterSubmit,
           questionsCount: e.questions.length,
-          questions: e.questions.map((q: any) => ({
+          questions: e.questions.map((q) => ({
             id: q.id,
             text: q.text,
             imageUrl: q.imageUrl ?? null,

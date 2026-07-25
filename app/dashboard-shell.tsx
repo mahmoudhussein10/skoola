@@ -38,9 +38,20 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
   useEffect(() => {
     if (!mobileOpen) return;
     const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMobileOpen(false); };
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previousOverflow; };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    const closeAtDesktop = () => { if (window.innerWidth > 900) setMobileOpen(false); };
+    window.addEventListener("resize", closeAtDesktop);
+    return () => window.removeEventListener("resize", closeAtDesktop);
+  }, []);
 
   useEffect(() => {
     const hrefs = kind === "teacher"

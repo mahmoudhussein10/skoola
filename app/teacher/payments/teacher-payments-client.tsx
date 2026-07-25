@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentType } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -9,9 +10,7 @@ import {
   CreditCard,
   Eye,
   FileImage,
-  Filter,
   Landmark,
-  RefreshCw,
   Search,
   Smartphone,
   X,
@@ -42,7 +41,7 @@ type PaymentStats = {
   rejected: number;
 };
 
-const methodLabels: Record<string, { label: string; icon: any }> = {
+const methodLabels: Record<string, { label: string; icon: ComponentType<{ size?: number }> }> = {
   VODAFONE_CASH: { label: "Vodafone Cash", icon: Smartphone },
   INSTAPAY: { label: "InstaPay", icon: Landmark },
   CASH: { label: "تحويل يدوي / نقدي", icon: CreditCard },

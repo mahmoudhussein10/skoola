@@ -8,9 +8,6 @@ import { ActiveAnnouncements } from "../active-announcements";
 import { StudentInviteLink } from "./student-invite-link";
 import {
   BarChart3,
-  BookOpen,
-  CheckCircle2,
-  Clock,
   CreditCard,
   ExternalLink,
   KeyRound,

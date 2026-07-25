@@ -1,0 +1,3 @@
+export default function Loading() {
+  return <main className="globalLoadingPage" aria-busy="true" aria-label="جارٍ تحميل الصفحة"><div className="globalLoadingHeader"><i/><span/></div><section className="globalLoadingHero"><span/><b/><b/><i/></section><section className="globalLoadingGrid">{Array.from({ length: 4 }, (_, index) => <article key={index}><i/><span/><b/></article>)}</section><span className="srOnly">جارٍ تحميل المحتوى…</span></main>;
+}

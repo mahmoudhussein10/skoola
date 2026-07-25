@@ -3,17 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  ChevronDown,
-  ChevronUp,
   Clock,
   Download,
   FileText,
   HelpCircle,
-  Lock,
   Menu,
   PlayCircle,
   X,
@@ -27,6 +25,26 @@ type Question = {
   type: "MCQ" | "TRUE_FALSE";
   options: string[];
   points: number;
+};
+
+type ExamReviewQuestion = {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  studentAnswer?: string | null;
+  correctAnswer?: string | null;
+  explanation?: string | null;
+};
+
+type ExamSubmissionResult = {
+  result?: {
+    passed: boolean;
+    percentage: number;
+    score: number;
+    maxScore: number;
+    passingScore: number;
+  };
+  questions?: ExamReviewQuestion[];
 };
 
 type Exam = {
@@ -126,7 +144,7 @@ export function StudentCourseViewer({
   const [examStarted, setExamStarted] = useState(false);
   const [examAnswers, setExamAnswers] = useState<Record<string, string>>({});
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
-  const [examResult, setExamResult] = useState<any | null>(null);
+  const [examResult, setExamResult] = useState<ExamSubmissionResult | null>(null);
   const [submittingExam, setSubmittingExam] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
 
@@ -157,6 +175,8 @@ export function StudentCourseViewer({
     }, 1000);
 
     return () => clearInterval(timer);
+  // The submit handler intentionally reads the latest active exam state when the timer reaches zero.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examStarted, timeRemaining]);
 
   // Mark lesson complete
@@ -398,7 +418,7 @@ export function StudentCourseViewer({
 
                         {q.imageUrl ? (
                           <div className="studentQuestionImage">
-                            <img src={q.imageUrl} alt={`صورة سؤال ${idx + 1}`} />
+                            <Image src={q.imageUrl} alt={`صورة سؤال ${idx + 1}`} width={1200} height={675} sizes="(max-width: 760px) calc(100vw - 56px), 760px" />
                           </div>
                         ) : null}
 
@@ -463,7 +483,7 @@ export function StudentCourseViewer({
                       {examResult.questions ? (
                         <div className="questionsReview">
                           <h3>مراجعة الإجابات والشرح:</h3>
-                          {examResult.questions.map((q: any, i: number) => (
+                          {examResult.questions.map((q, i: number) => (
                             <div
                               key={q.id}
                               className={`reviewItem ${q.isCorrect ? "correct" : "wrong"}`}

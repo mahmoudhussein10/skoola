@@ -96,7 +96,8 @@ export function homeForRole(role: UserRole) {
   return "/dashboard";
 }
 
-export async function createSession(userId: string, remember = true, tenantId?: string) {
+export async function createSession(userId: string, _remember = true, tenantId?: string) {
+  void _remember;
   const token = randomBytes(32).toString("base64url");
   const targetUser = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
   const isStudent = targetUser?.role === "STUDENT";
