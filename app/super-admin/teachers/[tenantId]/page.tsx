@@ -88,12 +88,10 @@ export default async function TenantDetails({ params }: { params: Promise<{ tena
     outstandingBalance,
   };
 
-  const serializableTenant = JSON.parse(JSON.stringify(tenant));
-
   return (
     <DashboardShell kind="super" title={`منصة ${tenant.name}`} subtitle={`الملف الشامل للمدرس والمنصة · /t/${tenant.slug}`} userName={user.fullName}>
-      <TeacherAccountManager tenant={serializableTenant} />
-      <TeacherDetailClient tenant={serializableTenant} stats={stats} financial={financial} />
+      <TeacherAccountManager tenant={tenant} />
+      <TeacherDetailClient tenant={tenant} stats={stats} financial={financial} />
     </DashboardShell>
   );
 }

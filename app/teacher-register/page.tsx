@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AuthVisual } from "../auth-visual";
 import { Brand } from "../ui";
 import { getAuthContext, homeForRole } from "../../lib/auth";
 import { TeacherSignupForm } from "./teacher-form";
@@ -15,10 +14,9 @@ export default async function TeacherRegisterPage() {
   if (auth) redirect(homeForRole(auth.user.role));
 
   return (
-    <main id="main-content" className="authPage skoolaAuthPage teacherSelfSignupPage">
-      <AuthVisual variant="default" />
+    <main id="main-content" className="authPage skoolaAuthPage teacherSelfSignupPage teacherOnlySignupPage">
       <section className="authCard teacherSelfSignupShell">
-        <div className="authMobileBrand"><Brand /></div>
+        <div className="teacherSignupBrand"><Brand /></div>
         <div className="authCardInner teacherSelfSignupCard">
           <div className="teacherSignupIntro">
             <span className="skoolaPill">ابدأ أكاديميتك</span>

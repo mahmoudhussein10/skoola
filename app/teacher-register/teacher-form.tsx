@@ -21,6 +21,7 @@ export function TeacherSignupForm() {
   const [success, setSuccess] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
+  const [slug, setSlug] = useState("");
 
   useEffect(() => () => {
     if (preview) URL.revokeObjectURL(preview);
@@ -116,7 +117,18 @@ export function TeacherSignupForm() {
         </div>
         <div className="fieldGrid">
           <label>اسم المنصة<input name="platformName" required minLength={2} maxLength={120} placeholder="أكاديمية الأستاذ أحمد" /></label>
-          <label>رابط المنصة<input name="slug" required minLength={3} maxLength={50} dir="ltr" placeholder="ahmed-academy" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" /><small className="teacherSignupSlugHint">skoola.app/t/<b>ahmed-academy</b></small></label>
+          <label className="fieldWide teacherSlugField">
+            <span>رابط المنصة الخاص بك</span>
+            <input name="slug" required minLength={3} maxLength={50} dir="ltr" value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/\s+/g, "-"))} placeholder="مثال: ahmed-math" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" aria-describedby="teacher-slug-guide" />
+            <div className="teacherSlugGuide" id="teacher-slug-guide">
+              <b>تكتب إيه هنا؟</b>
+              <p>اكتب اسمك أو اسم الأكاديمية <strong>بالإنجليزي</strong>، ومن غير مسافات. استخدم شرطة <strong dir="ltr">-</strong> بين الكلمات.</p>
+              <span>أمثلة صحيحة: <code>ahmed-math</code> · <code>reem-academy</code> · <code>mostafa-science</code></span>
+              <small>رابطك الذي سترسله للطلاب:</small>
+              <strong className="teacherSlugPreview" dir="ltr">skoola-rho.vercel.app/t/{slug || "ahmed-math"}</strong>
+            </div>
+            {slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? <small className="teacherSlugError">اكتب الرابط بحروف إنجليزية صغيرة وأرقام فقط. مثال: ahmed-math</small> : null}
+          </label>
           <label className="fieldWide">المادة أو التخصص<input name="subject" required minLength={2} maxLength={80} placeholder="مثال: الرياضيات" /></label>
         </div>
       </section>
