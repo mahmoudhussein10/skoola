@@ -111,6 +111,9 @@ export default async function TeacherDashboard() {
   const grade3Pct = Math.round((grade3Count / totalGraded) * 100);
 
   const gradeLabelsMap: Record<string, string> = {
+    FIRST_PREPARATORY: "الأول الإعدادي",
+    SECOND_PREPARATORY: "الثاني الإعدادي",
+    THIRD_PREPARATORY: "الثالث الإعدادي",
     FIRST_SECONDARY: "الأول الثانوي",
     SECOND_SECONDARY: "الثاني الثانوي",
     THIRD_SECONDARY: "الثالث الثانوي",

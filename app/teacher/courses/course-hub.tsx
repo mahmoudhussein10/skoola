@@ -13,7 +13,7 @@ type CourseItem = {
   title: string;
   slug: string;
   description: string;
-  grade: "FIRST_SECONDARY" | "SECOND_SECONDARY" | "THIRD_SECONDARY";
+  grade: "FIRST_PREPARATORY" | "SECOND_PREPARATORY" | "THIRD_PREPARATORY" | "FIRST_SECONDARY" | "SECOND_SECONDARY" | "THIRD_SECONDARY";
   subject: string;
   price: number;
   thumbnailUrl: string | null;
@@ -23,6 +23,9 @@ type CourseItem = {
 };
 
 const grades = {
+  FIRST_PREPARATORY: "الأول الإعدادي",
+  SECOND_PREPARATORY: "الثاني الإعدادي",
+  THIRD_PREPARATORY: "الثالث الإعدادي",
   FIRST_SECONDARY: "الأول الثانوي",
   SECOND_SECONDARY: "الثاني الثانوي",
   THIRD_SECONDARY: "الثالث الثانوي",

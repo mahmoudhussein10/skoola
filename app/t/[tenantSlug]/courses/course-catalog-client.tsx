@@ -11,7 +11,7 @@ type CatalogCourse = {
   slug: string;
   title: string;
   subject: string;
-  grade: "FIRST_SECONDARY" | "SECOND_SECONDARY" | "THIRD_SECONDARY";
+  grade: "FIRST_PREPARATORY" | "SECOND_PREPARATORY" | "THIRD_PREPARATORY" | "FIRST_SECONDARY" | "SECOND_SECONDARY" | "THIRD_SECONDARY";
   description: string;
   thumbnailUrl: string | null;
   price: number;
@@ -21,12 +21,18 @@ type CatalogCourse = {
 
 const gradeOptions = [
   { value: "ALL", label: "كل الصفوف" },
+  { value: "FIRST_PREPARATORY", label: "الأول الإعدادي" },
+  { value: "SECOND_PREPARATORY", label: "الثاني الإعدادي" },
+  { value: "THIRD_PREPARATORY", label: "الثالث الإعدادي" },
   { value: "FIRST_SECONDARY", label: "الأول الثانوي" },
   { value: "SECOND_SECONDARY", label: "الثاني الثانوي" },
   { value: "THIRD_SECONDARY", label: "الثالث الثانوي" },
 ] as const;
 
 const gradeLabels: Record<CatalogCourse["grade"], string> = {
+  FIRST_PREPARATORY: "الأول الإعدادي",
+  SECOND_PREPARATORY: "الثاني الإعدادي",
+  THIRD_PREPARATORY: "الثالث الإعدادي",
   FIRST_SECONDARY: "الأول الثانوي",
   SECOND_SECONDARY: "الثاني الثانوي",
   THIRD_SECONDARY: "الثالث الثانوي",

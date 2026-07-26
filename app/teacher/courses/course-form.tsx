@@ -48,7 +48,7 @@ export function CourseForm() {
     <div className="fieldGrid">
       <label>عنوان الكورس<input name="title" placeholder="اكتب عنوان الكورس" required /></label>
       <label>الرابط المختصر<input name="slug" dir="ltr" placeholder="course-name" required pattern="[a-z0-9-]+" /></label>
-      <label>الصف الدراسي<select name="grade"><option value="FIRST_SECONDARY">الأول الثانوي</option><option value="SECOND_SECONDARY">الثاني الثانوي</option><option value="THIRD_SECONDARY">الثالث الثانوي</option></select></label>
+      <label>الصف الدراسي<select name="grade"><option value="FIRST_PREPARATORY">الأول الإعدادي</option><option value="SECOND_PREPARATORY">الثاني الإعدادي</option><option value="THIRD_PREPARATORY">الثالث الإعدادي</option><option value="FIRST_SECONDARY">الأول الثانوي</option><option value="SECOND_SECONDARY">الثاني الثانوي</option><option value="THIRD_SECONDARY">الثالث الثانوي</option></select></label>
       <label>المادة الدراسية<input name="subject" placeholder="اكتب اسم المادة" required /></label>
       <label>السعر بالجنيه<input name="price" type="number" min="0" defaultValue="0" required dir="ltr" /></label>
       <label>الظهور للطلاب<select name="status" defaultValue="PUBLISHED"><option value="PUBLISHED">منشور — يظهر فورًا</option><option value="DRAFT">مسودة — مخفي</option></select></label>

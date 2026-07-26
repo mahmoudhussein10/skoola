@@ -498,3 +498,63 @@
   border-color: #e98e8e !important;
   background: #ffe9e9 !important;
 }
+
+
+/* Teacher self-signup */
+.teacherSelfSignupPage{height:auto!important;min-height:100svh;align-items:stretch}
+.teacherSelfSignupPage .authVisual{position:sticky;top:0;height:100svh;align-self:flex-start}
+.teacherSelfSignupShell{min-height:100svh!important;height:auto!important;padding:48px clamp(22px,4vw,64px)!important;align-items:flex-start!important;overflow:visible!important}
+.teacherSelfSignupCard{width:min(760px,100%)!important;max-width:760px!important;padding:40px!important}
+.teacherSignupIntro{margin-bottom:28px}
+.teacherSignupIntro h1{margin:14px 0 8px;color:#111b35;font-size:clamp(30px,4vw,44px);line-height:1.25}
+.teacherSignupIntro p{margin:0;color:#63718c;line-height:1.85}
+.teacherSignupForm{display:grid;gap:16px}
+.teacherSignupSection{padding:22px;border:1px solid #dfe6f2;border-radius:20px;background:#fff}
+.teacherSignupSectionHead{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px}
+.teacherSignupSectionHead>span{width:42px;height:42px;display:grid;place-items:center;flex:0 0 42px;border-radius:13px;background:#eef2ff;color:#4f46e5}
+.teacherSignupSectionHead h2{margin:0 0 3px;color:#17213b;font-size:17px}
+.teacherSignupSectionHead p{margin:0;color:#71809a;font-size:13px;line-height:1.65}
+.teacherSignupForm .fieldGrid{gap:15px}
+.teacherSignupForm .fieldGrid label{display:grid;gap:7px;color:#34425d;font-size:13px;font-weight:800}
+.teacherSignupForm .fieldGrid input{min-height:50px}
+.teacherSignupForm .fieldWide{grid-column:1/-1}
+.teacherSignupSlugHint{color:#8290aa;font-size:11px;font-weight:600;direction:ltr;text-align:left}
+.teacherPhotoPicker{width:100%;min-height:92px;padding:14px;display:flex;align-items:center;gap:14px;border:1px dashed #aebce0;border-radius:18px;background:#f8faff;color:#52617c;text-align:right;cursor:pointer;transition:border-color .18s ease,background .18s ease}
+.teacherPhotoPicker:hover{border-color:#6366f1;background:#f2f4ff}
+.teacherPhotoPicker:focus-visible{outline:3px solid rgba(99,102,241,.25);outline-offset:2px}
+.teacherPhotoPreview{width:64px;height:64px;display:grid;place-items:center;flex:0 0 64px;overflow:hidden;border:1px solid #d9e1ef;border-radius:18px;background:#fff;color:#697995;background-position:center;background-size:cover}
+.teacherPhotoPreview img{width:100%;height:100%;object-fit:cover}
+.teacherPhotoPicker>span:nth-child(2){min-width:0;display:grid;gap:4px;flex:1}
+.teacherPhotoPicker b{color:#263451;font-size:14px}
+.teacherPhotoPicker small{overflow:hidden;color:#7b89a2;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.teacherPhotoPicker>svg{flex:0 0 auto;color:#6366f1}
+.teacherPhotoInput,.teacherSignupHoneypot{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+.teacherGradeChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.teacherGradeChoices label{cursor:pointer}
+.teacherGradeChoices input{position:absolute;opacity:0;pointer-events:none}
+.teacherGradeChoices span{min-height:48px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #dfe6f2;border-radius:14px;background:#f9fbff;color:#52617b;font-size:13px;font-weight:800;transition:.18s ease}
+.teacherGradeChoices span svg{color:#a8b3c7}
+.teacherGradeChoices input:checked+span{border-color:#6366f1;background:#eef2ff;color:#3730a3}
+.teacherGradeChoices input:checked+span svg{color:#4f46e5}
+.teacherGradeChoices input:focus-visible+span{outline:3px solid rgba(99,102,241,.25);outline-offset:2px}
+.teacherSignupTerms{margin:4px 2px!important}
+.teacherSignupSubmit{min-height:56px!important;border-radius:16px!important;background:#4f46e5!important}
+.teacherSignupSubmit:hover{background:#4338ca!important}
+.teacherSignupLogin{margin:20px 0 0;text-align:center;color:#6c7890;font-size:13px}
+.teacherSignupLogin a{color:#4f46e5;font-weight:900}
+.formSuccess{padding:12px 14px;border:1px solid #a7e7c4;border-radius:13px;background:#edfdf4;color:#126b3b;font-size:13px;font-weight:800}
+@media(max-width:1000px){.teacherSelfSignupPage .authVisual{display:none}.teacherSelfSignupShell{width:100%!important;padding:30px 20px!important}.teacherSelfSignupCard{margin-inline:auto}}
+@media(max-width:760px){.teacherSelfSignupShell{padding:18px 12px calc(30px + env(safe-area-inset-bottom))!important}.teacherSelfSignupCard{padding:24px 16px!important;border-radius:22px!important}.teacherSignupIntro{margin-bottom:20px}.teacherSignupSection{padding:16px;border-radius:17px}.teacherSignupSectionHead{margin-bottom:14px}.teacherGradeChoices{grid-template-columns:1fr 1fr}.teacherPhotoPicker{align-items:flex-start}.teacherPhotoPicker>svg{display:none}.teacherPhotoPicker small{white-space:normal}.teacherSignupForm .fieldWide{grid-column:auto}}
+@media(max-width:390px){.teacherGradeChoices{grid-template-columns:1fr}.teacherPhotoPreview{width:56px;height:56px;flex-basis:56px}}
+@media(prefers-reduced-motion:reduce){.teacherPhotoPicker,.teacherGradeChoices span{transition:none}}
+
+
+/* Super-admin teacher account management */
+.teacherAdminActions{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border:1px solid #dfe6f2;border-radius:18px;background:#fff}
+.teacherAdminActions>div:first-child{display:grid;gap:3px}.teacherAdminActions b{color:#17213b}.teacherAdminActions span{color:#64748b;font-size:13px}.teacherAdminActions>div:last-child{display:flex;gap:9px;flex-wrap:wrap}.teacherAdminActions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}.teacherDeleteTrigger,.teacherDeleteConfirm{border:1px solid #fecaca!important;background:#fff1f2!important;color:#b4232f!important}.teacherDeleteConfirm{background:#b4232f!important;color:#fff!important}.teacherDeleteConfirm:disabled{opacity:.45;cursor:not-allowed}
+.teacherAdminModal{position:fixed;inset:0;z-index:1200;padding:18px;display:grid;place-items:center;background:rgba(9,18,38,.68);backdrop-filter:blur(7px)}
+.teacherAdminSheet{width:min(720px,100%);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid #e1e7f0;border-radius:22px;background:#fff}
+.teacherAdminSheet>header{position:sticky;top:0;z-index:2;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e6ebf3;background:#fff}.teacherAdminSheet>header>div{display:flex;align-items:center;gap:11px}.teacherAdminSheet>header span{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:#eef2ff;color:#4f46e5}.teacherAdminSheet>header span.danger{background:#fff1f2;color:#b4232f}.teacherAdminSheet h2{margin:0;color:#17213b;font-size:19px}.teacherAdminSheet header p{margin:3px 0 0;color:#71809a;font-size:12px;direction:ltr;text-align:right}.teacherAdminSheet>header>button{width:42px;height:42px;display:grid;place-items:center;border:1px solid #dfe6f2;border-radius:12px;background:#fff;cursor:pointer}
+.teacherAdminForm,.teacherDeletePanel{padding:20px}.teacherAdminForm label,.teacherDeletePanel>label{display:grid;gap:7px;color:#34425d;font-size:13px;font-weight:800}.teacherAdminForm input,.teacherDeletePanel input{min-height:49px}.teacherAdminForm .fieldWide{grid-column:1/-1}.teacherAdminForm footer,.teacherDeletePanel footer{margin-top:18px;padding-top:16px;display:flex;justify-content:flex-end;gap:9px;border-top:1px solid #e6ebf3}.teacherAdminForm footer button,.teacherDeletePanel footer button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.teacherDeletePanel{display:grid;gap:15px}.teacherDeleteWarning{padding:14px;display:flex;align-items:flex-start;gap:10px;border:1px solid #fecaca;border-radius:15px;background:#fff7f7;color:#8f1f28}.teacherDeleteWarning svg{flex:0 0 auto}.teacherDeleteWarning p{margin:0;display:grid;gap:4px}.teacherDeleteWarning span{font-size:12px;line-height:1.7}
+@media(max-width:760px){.teacherAdminActions{align-items:stretch;flex-direction:column}.teacherAdminActions>div:last-child{display:grid;grid-template-columns:1fr}.teacherAdminModal{padding:7px;align-items:end}.teacherAdminSheet{max-height:calc(100dvh - 14px);border-radius:22px 22px 10px 10px}.teacherAdminSheet>header,.teacherAdminForm,.teacherDeletePanel{padding:16px}.teacherAdminForm .fieldGrid{grid-template-columns:1fr!important}.teacherAdminForm .fieldWide{grid-column:auto}.teacherAdminForm footer,.teacherDeletePanel footer{display:grid;grid-template-columns:1fr}.teacherAdminForm footer button,.teacherDeletePanel footer button{width:100%;min-height:49px}}

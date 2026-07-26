@@ -16,7 +16,7 @@ function Empty({ icon, title, text, action, href }: { icon: string; title: strin
   return <div className="emptyState"><span>{icon}</span><h3>{title}</h3><p>{text}</p>{action && href ? <Link className="btn primary" href={href}>{action}</Link> : null}</div>;
 }
 
-const gradeLabels = { FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
+const gradeLabels = { FIRST_PREPARATORY: "الأول الإعدادي", SECOND_PREPARATORY: "الثاني الإعدادي", THIRD_PREPARATORY: "الثالث الإعدادي", FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
 
 type ViewerCourseRecord = {
   id: string;

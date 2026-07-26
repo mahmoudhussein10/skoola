@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { authorizeSuperAdmin, isSameOrigin } from "@/lib/api-auth";
 import { requestFingerprint } from "@/lib/auth";
 
 const updateTenantSchema = z.object({
   name: z.string().min(2).optional(),
+  slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
   subject: z.string().optional().nullable(),
   status: z.enum(["TRIAL", "ACTIVE", "SUSPENDED", "DISABLED", "ARCHIVED"]).optional(),
   fullName: z.string().min(2).optional(),
+  username: z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,40}$/).optional(),
   phone: z.string().min(8).optional(),
   email: z.string().optional().nullable(),
   pricePerStudent: z.number().min(0).optional(),
@@ -111,11 +114,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ te
 
   await prisma.$transaction(async (tx) => {
     // 1. Update Tenant basic info
-    if (data.name !== undefined || data.subject !== undefined || data.status !== undefined) {
+    if (data.name !== undefined || data.slug !== undefined || data.subject !== undefined || data.status !== undefined) {
       await tx.tenant.update({
         where: { id: tenantId },
         data: {
           ...(data.name ? { name: data.name } : {}),
+          ...(data.slug ? { slug: data.slug } : {}),
           ...(data.subject !== undefined ? { subject: data.subject } : {}),
           ...(data.status ? { status: data.status, suspendedAt: data.status === "SUSPENDED" ? new Date() : null } : {}),
         },
@@ -123,11 +127,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ te
     }
 
     // 2. Update Owner user info
-    if (tenant.ownerId && (data.fullName || data.phone || data.email !== undefined)) {
+    if (tenant.ownerId && (data.fullName || data.username || data.phone || data.email !== undefined)) {
       await tx.user.update({
         where: { id: tenant.ownerId },
         data: {
           ...(data.fullName ? { fullName: data.fullName } : {}),
+          ...(data.username ? { username: data.username } : {}),
           ...(data.phone ? { phone: data.phone } : {}),
           ...(data.email !== undefined ? { email: data.email || null } : {}),
         },
@@ -193,4 +198,50 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ te
   });
 
   return NextResponse.json({ ok: true, message: "تم تحديث بيانات المنصة والمالك بنجاح" });
+}
+
+
+const deleteTenantSchema = z.object({
+  confirmSlug: z.string(),
+  confirmText: z.literal("حذف نهائي"),
+});
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ tenantId: string }> }) {
+  const auth = await authorizeSuperAdmin();
+  if (!auth.ok) return auth.response;
+  if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
+  const parsed = deleteTenantSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ ok: false, message: "اكتب رابط المنصة وعبارة حذف نهائي للتأكيد" }, { status: 400 });
+  const { tenantId } = await params;
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    include: { owner: { select: { id: true, fullName: true, role: true } }, _count: { select: { members: true, courses: true } } },
+  });
+  if (!tenant) return NextResponse.json({ ok: false, message: "المنصة غير موجودة" }, { status: 404 });
+  if (parsed.data.confirmSlug !== tenant.slug) return NextResponse.json({ ok: false, message: "رابط المنصة غير مطابق" }, { status: 400 });
+  const { ipHash } = await requestFingerprint();
+  const ownerId = tenant.owner?.id ?? null;
+  try {
+    const teacherDeleted = await prisma.$transaction(async (tx) => {
+      await tx.auditLog.create({ data: {
+        actorId: auth.context.user.id,
+        action: "TENANT_PERMANENTLY_DELETED",
+        entityType: "Tenant",
+        entityId: tenant.id,
+        metadata: { tenantName: tenant.name, slug: tenant.slug, teacherName: tenant.owner?.fullName, members: tenant._count.members, courses: tenant._count.courses },
+        ipHash,
+      } });
+      await tx.tenant.delete({ where: { id: tenant.id } });
+      if (!ownerId || tenant.owner?.role !== "TEACHER_OWNER") return false;
+      const linkedElsewhere = await tx.tenantMember.count({ where: { userId: ownerId } });
+      const ownsAnotherTenant = await tx.tenant.count({ where: { ownerId } });
+      if (linkedElsewhere || ownsAnotherTenant) return false;
+      await tx.user.delete({ where: { id: ownerId } });
+      return true;
+    });
+    return NextResponse.json({ ok: true, teacherDeleted });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) console.error("Teacher deletion failed:", error.code);
+    return NextResponse.json({ ok: false, message: "تعذر الحذف النهائي بسبب بيانات مرتبطة. لم يتم حذف أي جزء." }, { status: 409 });
+  }
 }

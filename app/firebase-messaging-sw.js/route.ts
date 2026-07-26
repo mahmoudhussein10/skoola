@@ -1,6 +1,6 @@
 const worker = String.raw`
 const FALLBACK = "/dashboard";
-const SAFE_PATH = /^\\/(?:dashboard|teacher(?:\\/|$)|course(?:\\?|$)|t\\/[a-z0-9-]+(?:\\/|$))/i;
+const SAFE_PATH = /^\/(?:dashboard|teacher(?:\/|$)|course(?:\?|$)|t\/[a-z0-9-]+(?:\/|$))/i;
 
 function safeUrl(value) {
   if (typeof value !== "string" || value.length > 500 || !SAFE_PATH.test(value)) return FALLBACK;

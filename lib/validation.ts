@@ -19,7 +19,7 @@ export const signupSchema = z
     email: z.union([z.string().trim().email("البريد الإلكتروني غير صحيح"), z.literal("")]).optional(),
     phone: z.string().trim().regex(egyptianPhone, "أدخل رقم هاتف مصري صحيح"),
     parentPhone: z.string().trim().regex(egyptianPhone, "أدخل رقم ولي أمر مصري صحيح"),
-    grade: z.enum(["FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]),
+    grade: z.enum(["FIRST_PREPARATORY", "SECOND_PREPARATORY", "THIRD_PREPARATORY", "FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]),
     governorate: z.string().trim().min(2).max(60),
     tenantSlug: z.string().trim().toLowerCase().regex(slugPattern).optional(),
     password: z.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل").max(128),

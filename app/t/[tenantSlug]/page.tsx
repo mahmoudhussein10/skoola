@@ -10,7 +10,7 @@ import { TenantPublicHeader } from "../../components/tenant-public-header";
 
 export const dynamic = "force-dynamic";
 
-const gradeLabels = { FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
+const gradeLabels = { FIRST_PREPARATORY: "الأول الإعدادي", SECOND_PREPARATORY: "الثاني الإعدادي", THIRD_PREPARATORY: "الثالث الإعدادي", FIRST_SECONDARY: "الأول الثانوي", SECOND_SECONDARY: "الثاني الثانوي", THIRD_SECONDARY: "الثالث الثانوي" } as const;
 
 export default async function TenantPublicPage({ params }: { params: Promise<{ tenantSlug: string }> }) {
   const { tenantSlug } = await params;

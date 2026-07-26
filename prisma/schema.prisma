@@ -41,6 +41,9 @@ enum MemberStatus {
 }
 
 enum Grade {
+  FIRST_PREPARATORY
+  SECOND_PREPARATORY
+  THIRD_PREPARATORY
   FIRST_SECONDARY
   SECOND_SECONDARY
   THIRD_SECONDARY
@@ -761,6 +764,7 @@ model TenantSettings {
   socialLinks             Json?
   locale                  String   @default("ar-EG")
   timezone                String   @default("Africa/Cairo")
+  supportedGrades         Grade[]  @default([FIRST_PREPARATORY, SECOND_PREPARATORY, THIRD_PREPARATORY, FIRST_SECONDARY, SECOND_SECONDARY, THIRD_SECONDARY])
   publicPageLive          Boolean  @default(false)
   bunnyStreamCollectionId String?
   createdAt               DateTime @default(now())

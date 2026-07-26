@@ -6,7 +6,7 @@ import { authorizeTenant, isSameOrigin } from "../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../lib/auth";
 import { isBunnyStorageUrl } from "../../../../lib/media/trusted-url";
 
-const schema = z.object({ title: z.string().trim().min(3).max(120), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), description: z.string().trim().min(10).max(2000), grade: z.enum(["FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]), subject: z.string().trim().min(2).max(80), price: z.coerce.number().min(0).max(100000), thumbnailUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع غلاف الكورس من خلال Bunny"), z.literal("")]).transform((value) => value || null), status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED") });
+const schema = z.object({ title: z.string().trim().min(3).max(120), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), description: z.string().trim().min(10).max(2000), grade: z.enum(["FIRST_PREPARATORY", "SECOND_PREPARATORY", "THIRD_PREPARATORY", "FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]), subject: z.string().trim().min(2).max(80), price: z.coerce.number().min(0).max(100000), thumbnailUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع غلاف الكورس من خلال Bunny"), z.literal("")]).transform((value) => value || null), status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED") });
 const statusSchema = z.object({ courseId: z.string().cuid(), status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]) });
 const updateSchema = schema.extend({ courseId: z.string().cuid(), status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]) });
 

@@ -50,6 +50,9 @@ const methodLabels: Record<string, { label: string; icon: ComponentType<{ size?:
 };
 
 const gradeLabels: Record<string, string> = {
+  FIRST_PREPARATORY: "الأول الإعدادي",
+  SECOND_PREPARATORY: "الثاني الإعدادي",
+  THIRD_PREPARATORY: "الثالث الإعدادي",
   FIRST_SECONDARY: "الأول الثانوي",
   SECOND_SECONDARY: "الثاني الثانوي",
   THIRD_SECONDARY: "الثالث الثانوي",
@@ -73,9 +76,7 @@ export function TeacherPaymentsClient({
   const [rejectReasonInput, setRejectReasonInput] = useState("");
   const [rejectModalPayment, setRejectModalPayment] = useState<PaymentItem | null>(null);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
-  const [portalReady, setPortalReady] = useState(false);
-
-  useEffect(() => setPortalReady(true), []);
+  const portalReady = typeof document !== "undefined";
 
   useEffect(() => {
     if (!selectedPayment && !rejectModalPayment) return;

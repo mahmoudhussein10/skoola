@@ -72,7 +72,7 @@ export function RegisterForm({ tenantSlug }: { tenantSlug?: string } = {}) {
       <label>البريد الإلكتروني <small>(اختياري)</small><input name="email" type="email" autoComplete="email" dir="ltr" />{error("email")}</label>
       <label>رقم الهاتف<input name="phone" type="tel" inputMode="numeric" autoComplete="tel" dir="ltr" placeholder="01XXXXXXXXX" required />{error("phone")}</label>
       <label>هاتف ولي الأمر<input name="parentPhone" type="tel" inputMode="numeric" dir="ltr" placeholder="01XXXXXXXXX" required />{error("parentPhone")}</label>
-      <label>الصف الدراسي<select name="grade" required><option value="FIRST_SECONDARY">الأول الثانوي</option><option value="SECOND_SECONDARY">الثاني الثانوي</option><option value="THIRD_SECONDARY">الثالث الثانوي</option></select>{error("grade")}</label>
+      <label>الصف الدراسي<select name="grade" required><option value="FIRST_PREPARATORY">الأول الإعدادي</option><option value="SECOND_PREPARATORY">الثاني الإعدادي</option><option value="THIRD_PREPARATORY">الثالث الإعدادي</option><option value="FIRST_SECONDARY">الأول الثانوي</option><option value="SECOND_SECONDARY">الثاني الثانوي</option><option value="THIRD_SECONDARY">الثالث الثانوي</option></select>{error("grade")}</label>
       <label>المحافظة<select name="governorate" required>{governorates.map((item) => <option key={item}>{item}</option>)}</select>{error("governorate")}</label>
       <span />
       <label>كلمة المرور<input name="password" type="password" autoComplete="new-password" minLength={8} required />{error("password")}</label>

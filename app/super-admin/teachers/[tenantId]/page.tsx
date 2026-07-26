@@ -3,6 +3,7 @@ import { prisma } from "../../../../lib/prisma";
 import { requireSuperAdmin } from "../../../../lib/auth";
 import { DashboardShell } from "../../../dashboard-shell";
 import { TeacherDetailClient } from "./teacher-detail-client";
+import { TeacherAccountManager } from "./teacher-account-manager";
 
 export default async function TenantDetails({ params }: { params: Promise<{ tenantId: string }> }) {
   const user = await requireSuperAdmin();
@@ -87,9 +88,12 @@ export default async function TenantDetails({ params }: { params: Promise<{ tena
     outstandingBalance,
   };
 
+  const serializableTenant = JSON.parse(JSON.stringify(tenant));
+
   return (
     <DashboardShell kind="super" title={`منصة ${tenant.name}`} subtitle={`الملف الشامل للمدرس والمنصة · /t/${tenant.slug}`} userName={user.fullName}>
-      <TeacherDetailClient tenant={tenant} stats={stats} financial={financial} />
+      <TeacherAccountManager tenant={serializableTenant} />
+      <TeacherDetailClient tenant={serializableTenant} stats={stats} financial={financial} />
     </DashboardShell>
   );
 }
