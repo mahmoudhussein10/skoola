@@ -1002,6 +1002,10 @@ model TeacherBillingSettings {
   subscriptionStart   DateTime  @default(now())
   subscriptionEnd     DateTime?
   internalNotes       String?
+  openingFeeAmount    Decimal   @default(500) @db.Decimal(10, 2)
+  openingFeeDueAt     DateTime?
+  openingFeeStatus    String    @default("NOT_REQUIRED")
+  openingFeeActivatedAt DateTime?
   vodafoneCashEnabled Boolean   @default(false)
   vodafoneCashNumber  String?
   instaPayEnabled     Boolean   @default(false)
@@ -1067,6 +1071,8 @@ model TeacherBillingPaymentSubmission {
   paymentMethod   PaymentMethod
   referenceNumber String?
   notes           String?
+  proofUrl        String?
+  purpose         String           @default("MONTHLY")
   status          PaymentStatus    @default(PENDING)
   rejectionReason String?
   reviewedAt      DateTime?

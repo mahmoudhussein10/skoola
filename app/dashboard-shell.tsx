@@ -24,6 +24,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
     { href: "/teacher/help", label: "دليل استخدام المنصة", icon: CircleHelp },
     { href: "/teacher/courses", label: "الكورسات", icon: BookOpen },
     { href: "/teacher/students", label: "الطلاب", icon: Users },
+    { href: "/teacher/activation-fee", label: "رسوم فتح الحساب", icon: CreditCard },
     { href: "/teacher/billing", label: "فواتير اشتراك Skoola", icon: CreditCard },
     { href: "/teacher/payments", label: "طلبات الدفع والاشتراكات", icon: CreditCard },
     { href: "/teacher/exams", label: "الامتحانات والنتائج", icon: CheckCircle2 },
@@ -103,7 +104,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
 
   useEffect(() => {
     const hrefs = kind === "teacher"
-      ? ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/billing", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/help", "/teacher/notifications", "/teacher/settings"]
+      ? ["/teacher", "/teacher/activation-fee", "/teacher/courses", "/teacher/students", "/teacher/billing", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/help", "/teacher/notifications", "/teacher/settings"]
       : ["/super-admin", "/super-admin/teachers", "/super-admin/billing", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
     hrefs.forEach((href) => router.prefetch(href));
   }, [kind, router]);

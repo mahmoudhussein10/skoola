@@ -113,6 +113,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await prisma.$transaction(async (tx) => {
+      const openingFeeDueAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
       // 1. Create teacher User
       const teacherUser = await tx.user.create({
         data: {
@@ -177,8 +178,14 @@ export async function POST(request: Request) {
           subscriptionStart: data.subscriptionStart ? new Date(data.subscriptionStart) : new Date(),
           subscriptionEnd: data.subscriptionEnd ? new Date(data.subscriptionEnd) : null,
           internalNotes: data.internalNotes || null,
+          openingFeeAmount: 500,
+          openingFeeDueAt,
+          openingFeeStatus: "PENDING",
         },
       });
+
+      const openingStatement = await tx.billingStatement.create({ data: { tenantId: tenant.id, statementNumber: `OPEN-${tenant.id}`, periodStart: new Date(), periodEnd: openingFeeDueAt, billableStudents: 0, pricePerStudent: 0, subtotal: 500, finalAmount: 500, paidAmount: 0, dueDate: openingFeeDueAt, status: "UNPAID", internalNote: "رسوم فتح حساب المدرس" } });
+      await tx.auditLog.create({ data: { tenantId: tenant.id, actorId: auth.context.user.id, action: "OPENING_FEE_STATEMENT_CREATED", entityType: "BillingStatement", entityId: openingStatement.id, metadata: { amount: 500, dueAt: openingFeeDueAt.toISOString() }, ipHash } });
 
       // 7. Audit Log
       await tx.auditLog.create({

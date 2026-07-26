@@ -21,6 +21,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ te
       where: { id: tenantId },
       data: { status: parsed.data.status, suspendedAt: parsed.data.status === "SUSPENDED" ? new Date() : null },
     });
+    if (parsed.data.status === "ACTIVE") await tx.teacherBillingSettings.updateMany({ where: { tenantId, openingFeeStatus: { in: ["PENDING", "SUBMITTED"] } }, data: { openingFeeStatus: "WAIVED", openingFeeActivatedAt: new Date() } });
     await tx.auditLog.create({
       data: { tenantId, actorId: auth.context.user.id, action: "TENANT_STATUS_CHANGED", entityType: "Tenant", entityId: tenantId, before, after: { status: parsed.data.status }, ipHash },
     });

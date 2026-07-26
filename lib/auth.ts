@@ -258,6 +258,19 @@ export async function getTenantContext() {
 export async function requireTenantMember(roles?: UserRole | UserRole[]) {
   const context = await getTenantContext();
   if (!context) redirect("/login");
+  if (!context.supportMode && tenantStaffRoles.includes(context.membership.role)) {
+    const openingFee = await prisma.teacherBillingSettings.findUnique({ where: { tenantId: context.membership.tenantId }, select: { openingFeeStatus: true, openingFeeDueAt: true } });
+    const feeExpired = openingFee?.openingFeeDueAt && openingFee.openingFeeDueAt <= new Date() && ["PENDING", "SUBMITTED"].includes(openingFee.openingFeeStatus);
+    if (feeExpired) {
+      if (context.membership.tenant.status !== "SUSPENDED") {
+        await prisma.$transaction([
+          prisma.tenant.update({ where: { id: context.membership.tenantId }, data: { status: "SUSPENDED", suspendedAt: new Date() } }),
+          prisma.auditLog.create({ data: { tenantId: context.membership.tenantId, actorId: context.user.id, action: "OPENING_FEE_AUTO_SUSPENDED", entityType: "Tenant", entityId: context.membership.tenantId, metadata: { dueAt: openingFee.openingFeeDueAt!.toISOString(), feeStatus: openingFee.openingFeeStatus } } }),
+        ]);
+      }
+      redirect("/teacher/activation-fee");
+    }
+  }
   if (context.blocked) redirect("/tenant-unavailable");
   const allowed = roles ? (Array.isArray(roles) ? roles : [roles]) : null;
   if (allowed && !allowed.includes(context.membership.role)) redirect(homeForRole(context.user.role));

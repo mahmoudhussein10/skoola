@@ -16,6 +16,7 @@ export async function POST(request:Request,{params}:{params:Promise<{submissionI
     if(!submission||submission.status!=="PENDING")return null;
     if(parsed.data.action==="REJECT"){
       await tx.teacherBillingPaymentSubmission.update({where:{id:submission.id},data:{status:"REJECTED",rejectionReason:parsed.data.rejectionReason,reviewedAt:new Date()}});
+      if(submission.purpose==="OPENING_FEE")await tx.teacherBillingSettings.update({where:{tenantId:submission.tenantId},data:{openingFeeStatus:"PENDING"}});
       await tx.auditLog.create({data:{tenantId:submission.tenantId,actorId:auth.context.user.id,action:"TEACHER_BILLING_PAYMENT_REJECTED",entityType:"TeacherBillingPaymentSubmission",entityId:submission.id,ipHash}});
       return {tenantId:submission.tenantId,approved:false,statementId:submission.statementId};
     }
@@ -23,6 +24,7 @@ export async function POST(request:Request,{params}:{params:Promise<{submissionI
     await tx.teacherPaymentRecord.create({data:{tenantId:submission.tenantId,statementId:submission.statementId,amount:submission.amount,paymentMethod:submission.paymentMethod,referenceNumber:submission.referenceNumber,notes:submission.notes}});
     await tx.teacherBillingPaymentSubmission.update({where:{id:submission.id},data:{status:"APPROVED",reviewedAt:new Date(),rejectionReason:null}});
     await tx.billingStatement.update({where:{id:submission.statementId},data:{paidAmount,status:paidAmount>=Number(submission.statement.finalAmount)?"PAID":"PARTIALLY_PAID"}});
+    if(submission.purpose==="OPENING_FEE"){await tx.teacherBillingSettings.update({where:{tenantId:submission.tenantId},data:{openingFeeStatus:"PAID",openingFeeActivatedAt:new Date()}});await tx.tenant.update({where:{id:submission.tenantId},data:{status:"ACTIVE",suspendedAt:null}});}
     await tx.auditLog.create({data:{tenantId:submission.tenantId,actorId:auth.context.user.id,action:"TEACHER_BILLING_PAYMENT_APPROVED",entityType:"TeacherBillingPaymentSubmission",entityId:submission.id,ipHash}});
     return {tenantId:submission.tenantId,approved:true,statementId:submission.statementId};
   });

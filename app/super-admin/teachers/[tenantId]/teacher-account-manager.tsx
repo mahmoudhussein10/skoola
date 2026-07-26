@@ -11,6 +11,7 @@ type TeacherAccountManagerProps = {
     slug: string;
     subject: string | null;
     owner: { fullName: string; username: string; email: string | null; phone: string } | null;
+    billingSettings: { openingFeeStatus: string; openingFeeDueAt: string | Date | null } | null;
   };
 };
 
@@ -51,6 +52,14 @@ export function TeacherAccountManager({ tenant }: TeacherAccountManagerProps) {
     }
   }
 
+  async function activateWithoutFee() {
+    setBusy(true); setMessage("");
+    const response = await fetch(`/api/super-admin/tenants/${tenant.id}/status`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ status: "ACTIVE" }) });
+    setBusy(false);
+    if (!response.ok) return setMessage("تعذر تفعيل الحساب");
+    router.refresh();
+  }
+
   async function deleteTeacher() {
     setBusy(true);
     setMessage("");
@@ -78,6 +87,7 @@ export function TeacherAccountManager({ tenant }: TeacherAccountManagerProps) {
           <span>تعديل بيانات الحساب والمنصة أو حذفهما نهائيًا.</span>
         </div>
         <div>
+          {["PENDING", "SUBMITTED"].includes(tenant.billingSettings?.openingFeeStatus ?? "") ? <button type="button" className="btn primary" disabled={busy} onClick={activateWithoutFee}><Save size={17} /> تفعيل الحساب دون انتظار</button> : null}
           <button type="button" className="btn secondary" onClick={() => { setMessage(""); setDialog("edit"); }}><Edit3 size={17} /> تعديل البيانات</button>
           <button type="button" className="btn teacherDeleteTrigger" onClick={() => { setMessage(""); setDialog("delete"); }}><Trash2 size={17} /> حذف الحساب بالكامل</button>
         </div>
