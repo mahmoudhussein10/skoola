@@ -1,0 +1,414 @@
+/* Teacher dashboard visual shell — loaded after legacy responsive layers. */
+.saasShell.teacher {
+  --teacher-blue: #286cf3;
+  --teacher-violet: #743cf1;
+  --teacher-ink: #10203d;
+  --teacher-line: #dfe7f3;
+  background:
+    radial-gradient(circle at 78% 0, rgba(62, 111, 244, .08), transparent 28%),
+    linear-gradient(180deg, #f4f7fc 0, #f8faff 300px, #f7f9fd 100%) !important;
+}
+
+.saasShell.teacher .saasTop {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  min-height: 92px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  margin-block: 0 22px !important;
+  padding-block: 15px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(116, 142, 188, .2) !important;
+  border-radius: 0 0 24px 24px !important;
+  background: rgba(255,255,255,.9) !important;
+  box-shadow: 0 14px 38px rgba(18, 43, 84, .075) !important;
+  backdrop-filter: blur(22px) saturate(1.2) !important;
+}
+
+.saasShell.teacher.courseArea .saasTop {
+  background:
+    radial-gradient(circle at 86% 0, rgba(77, 119, 246, .11), transparent 34%),
+    rgba(255,255,255,.94) !important;
+}
+
+.saasShell.teacher .saasTop::before {
+  display: none !important;
+}
+
+.saasShell.teacher .saasTop::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: auto 0 0 !important;
+  width: 100% !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #20b8d7, #286cf3 52%, #743cf1) !important;
+  opacity: .9 !important;
+}
+
+.saasShell.teacher .saasTopIdentity {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.saasShell.teacher .saasTopCopy {
+  min-width: 0 !important;
+}
+
+.saasShell.teacher .saasBreadcrumb {
+  width: max-content !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 0 4px !important;
+  padding: 5px 9px !important;
+  border: 1px solid #d9e5fb !important;
+  border-radius: 999px !important;
+  background: #eef4ff !important;
+  color: #2868df !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+
+.saasShell.teacher .saasTop h1 {
+  margin: 0 !important;
+  color: var(--teacher-ink) !important;
+  font-size: clamp(22px, 2vw, 28px) !important;
+  font-weight: 950 !important;
+  line-height: 1.3 !important;
+}
+
+.saasShell.teacher .saasTop p {
+  margin: 2px 0 0 !important;
+  color: #718098 !important;
+  font-size: 12px !important;
+  line-height: 1.65 !important;
+}
+
+.saasShell.teacher .saasTopActions {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+}
+
+.saasShell.teacher .saasTopIconLink {
+  width: 46px !important;
+  height: 46px !important;
+  flex: 0 0 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid var(--teacher-line) !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  color: #48617f !important;
+  box-shadow: 0 8px 22px rgba(19, 43, 82, .065) !important;
+}
+
+.saasShell.teacher .saasUser {
+  min-width: 190px !important;
+  min-height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 5px 7px 5px 13px !important;
+  border: 1px solid var(--teacher-line) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 22px rgba(19, 43, 82, .055) !important;
+}
+
+.saasShell.teacher .saasUser > b {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg, var(--teacher-blue), var(--teacher-violet)) !important;
+  color: #fff !important;
+}
+
+.saasShell.teacher .saasUser > span {
+  min-width: 0 !important;
+  display: grid !important;
+  overflow: hidden !important;
+  color: var(--teacher-ink) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.saasShell.teacher .saasUser small {
+  color: #8290a4 !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+}
+
+.saasShell.teacher .saasSide nav a {
+  transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease !important;
+}
+
+.saasShell.teacher .saasSide nav a:hover {
+  border-color: #dbe5f4 !important;
+  background: #f2f6fd !important;
+  color: #2465d9 !important;
+}
+
+.saasShell.teacher .saasSide nav a.active {
+  border-color: #d4e1f8 !important;
+  background: linear-gradient(110deg, #edf4ff, #f2edff) !important;
+  color: #2368e6 !important;
+  box-shadow: 0 8px 20px rgba(54, 91, 187, .08) !important;
+}
+
+@media (max-width: 900px) {
+  .saasShell.teacher .saasTop {
+    top: max(6px, env(safe-area-inset-top)) !important;
+    min-height: 70px !important;
+    display: block !important;
+    margin-bottom: 15px !important;
+    padding: 9px 10px !important;
+    border: 1px solid rgba(112,137,188,.17) !important;
+    border-radius: 20px !important;
+    background: linear-gradient(120deg, rgba(255,255,255,.98), rgba(243,247,255,.97)) !important;
+    box-shadow: 0 14px 36px rgba(18,43,84,.11) !important;
+  }
+
+  .saasShell.teacher .saasTopIdentity {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 48px minmax(0,1fr) !important;
+    gap: 11px !important;
+  }
+
+  .saasShell.teacher .mobileMenuButton {
+    position: static !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 15px !important;
+    background: linear-gradient(135deg, var(--teacher-blue), var(--teacher-violet)) !important;
+    color: #fff !important;
+    box-shadow: 0 10px 24px rgba(61,78,226,.28) !important;
+  }
+
+  .saasShell.teacher .saasTopCopy {
+    width: 100% !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+  }
+
+  .saasShell.teacher .saasTopCopy > :is(.saasBreadcrumb, h1, p) {
+    display: none !important;
+  }
+
+  .saasShell.teacher .saasMobileSection {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    color: #3970d9 !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .saasShell.teacher .saasMobileGreeting {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    overflow: hidden !important;
+    margin-top: 3px !important;
+    color: var(--teacher-ink) !important;
+    font-size: 16px !important;
+    font-weight: 950 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .saasShell.teacher .saasTopActions {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .saasShell.teacher .saasTop {
+    border-radius: 17px !important;
+  }
+
+  .saasShell.teacher .saasTopIdentity {
+    grid-template-columns: 45px minmax(0,1fr) !important;
+    gap: 9px !important;
+  }
+
+  .saasShell.teacher .mobileMenuButton {
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    border-radius: 14px !important;
+  }
+
+  .saasShell.teacher .saasMobileGreeting {
+    font-size: 15px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saasShell.teacher .saasSide nav a {
+    transition: none !important;
+  }
+}
+
+/* Teacher dashboard KPI cards v2. */
+.saasShell.teacher .teacherKpisGrid {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.saasShell.teacher .teacherKpisGrid .kpiBox {
+  min-width: 0 !important;
+  min-height: 146px !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  overflow: hidden !important;
+  padding: 18px !important;
+  border: 1px solid #dfe7f3 !important;
+  border-radius: 21px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 36px rgba(15, 39, 80, .065) !important;
+}
+
+.saasShell.teacher .teacherKpiHead {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.saasShell.teacher .teacherKpiHead > i {
+  width: 42px !important;
+  height: 42px !important;
+  flex: 0 0 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+  background: #edf4ff !important;
+  color: #286cf3 !important;
+  font-style: normal !important;
+}
+
+.saasShell.teacher .teacherKpisGrid .green .teacherKpiHead > i { background: #e6f8ef !important; color: #11906a !important; }
+.saasShell.teacher .teacherKpisGrid .purple .teacherKpiHead > i { background: #f0eaff !important; color: #7142db !important; }
+.saasShell.teacher .teacherKpisGrid .sky .teacherKpiHead > i { background: #e6f7fb !important; color: #1688a7 !important; }
+.saasShell.teacher .teacherKpisGrid .indigo .teacherKpiHead > i { background: #ebedff !important; color: #4d59d6 !important; }
+.saasShell.teacher .teacherKpisGrid .orange .teacherKpiHead > i { background: #fff0df !important; color: #c66b14 !important; }
+
+.saasShell.teacher .teacherKpiHead > span {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  display: block !important;
+  color: #607089 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  line-height: 1.6 !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+}
+
+.saasShell.teacher .teacherKpisGrid .kpiBox > b {
+  display: block !important;
+  color: #10203d !important;
+  font-size: 32px !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  writing-mode: horizontal-tb !important;
+}
+
+.saasShell.teacher .teacherKpisGrid .kpiBox > small {
+  display: block !important;
+  color: #8592a5 !important;
+  font-size: 10px !important;
+  line-height: 1.6 !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+}
+
+@media (max-width: 1180px) {
+  .saasShell.teacher .teacherKpisGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .saasShell.teacher .teacherKpisGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+
+  .saasShell.teacher .teacherKpisGrid .kpiBox {
+    min-height: 154px !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .saasShell.teacher .teacherKpiHead {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .saasShell.teacher .teacherKpiHead > i {
+    width: 38px !important;
+    height: 38px !important;
+    flex-basis: 38px !important;
+    border-radius: 12px !important;
+  }
+
+  .saasShell.teacher .teacherKpiHead > span {
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+  }
+
+  .saasShell.teacher .teacherKpisGrid .kpiBox > b {
+    font-size: 27px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .saasShell.teacher .teacherKpisGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .saasShell.teacher .teacherKpisGrid .kpiBox {
+    min-height: 108px !important;
+  }
+
+  .saasShell.teacher .teacherKpiHead {
+    align-items: center !important;
+    flex-direction: row !important;
+  }
+}

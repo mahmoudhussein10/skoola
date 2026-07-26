@@ -38,6 +38,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
   const nav = kind === "teacher" ? teacherNav : superNav;
   const isActive = (href: string) => pathname === href || (href !== "/teacher" && href !== "/super-admin" && pathname.startsWith(href + "/"));
   const activeItem = nav.find((item) => isActive(item.href));
+  const courseArea = kind === "teacher" && pathname.startsWith("/teacher/courses");
   useEffect(() => {
     if (!mobileOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -85,7 +86,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
       : ["/super-admin", "/super-admin/teachers", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
     hrefs.forEach((href) => router.prefetch(href));
   }, [kind, router]);
-  return <div className={`saasShell ${kind}${collapsed ? " isCollapsed" : ""}`}>
+  return <div className={`saasShell ${kind}${courseArea ? " courseArea" : ""}${collapsed ? " isCollapsed" : ""}`}>
 
     <AnimatePresence>{mobileOpen && <motion.button className="sideOverlay" aria-label="إغلاق القائمة" onClick={() => setMobileOpen(false)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} />}</AnimatePresence>
     <motion.aside ref={drawerRef} id="dashboard-navigation" aria-label="التنقل الرئيسي" aria-modal={mobileOpen ? "true" : undefined} className={`saasSide${mobileOpen ? " mobileOpen" : ""}`} animate={reduceMotion ? undefined : { width: collapsed ? 92 : 280 }} transition={{type:"spring",stiffness:260,damping:28}}>

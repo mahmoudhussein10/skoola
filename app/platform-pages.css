@@ -1,0 +1,1086 @@
+/* Skoola page-specific experience layer
+   Loaded last so route-level layouts stay consistent across mobile, tablet and desktop. */
+:root {
+  --px-page: clamp(14px, 2.2vw, 34px);
+  --px-card: clamp(16px, 2vw, 26px);
+  --px-radius: 24px;
+  --px-line: #e3eaf5;
+  --px-ink: #10203c;
+  --px-muted: #687892;
+  --px-blue: #2768f5;
+  --px-violet: #7138f5;
+  --px-shadow: 0 18px 48px rgba(18, 45, 90, .09);
+}
+
+/* Arabic content must never collapse into one-letter columns. */
+:is(.saasShell.teacher, .studentShell, .studentViewerPage, .tenantShowcase, .skoolaAuthPage, .courseContentManager)
+:is(h1, h2, h3, h4, p, b, strong, small, span, label, button, a) {
+  writing-mode: horizontal-tb;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+:is(.saasShell.teacher, .studentShell, .studentViewerPage, .tenantShowcase, .skoolaAuthPage, .courseContentManager) * {
+  min-inline-size: 0;
+}
+
+:is(.saasShell.teacher, .studentShell, .studentViewerPage, .tenantShowcase, .skoolaAuthPage, .courseContentManager)
+:is(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid rgba(39, 104, 245, .28) !important;
+  outline-offset: 3px;
+}
+
+/* Teacher pages: dependable content rhythm across every dashboard route. */
+.saasShell.teacher .saasMain {
+  width: 100%;
+  max-width: 100%;
+  padding-inline: var(--px-page) !important;
+  overflow-x: clip;
+}
+
+.saasShell.teacher .saasContent {
+  width: min(1460px, 100%);
+  margin-inline: auto;
+}
+
+.saasShell.teacher :is(.saasPanel, .teacherPanel, .tablePanel, .analyticsCard, .settingsCard) {
+  border: 1px solid rgba(127, 151, 193, .17) !important;
+  border-radius: var(--px-radius) !important;
+  background: rgba(255, 255, 255, .94) !important;
+  box-shadow: var(--px-shadow) !important;
+}
+
+.saasShell.teacher :is(.saasPanel, .teacherPanel, .analyticsCard, .settingsCard) > :is(header, .panelTitle) {
+  min-height: 52px;
+  gap: 12px;
+}
+
+.saasShell.teacher :is(.btn, button, a[role="button"]) {
+  min-height: 44px;
+}
+
+.saasShell.teacher :is(input, select, textarea) {
+  max-width: 100%;
+  min-height: 48px;
+  border-radius: 13px !important;
+  font-size: max(14px, 1em);
+}
+
+.saasShell.teacher textarea { min-height: 120px; resize: vertical; }
+
+/* Teacher dashboard statistics: this fixes the narrow vertical Arabic shown in the screenshot. */
+.saasShell.teacher .teacherKpisGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch;
+}
+
+.saasShell.teacher .teacherKpisGrid .kpiBox {
+  display: flex !important;
+  min-width: 0 !important;
+  min-height: 148px;
+  padding: 20px !important;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch !important;
+  overflow: hidden;
+}
+
+.teacherKpiHead,
+.studentKpiHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.teacherKpiHead i,
+.studentKpiHead i {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #eaf1ff;
+  color: var(--px-blue);
+}
+
+.teacherKpiHead span,
+.studentKpiHead span {
+  min-width: 0;
+  color: #61718a !important;
+  font-size: 13px !important;
+  font-weight: 850;
+  line-height: 1.55;
+  white-space: normal !important;
+}
+
+.teacherKpisGrid .kpiBox > b {
+  margin-block: 8px 1px;
+  font-size: clamp(29px, 3vw, 40px) !important;
+  line-height: 1 !important;
+}
+
+.teacherKpisGrid .kpiBox > small {
+  color: #78879c;
+  font-size: 12px !important;
+  line-height: 1.6;
+}
+
+.teacherKpisGrid .kpiBox.green .teacherKpiHead i { background:#e6f9ef; color:#12a660; }
+.teacherKpisGrid .kpiBox.purple .teacherKpiHead i { background:#f0eaff; color:#7138f5; }
+.teacherKpisGrid .kpiBox.sky .teacherKpiHead i { background:#e6f8ff; color:#0898c5; }
+.teacherKpisGrid .kpiBox.indigo .teacherKpiHead i { background:#e9edff; color:#4f5ee8; }
+.teacherKpisGrid .kpiBox.orange .teacherKpiHead i { background:#fff0df; color:#ed7119; }
+
+/* Student dashboard: visual hierarchy and resilient cards. */
+.studentShell .appMain {
+  width: 100%;
+  max-width: 1540px;
+  margin-inline: auto;
+  padding-inline: var(--px-page) !important;
+  overflow-x: clip;
+}
+
+.studentDashboardHero {
+  min-height: 300px;
+  height: auto !important;
+  padding: clamp(25px, 3vw, 42px) !important;
+  border-radius: 30px !important;
+  isolation: isolate;
+}
+
+.studentDashboardHero h2 {
+  max-width: 650px;
+  font-size: clamp(30px, 4vw, 48px) !important;
+  line-height: 1.28 !important;
+  letter-spacing: -.8px;
+}
+
+.studentDashboardHero p { font-size: 14px !important; line-height: 1.9 !important; }
+.studentHeroActions :is(a, button) { min-height: 48px; padding-inline: 19px; }
+
+.studentKpis {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin-block: 18px !important;
+}
+
+.studentKpis .studentKpi {
+  min-width: 0;
+  min-height: 148px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 19px !important;
+  border: 1px solid rgba(126, 150, 190, .15) !important;
+  background: rgba(255, 255, 255, .95) !important;
+  box-shadow: 0 14px 36px rgba(20, 48, 95, .07) !important;
+}
+
+.studentKpi > b {
+  margin-block: 10px 2px !important;
+  font-size: clamp(29px, 3vw, 38px) !important;
+  line-height: 1 !important;
+}
+
+.studentKpi > small { color: #7a879b; font-size: 12px !important; line-height: 1.55; }
+.studentKpi.green .studentKpiHead i { background:#e4f9ee; color:#0aa45c; }
+.studentKpi.purple .studentKpiHead i { background:#f0e9ff; color:#7037f3; }
+.studentKpi.orange .studentKpiHead i { background:#fff0dd; color:#e97219; }
+
+.studentContentGrid { align-items: start; gap: 18px !important; }
+.studentPanel {
+  border: 1px solid rgba(127, 151, 193, .14) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--px-shadow) !important;
+}
+.studentPanel .panelHead { gap: 12px; flex-wrap: wrap; }
+.realCourseList, .studentCatalog { gap: 12px; }
+.enrolledCourse, .catalogCourse { min-width: 0; border-radius: 17px !important; }
+.enrolledCourseCopy :is(h3,p), .catalogCourse :is(h3,p) { max-width: 100%; }
+
+/* Auth pages: forms remain readable when the mobile keyboard opens. */
+.skoolaAuthPage { min-height: 100svh; background: #f5f8fe !important; }
+.skoolaAuthPage .authCard {
+  min-width: 0;
+  padding: clamp(22px, 4vw, 54px) !important;
+  overflow-y: auto;
+}
+.skoolaAuthPage .authCardInner {
+  width: min(560px, 100%) !important;
+  padding: clamp(24px, 4vw, 42px) !important;
+  border: 1px solid rgba(115, 140, 185, .18) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 28px 80px rgba(14, 41, 86, .12) !important;
+}
+.skoolaAuthPage .authCardInner.wide { width: min(760px, 100%) !important; }
+.skoolaAuthPage .authCard h1 { font-size: clamp(29px, 4vw, 40px) !important; }
+.skoolaAuthPage .authCardInner > p { font-size: 14px !important; line-height: 1.8; }
+.skoolaAuthPage .authForm { gap: 17px; }
+.skoolaAuthPage .authForm :is(input, select) { min-height: 54px; font-size: 16px !important; }
+.skoolaAuthPage .authForm label { font-size: 13px !important; line-height: 1.6; }
+.skoolaAuthPage .authSubmit { min-height: 54px; font-size: 15px; }
+.skoolaAuthPage :is(.formError, .formNotice) { padding: 13px 15px; font-size: 13px; line-height: 1.7; }
+
+/* Public teacher platform: consistent cards and clear mobile CTAs. */
+.tenantShowcase { overflow-x: clip; }
+.tenantShowcase .tenantHero {
+  gap: clamp(34px, 6vw, 82px) !important;
+  min-height: min(760px, calc(100svh - 84px));
+}
+.tenantShowcase .tenantHero h1 {
+  max-width: 760px;
+  font-size: clamp(45px, 5.4vw, 78px) !important;
+  line-height: 1.13 !important;
+}
+.tenantHeroActions :is(a, button) { min-height: 50px; }
+.tenantCourseCard, .tenantValueGrid article {
+  min-width: 0;
+  border-radius: 24px !important;
+  box-shadow: 0 18px 48px rgba(21, 49, 94, .08) !important;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.tenantCourseCard:hover, .tenantValueGrid article:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 58px rgba(21, 49, 94, .13) !important;
+}
+.tenantCourseBody :is(h3,p) { max-width: 100%; }
+.tenantCourseAction { min-height: 44px; }
+
+/* Lesson player, exams and results. */
+.studentViewerPage { overflow-x: clip; background:#f4f7fc; }
+.viewerHeader { backdrop-filter: blur(20px); }
+.viewerLayout { width: min(1500px, calc(100% - 40px)); align-items: start; }
+.viewerMain, .viewerSidebar, .lessonViewContainer, .examViewContainer { min-width: 0; }
+.videoPlayerWrapper { overflow: hidden; box-shadow: 0 22px 58px rgba(10, 30, 66, .18); }
+.lessonHeaderBar, .lessonDescription, .attachmentBox, .examIntroCard, .examActiveSheet, .examResultCard {
+  border: 1px solid rgba(123, 148, 190, .16) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 14px 38px rgba(17, 43, 87, .07) !important;
+}
+.questionItem, .reviewItem, .optionLabel { min-width: 0; }
+.optionLabel { min-height: 54px; }
+.examResultCard { overflow: hidden; }
+.examResultCard .resultHeader { padding: clamp(22px, 4vw, 38px); }
+.resultQuickStats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.resultQuickStats > * { min-width:0; }
+
+/* Course editor and content builder: direct route redesign, not only shared rules. */
+.courseContentManager {
+  width: min(1420px, calc(100% - 48px)) !important;
+  padding-block: 30px 70px !important;
+}
+.courseContentManager .managerHeader {
+  overflow: hidden;
+  border: 1px solid rgba(121, 146, 190, .16) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(69, 109, 255, .10), transparent 28%),
+    linear-gradient(145deg, #fff, #f7f9ff) !important;
+  box-shadow: 0 24px 65px rgba(15, 43, 91, .11) !important;
+}
+.courseContentManager .managerHeaderNav,
+.courseContentManager .managerHeaderMain,
+.courseContentManager .managerMetrics { min-width: 0; }
+.courseContentManager .courseMeta { min-width: 0; }
+.courseContentManager .courseMetaInfo { min-width: 0; flex: 1; }
+.courseContentManager .courseMetaInfo h1 { font-size: clamp(25px, 3vw, 39px); line-height: 1.35; }
+.courseContentManager .courseMetaInfo p { line-height: 1.8; }
+.courseContentManager .managerActions { flex-wrap: wrap; }
+.courseContentManager .managerActions .btn { min-height: 48px; }
+.courseContentManager .managerMetrics { grid-template-columns: repeat(3, minmax(0, 1fr)) auto !important; }
+.courseContentManager .metric {
+  min-width: 0;
+  min-height: 82px !important;
+  border: 1px solid #e4eaf5;
+  border-radius: 18px !important;
+}
+.courseContentManager .sectionAccordion {
+  overflow: hidden;
+  border: 1px solid rgba(122, 147, 188, .18) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 13px 38px rgba(18, 44, 88, .07);
+}
+.courseContentManager .sectionHeader { min-height: 72px; }
+.courseContentManager .sectionToolbar { flex-wrap: wrap; }
+.courseContentManager .sectionToolbar button { min-width: 44px; min-height: 44px; }
+.courseContentManager .lessonRow,
+.courseContentManager .examRow { min-width: 0; }
+.courseContentManager .modalSheet { max-height: min(900px, calc(100dvh - 32px)); }
+.courseContentManager .modalBody { overscroll-behavior: contain; }
+
+/* Tables keep their structure; cards and long lists never force page overflow. */
+.saasShell.teacher :is(.responsiveTable, .tablePanel, .resultsTable) {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+.saasShell.teacher :is(.responsiveTable, .tablePanel, .resultsTable) table { min-width: 720px; }
+.saasShell.teacher :is(.responsiveTable, .tablePanel, .resultsTable) :is(th,td) { white-space: nowrap; }
+
+/* Dialogs and long forms. */
+.modalOverlay, .checkoutPortalOverlay { padding: clamp(10px, 2vw, 24px); }
+.modalSheet, .modalContent {
+  width: min(760px, 100%);
+  max-width: 100%;
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modalSheet.wide { width: min(980px, 100%); }
+.modalSheet.extraWide { width: min(1160px, 100%); }
+.modalSheet > header, .modalContent > header,
+.modalSheet > footer, .modalContent > footer { flex: 0 0 auto; }
+.modalBody, .modalSheetBody { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.modalSheet :is(input,select,textarea), .modalContent :is(input,select,textarea) { font-size: 16px; }
+
+/* Empty, error, loading and success states. */
+:is(.emptyState, .compactEmpty, .courseBuilderEmpty, .emptyStateCard, .catalogEmpty) {
+  min-width: 0;
+  border-radius: 22px !important;
+}
+:is(.emptyState, .compactEmpty, .emptyStateCard) :is(h2,h3) { font-size: clamp(20px, 3vw, 28px); }
+:is(.emptyState, .compactEmpty, .emptyStateCard) p { max-width: 620px; margin-inline: auto; line-height: 1.8; }
+:is(.formError, .managerNotice.error) { border:1px solid rgba(220,55,70,.17); }
+:is(.formNotice, .managerNotice.success) { border:1px solid rgba(16,160,90,.17); }
+
+@media (max-width: 1180px) {
+  .saasShell.teacher .teacherKpisGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .studentKpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .courseContentManager .managerMetrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .courseContentManager .metricActions { grid-column: 1 / -1; }
+  .courseContentManager .metricActions .btn { width: 100%; }
+}
+
+@media (max-width: 900px) {
+  :root { --px-radius: 21px; }
+  .saasShell.teacher .saasMain { padding-inline: 14px !important; }
+  .saasShell.teacher .saasContent { padding-top: 12px; }
+  .studentShell .appMain { padding-inline: 14px !important; }
+  .studentContentGrid { grid-template-columns: 1fr !important; }
+  .viewerLayout { width: 100% !important; padding-inline: 14px !important; grid-template-columns: 1fr !important; }
+  .courseContentManager { width: calc(100% - 24px) !important; padding-top: 16px !important; }
+  .courseContentManager .managerHeaderMain { align-items: stretch; flex-direction: column; }
+  .courseContentManager .managerActions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .courseContentManager .managerActions .btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 700px) {
+  :root { --px-page: 12px; --px-card: 16px; }
+  body { text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+
+  .saasShell.teacher .teacherKpisGrid,
+  .studentKpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .saasShell.teacher .teacherKpisGrid .kpiBox,
+  .studentKpis .studentKpi {
+    min-height: 134px;
+    padding: 14px !important;
+  }
+
+  .teacherKpiHead,
+  .studentKpiHead { align-items: flex-start; gap: 8px; }
+  .teacherKpiHead i,
+  .studentKpiHead i { width: 38px; height: 38px; flex-basis: 38px; border-radius: 12px; }
+  .teacherKpiHead span,
+  .studentKpiHead span { font-size: 12px !important; line-height: 1.45; }
+  .teacherKpisGrid .kpiBox > b,
+  .studentKpi > b { font-size: 29px !important; }
+
+  .studentDashboardHero {
+    min-height: 0 !important;
+    margin-top: 12px !important;
+    padding: 25px 20px !important;
+    border-radius: 24px !important;
+  }
+  .studentDashboardHero h2 { font-size: clamp(27px, 8vw, 35px) !important; }
+  .studentHeroCopy { text-align: right !important; max-width: 100% !important; }
+  .studentHeroVisual { display: none !important; }
+  .studentHeroActions { display: grid !important; grid-template-columns: 1fr !important; }
+  .studentHeroActions a { width: 100%; justify-content: center; }
+
+  .skoolaAuthPage { display: block !important; }
+  .skoolaAuthPage .authVisual { display: none !important; }
+  .skoolaAuthPage .authCard {
+    min-height: 100svh;
+    align-items: flex-start !important;
+    padding: max(18px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom)) !important;
+  }
+  .skoolaAuthPage .authMobileBrand { display: block !important; margin-bottom: 18px; }
+  .skoolaAuthPage .authCardInner { padding: 25px 18px !important; border-radius: 23px !important; }
+  .skoolaAuthPage .fieldGrid { grid-template-columns: 1fr !important; }
+
+  .tenantShowcase .tenantHero {
+    min-height: auto;
+    display: flex !important;
+    flex-direction: column;
+    width: calc(100% - 24px) !important;
+    padding-block: 38px 54px !important;
+  }
+  .tenantShowcase .tenantHero h1 { font-size: clamp(34px, 10vw, 44px) !important; }
+  .tenantHeroActions { display: grid !important; grid-template-columns: 1fr !important; }
+  .tenantHeroActions > * { width: 100%; justify-content: center; }
+  .tenantHeroProof { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+  .tenantShowcase .tenantTeacher { width: 100% !important; height: 390px !important; }
+  .tenantCourseGrid, .tenantValueGrid { grid-template-columns: 1fr !important; }
+
+  .viewerHeaderWrap { width: 100% !important; }
+  .viewerHeader .brandArea { flex: 1; overflow: hidden; }
+  .viewerHeader .courseTitleHeader { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lessonHeaderBar { align-items: flex-start; flex-direction: column; padding: 16px !important; }
+  .lessonNavFooter { display: grid !important; grid-template-columns: 1fr 1fr; }
+  .resultQuickStats { grid-template-columns: 1fr; }
+  .questionsReview { padding-inline: 0; }
+
+  .courseContentManager .managerHeader { padding: 18px !important; border-radius: 23px !important; }
+  .courseContentManager .managerHeaderNav { align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+  .courseContentManager .courseMeta { align-items: flex-start; }
+  .courseContentManager .courseHeroPoster,
+  .courseContentManager .courseHeroPoster > * { width: 64px !important; height: 64px !important; flex-basis: 64px; border-radius: 17px !important; }
+  .courseContentManager .managerActions { grid-template-columns: 1fr; }
+  .courseContentManager .managerMetrics { grid-template-columns: 1fr 1fr !important; gap: 9px; }
+  .courseContentManager .metric { min-height: 76px !important; padding: 12px !important; }
+  .courseContentManager .metric svg { display: none; }
+  .courseContentManager .sectionHeader { align-items: flex-start; }
+  .courseContentManager .sectionMeta { width: 100%; }
+
+  .modalOverlay, .checkoutPortalOverlay { align-items: flex-end !important; padding: 8px !important; }
+  .modalSheet, .modalContent, .modalSheet.wide, .modalSheet.extraWide {
+    width: 100% !important;
+    max-height: calc(100dvh - 8px) !important;
+    border-radius: 25px 25px 10px 10px !important;
+  }
+  .modalSheet > header, .modalContent > header { position: sticky; top: 0; z-index: 3; }
+  .modalSheet > footer, .modalContent > footer {
+    position: sticky; bottom: 0; z-index: 3;
+    padding-bottom: max(13px, env(safe-area-inset-bottom)) !important;
+  }
+  .modalSheet > footer .btn, .modalContent > footer .btn { min-height: 48px; }
+}
+
+@media (max-width: 390px) {
+  .saasShell.teacher .teacherKpisGrid,
+  .studentKpis { grid-template-columns: 1fr !important; }
+  .saasShell.teacher .teacherKpisGrid .kpiBox,
+  .studentKpis .studentKpi { min-height: 118px; }
+  .teacherKpiHead,
+  .studentKpiHead { align-items: center; }
+  .courseContentManager .managerMetrics { grid-template-columns: 1fr !important; }
+  .courseContentManager .metricActions { grid-column: auto; }
+  .tenantHeroProof { grid-template-columns: 1fr !important; }
+  .lessonNavFooter { grid-template-columns: 1fr; }
+}
+
+@media (hover: none) {
+  .tenantCourseCard:hover, .tenantValueGrid article:hover,
+  .enrolledCourse:hover { transform: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tenantCourseCard, .tenantValueGrid article,
+  .enrolledCourse, .modalSheet, .modalContent { transition: none !important; animation: none !important; }
+}
+/* Route-level loading and error feedback. */
+.routeStatePage,.teacherRouteLoading,.courseRouteLoading{min-height:100svh;padding:clamp(18px,4vw,48px);background:linear-gradient(145deg,#f7faff,#eef3fc)}
+.routeStateShell,.teacherRouteLoading,.courseRouteLoading{width:min(1380px,100%);margin-inline:auto}
+.routeStateBrand{display:flex;align-items:center;gap:12px;margin-bottom:24px}.routeStateBrand>span{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;color:#fff;font-weight:950;background:linear-gradient(135deg,var(--px-blue),var(--px-violet))}.routeStateBrand>div{display:grid;gap:2px}.routeStateBrand b{font-size:18px;color:var(--px-ink)}.routeStateBrand small{color:var(--px-muted)}
+.routeSkeletonHero,.teacherLoadingHero{height:230px;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:30px;border-radius:28px;background:linear-gradient(135deg,#0d2855,#293d94)}
+.routeSkeletonHero i,.teacherLoadingHero i{display:block;height:17px;max-width:520px;border-radius:99px;background:rgba(255,255,255,.17);animation:routePulse 1.5s ease-in-out infinite}.routeSkeletonHero i:nth-child(2),.teacherLoadingHero i:nth-child(2){width:72%}.routeSkeletonHero i:nth-child(3),.teacherLoadingHero i:nth-child(3){width:44%}
+.routeSkeletonGrid,.teacherLoadingKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}.routeSkeletonGrid i,.teacherLoadingKpis i,.teacherLoadingPanels i{display:block;min-height:128px;border:1px solid #e1e8f4;border-radius:21px;background:linear-gradient(100deg,#fff 35%,#f1f5fb 50%,#fff 65%);background-size:220% 100%;animation:routeShimmer 1.5s linear infinite}
+.routeErrorCard{width:min(560px,100%);margin:min(16vh,150px) auto 0;padding:clamp(26px,5vw,46px);text-align:center;border:1px solid #e1e8f4;border-radius:28px;background:#fff;box-shadow:var(--px-shadow)}.routeErrorIcon{width:58px;height:58px;display:grid;place-items:center;margin:0 auto 18px;border-radius:18px;color:#d6344b;background:#fff0f2;font-size:30px;font-weight:950}.routeErrorCard small{color:#d6344b;font-weight:900}.routeErrorCard h1{margin:8px 0;color:var(--px-ink);font-size:clamp(27px,5vw,38px)}.routeErrorCard p{color:var(--px-muted);line-height:1.9}.routeErrorCard>div{display:flex;justify-content:center;gap:10px;margin-top:22px}
+.teacherLoadingTop,.courseLoadingHeader{height:80px;display:flex;align-items:center;gap:14px;padding:15px 20px;margin-bottom:18px;border-radius:22px;background:#fff}.teacherLoadingTop i,.courseLoadingHeader i{width:46px;height:46px;border-radius:14px;background:#e8effc}.teacherLoadingTop span,.courseLoadingHeader span{width:240px;height:16px;border-radius:99px;background:#e8effc}.teacherLoadingKpis{grid-template-columns:repeat(3,minmax(0,1fr))}.teacherLoadingPanels{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px}.teacherLoadingPanels i{min-height:330px}.courseLoadingLayout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}.courseLoadingLayout section,.courseLoadingLayout aside{padding:18px;border-radius:24px;background:#fff}.courseLoadingLayout section>i{display:block;height:70px;margin-bottom:12px;border-radius:16px;background:#edf2fa}.courseLoadingLayout section>i:first-child{height:auto;aspect-ratio:16/9}.courseLoadingLayout aside>i{display:block;height:56px;margin-bottom:9px;border-radius:14px;background:#edf2fa}
+@keyframes routePulse{50%{opacity:.45}}@keyframes routeShimmer{to{background-position:-220% 0}}
+@media(max-width:760px){.routeStatePage,.teacherRouteLoading,.courseRouteLoading{padding:14px}.routeSkeletonGrid,.teacherLoadingKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.teacherLoadingPanels,.courseLoadingLayout{grid-template-columns:1fr}.courseLoadingLayout aside{display:none}.routeErrorCard{margin-top:10vh}.routeErrorCard>div{display:grid}.routeErrorCard .btn{width:100%}.routeSkeletonHero,.teacherLoadingHero{height:190px;border-radius:23px}}
+@media(max-width:390px){.routeSkeletonGrid,.teacherLoadingKpis{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.routeSkeletonHero i,.teacherLoadingHero i,.routeSkeletonGrid i,.teacherLoadingKpis i,.teacherLoadingPanels i{animation:none}}
+/* Payments and exam analytics: prevent the 3-column mobile squeeze. */
+.teacherPaymentsWorkspace .analyticsGrid,
+.teacherExamsWorkspace .analyticsGrid {
+  width: 100%;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 13px !important;
+  margin-bottom: 22px;
+}
+.teacherPaymentsWorkspace .analyticsGrid .kpiCard,
+.teacherExamsWorkspace .analyticsGrid .kpiCard {
+  min-width: 0;
+  min-height: 116px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 17px !important;
+  overflow: hidden;
+  border-radius: 19px !important;
+}
+.teacherPaymentsWorkspace .analyticsGrid .kpiCard > div:last-child,
+.teacherExamsWorkspace .analyticsGrid .kpiCard > div:last-child { min-width: 0; }
+.teacherPaymentsWorkspace .analyticsGrid .kpiCard :is(small,b),
+.teacherExamsWorkspace .analyticsGrid .kpiCard :is(small,b) {
+  width: auto;
+  max-width: 100%;
+  display: block;
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  white-space: normal !important;
+}
+.teacherPaymentsWorkspace .analyticsGrid .kpiCard small,
+.teacherExamsWorkspace .analyticsGrid .kpiCard small {
+  color: #687892;
+  font-size: 12px !important;
+  line-height: 1.65;
+}
+.teacherPaymentsWorkspace .analyticsGrid .kpiCard b,
+.teacherExamsWorkspace .analyticsGrid .kpiCard b {
+  margin-top: 5px;
+  color: #10203c;
+  font-size: clamp(23px, 2.4vw, 31px) !important;
+  line-height: 1.15;
+}
+.teacherExamsWorkspace .examsToolbar,
+.teacherExamsWorkspace .selectLabel,
+.teacherExamsWorkspace .selectLabel select { width: 100%; max-width: 100%; }
+.teacherExamsWorkspace .selectLabel { display: grid; gap: 9px; }
+.teacherExamsWorkspace .selectLabel select { min-height: 54px; font-size: 16px; }
+@media (max-width: 1100px) {
+  .teacherPaymentsWorkspace .analyticsGrid,
+  .teacherExamsWorkspace .analyticsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 700px) {
+  .teacherPaymentsWorkspace,
+  .teacherExamsWorkspace { width: 100%; min-width: 0; padding-top: 12px; }
+  .teacherPaymentsWorkspace .analyticsGrid,
+  .teacherExamsWorkspace .analyticsGrid { gap: 10px !important; }
+  .teacherPaymentsWorkspace .analyticsGrid .kpiCard,
+  .teacherExamsWorkspace .analyticsGrid .kpiCard {
+    min-height: 132px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px !important;
+  }
+  .teacherPaymentsWorkspace .analyticsGrid .kpiCard .icon,
+  .teacherExamsWorkspace .analyticsGrid .kpiCard .icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+  .teacherPaymentsWorkspace .analyticsGrid .kpiCard small,
+  .teacherExamsWorkspace .analyticsGrid .kpiCard small { font-size: 11px !important; line-height: 1.55; }
+  .teacherPaymentsWorkspace .analyticsGrid .kpiCard b,
+  .teacherExamsWorkspace .analyticsGrid .kpiCard b { font-size: 25px !important; }
+}
+@media (max-width: 390px) {
+  .teacherPaymentsWorkspace .analyticsGrid,
+  .teacherExamsWorkspace .analyticsGrid { grid-template-columns: 1fr !important; }
+  .teacherPaymentsWorkspace .analyticsGrid .kpiCard,
+  .teacherExamsWorkspace .analyticsGrid .kpiCard {
+    min-height: 94px;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+/* Tenant student auth: compact visual and stable form row on phones. */
+@media (max-width: 760px) {
+  .tenantStudentAuthPage { min-height: 100svh; overflow-x: clip; }
+  .tenantStudentAuthPage .tenantPremiumHeader { position: relative !important; }
+  .tenantStudentAuthStage {
+    width: 100% !important;
+    min-height: 0 !important;
+    display: block !important;
+  }
+  .tenantAuthTeacherVisual {
+    width: 100% !important;
+    min-height: 210px !important;
+    height: 210px !important;
+    max-height: none !important;
+    border-radius: 0 0 28px 28px;
+  }
+  .tenantAuthImageFrame img {
+    object-position: center 22% !important;
+  }
+  .tenantAuthVisualBrand {
+    top: 14px !important;
+    right: 14px !important;
+    padding: 9px 11px !important;
+  }
+  .tenantAuthVisualQuote {
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+    margin: 0 12px 12px !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+  }
+  .tenantAuthVisualQuote b { font-size: 13px !important; line-height: 1.55; }
+  .tenantAuthVisualQuote p { display: none !important; }
+  .tenantAuthFormSide {
+    width: 100% !important;
+    display: block !important;
+    margin-top: -22px !important;
+    padding: 0 12px max(28px, env(safe-area-inset-bottom)) !important;
+  }
+  .tenantAuthFormCard {
+    width: min(540px, 100%) !important;
+    margin-inline: auto !important;
+    padding: 27px 20px !important;
+    border-radius: 27px !important;
+    background: rgba(255,255,255,.98) !important;
+    box-shadow: 0 24px 65px rgba(15, 42, 87, .15) !important;
+    backdrop-filter: none !important;
+  }
+  .tenantAuthFormCard h1 {
+    margin-top: 17px !important;
+    font-size: clamp(29px, 8vw, 36px) !important;
+    line-height: 1.25 !important;
+  }
+  .tenantAuthFormCard > p { margin-bottom: 0; font-size: 13px !important; line-height: 1.8; }
+  .tenantAuthFormCard .authForm { margin-top: 25px !important; gap: 18px !important; }
+  .tenantAuthFormCard .authForm > label {
+    width: 100% !important;
+    gap: 8px !important;
+    font-size: 13px !important;
+    line-height: 1.7 !important;
+  }
+  .tenantAuthFormCard .authForm :is(input, select) {
+    min-height: 54px !important;
+    padding-inline: 15px !important;
+    font-size: 16px !important;
+  }
+  .tenantAuthFormCard .passwordField button {
+    top: 50% !important;
+    left: 10px !important;
+    min-width: 58px !important;
+    min-height: 40px !important;
+    padding: 0 11px !important;
+    transform: translateY(-50%);
+    font-size: 12px !important;
+  }
+  .tenantAuthFormCard .passwordField input { padding-left: 78px !important; }
+  .tenantAuthFormCard .formRow {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-direction: row !important;
+    gap: 14px !important;
+  }
+  .tenantAuthFormCard .formRow .check {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+  .tenantAuthFormCard .formRow > a {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 4px 0 !important;
+    white-space: nowrap !important;
+    font-size: 13px !important;
+  }
+  .tenantAuthFormCard .authSubmit { min-height: 54px !important; font-size: 15px !important; }
+}
+@media (max-width: 390px) {
+  .tenantAuthTeacherVisual { min-height: 178px !important; height: 178px !important; }
+  .tenantAuthVisualBrand { display: none !important; }
+  .tenantAuthFormSide { margin-top: -18px !important; padding-inline: 8px !important; }
+  .tenantAuthFormCard { padding: 23px 16px !important; border-radius: 24px !important; }
+  .tenantAuthFormCard .formRow { gap: 8px !important; }
+  .tenantAuthFormCard .formRow > a,
+  .tenantAuthFormCard .formRow .check { font-size: 12px !important; }
+}
+/* UX refresh: student authentication + learning dashboard */
+:root {
+  --ux-blue: #2563eb;
+  --ux-purple: #6d35f4;
+  --ux-navy: #0f2447;
+  --ux-ink: #172b4d;
+  --ux-muted: #64748b;
+  --ux-line: #dfe7f3;
+  --ux-soft: #f7f9fd;
+  --ux-shadow: 0 20px 55px rgba(22, 55, 105, .10);
+}
+
+/* Registration and login: calm hierarchy, clearer focus, and touch-friendly controls. */
+:is(.skoolaAuthPage, .tenantStudentAuthPage, .simpleAuth, .academyPickerPage) {
+  font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+
+.skoolaAuthPage {
+  background:
+    radial-gradient(circle at 9% 12%, rgba(99, 102, 241, .12), transparent 30%),
+    radial-gradient(circle at 91% 86%, rgba(37, 99, 235, .10), transparent 28%),
+    #f7faff !important;
+}
+.skoolaAuthPage .authVisual {
+  border-inline-end: 1px solid rgba(111, 137, 190, .16);
+}
+.skoolaAuthPage .authCard {
+  padding: clamp(18px, 4vw, 64px) !important;
+}
+.skoolaAuthPage .authCardInner {
+  width: min(540px, 100%) !important;
+  padding: clamp(24px, 4vw, 42px) !important;
+  border: 1px solid rgba(109, 137, 190, .20) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--ux-shadow) !important;
+}
+.skoolaAuthPage .authCard h1 {
+  letter-spacing: -.7px;
+  color: var(--ux-navy) !important;
+}
+.skoolaAuthPage .authCardInner > p {
+  color: #5d6f8c !important;
+  line-height: 1.9 !important;
+}
+.authForm {
+  gap: 17px !important;
+}
+.authForm > label,
+.fieldGrid > label {
+  color: var(--ux-ink) !important;
+  line-height: 1.65;
+}
+.authForm :is(input, select),
+.tenantAuthFormCard .authForm :is(input, select),
+.simpleAuth .authForm :is(input, select) {
+  min-height: 54px !important;
+  border: 1px solid var(--ux-line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  color: var(--ux-ink) !important;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.authForm :is(input, select):hover {
+  border-color: #b8cbed !important;
+  background: #fcfdff !important;
+}
+.authForm :is(input, select):focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .18) !important;
+  outline-offset: 1px;
+  border-color: var(--ux-blue) !important;
+  box-shadow: 0 0 0 1px var(--ux-blue) !important;
+}
+.passwordField button {
+  min-width: 42px;
+  min-height: 38px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--ux-blue) !important;
+  background: #edf4ff !important;
+  transition: background-color .2s ease, color .2s ease;
+}
+.passwordField button:hover,
+.passwordField button:focus-visible {
+  background: #dceaff !important;
+  color: #1749b7 !important;
+}
+.formRow {
+  min-height: 34px;
+  color: var(--ux-muted);
+}
+.formRow a,
+.authSwitch a,
+.terms a,
+.backLink {
+  color: var(--ux-blue) !important;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.authSubmit {
+  min-height: 56px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px !important;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.authSubmit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: saturate(1.08);
+  box-shadow: 0 16px 34px rgba(45, 79, 220, .28) !important;
+}
+.authSubmit:focus-visible,
+.authRoleTabs a:focus-visible,
+.authAccountPrompt a:focus-visible,
+.academyPickerCard a:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .22);
+  outline-offset: 3px;
+}
+.formError,
+.formNotice {
+  border: 1px solid currentColor;
+  border-color: rgba(211, 54, 54, .18);
+  line-height: 1.75;
+}
+.authAccountPrompt {
+  border: 1px solid #dce6f6 !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #f8fbff, #f4f1ff) !important;
+  box-shadow: 0 12px 30px rgba(50, 81, 150, .07);
+}
+.authAccountPrompt > span { color: var(--ux-navy) !important; }
+.authCreateAccount {
+  min-height: 48px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.authCreateAccount:hover { transform: translateY(-2px); }
+
+/* Academy picker: make the first decision easy to scan. */
+.academyPickerPage {
+  background:
+    radial-gradient(circle at 10% 8%, rgba(88, 115, 238, .15), transparent 29%),
+    radial-gradient(circle at 92% 90%, rgba(119, 67, 236, .11), transparent 26%),
+    #f8faff !important;
+}
+.academyPickerHeader {
+  border-bottom: 1px solid rgba(119, 146, 196, .14);
+}
+.academyPickerHero { margin-top: clamp(38px, 7vw, 78px) !important; }
+.academyPickerHero h1 { letter-spacing: -.9px; }
+.academyPickerCard {
+  min-height: 206px;
+  border-color: #e2eaf6 !important;
+  box-shadow: 0 16px 42px rgba(21, 56, 113, .07) !important;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important;
+}
+.academyPickerCard:hover {
+  border-color: #b9caf0 !important;
+  transform: translateY(-4px) !important;
+}
+.academyPickerCard > a {
+  min-height: 48px !important;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.academyPickerCard > a:hover { box-shadow: 0 12px 26px rgba(37, 99, 235, .22); }
+
+/* Tenant login/register pages. */
+.tenantStudentAuthPage {
+  background:
+    radial-gradient(circle at 11% 14%, color-mix(in srgb, var(--tenant-primary) 12%, transparent), transparent 27%),
+    radial-gradient(circle at 89% 88%, color-mix(in srgb, var(--tenant-accent) 12%, transparent), transparent 28%),
+    #f7faff !important;
+}
+.tenantStudentAuthStage {
+  min-height: calc(100svh - 84px) !important;
+  max-width: 1480px !important;
+  gap: 0 !important;
+}
+.tenantAuthTeacherVisual {
+  min-height: 760px !important;
+  box-shadow: inset -1px 0 rgba(255,255,255,.15);
+}
+.tenantAuthVisualQuote {
+  border-radius: 22px !important;
+  padding: 22px 24px !important;
+}
+.tenantAuthFormSide {
+  padding: clamp(24px, 5vw, 82px) !important;
+}
+.tenantAuthFormCard {
+  width: min(550px, 100%) !important;
+  padding: clamp(24px, 4vw, 42px) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--ux-shadow) !important;
+}
+.tenantAuthRegisterCard { width: min(780px, 100%) !important; }
+.tenantAuthFormCard h1 { letter-spacing: -.8px; }
+.tenantAuthFormCard .authForm { margin-top: 28px !important; }
+.tenantAuthFormCard .authSubmit {
+  background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-accent)) !important;
+}
+
+/* Student dashboard: clear navigation, stronger hierarchy, and comfortable density. */
+.studentShell {
+  background: #f5f8fd !important;
+}
+.studentShell .side {
+  background: linear-gradient(180deg, #0c1d3a 0%, #102a52 100%) !important;
+  border-inline-start: 1px solid rgba(255,255,255,.07);
+  box-shadow: 14px 0 40px rgba(10, 30, 66, .10);
+}
+.studentShell .side .brand { border-bottom-color: rgba(255,255,255,.10); }
+.studentShell .side nav { margin-top: 24px; gap: 8px; }
+.studentShell .side nav a {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid transparent;
+  color: #b9c7dc;
+  font-weight: 800;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.studentShell .side nav a > span {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #7387a8;
+  font-size: 0;
+  transition: background-color .2s ease, box-shadow .2s ease;
+}
+.studentShell .side nav a:hover {
+  background: rgba(255,255,255,.08) !important;
+  color: #fff !important;
+}
+.studentShell .side nav a.active {
+  background: linear-gradient(90deg, rgba(55, 110, 231, .34), rgba(112, 69, 235, .22)) !important;
+  border-color: rgba(143, 170, 244, .22);
+  color: #fff !important;
+}
+.studentShell .side nav a.active > span {
+  background: #8bb6ff;
+  box-shadow: 0 0 0 5px rgba(139,182,255,.12);
+}
+.studentShell .sideLogout button {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 13px;
+  background: rgba(255,255,255,.05);
+  color: #c7d4e8;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.studentShell .sideLogout button:hover { background: rgba(244, 63, 94, .15); color: #fff; }
+.studentShell .side footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #9fb1cd;
+  line-height: 1.7;
+}
+.studentShell .side footer b { color: #fff; margin-top: 2px; }
+.studentShell .appTop {
+  min-height: 88px;
+  position: sticky !important;
+  top: 0;
+  z-index: 40;
+  background: rgba(245,248,253,.90) !important;
+  border-bottom-color: rgba(127, 151, 193, .18) !important;
+  backdrop-filter: blur(18px);
+}
+.studentShell .appTop h1 { color: var(--ux-navy); font-size: clamp(18px, 2vw, 24px); }
+.studentShell .appTop p { color: #71809a; font-size: 11px; }
+.studentShell .user { gap: 10px; }
+.userNotification {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  padding: 0 10px;
+  border: 1px solid #dce5f2;
+  border-radius: 12px;
+  background: #fff;
+  color: #52647f;
+  font-size: 10px;
+  font-weight: 800;
+  transition: color .2s ease, border-color .2s ease;
+}
+.userNotification:hover { color: var(--ux-blue); border-color: #b9cbed; }
+.notificationDot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  top: 7px;
+  right: 7px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ef4444;
+}
+.studentShell .studentDashboardHero {
+  margin-top: 22px !important;
+  min-height: 292px;
+  box-shadow: 0 24px 60px rgba(20, 56, 117, .18) !important;
+}
+.studentShell .studentDashboardHero h2 { letter-spacing: -.45px; }
+.studentShell .studentGhostButton {
+  min-height: 48px;
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.studentShell .studentGhostButton:hover {
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.50);
+  transform: translateY(-2px);
+}
+.studentShell .studentKpis .kpi {
+  min-height: 144px;
+  border: 1px solid rgba(127,151,193,.15) !important;
+  box-shadow: 0 12px 32px rgba(19, 50, 101, .07) !important;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.studentShell .studentKpis .kpi:hover {
+  transform: translateY(-3px);
+  border-color: #bfd0ee !important;
+  box-shadow: 0 18px 40px rgba(19, 50, 101, .11) !important;
+}
+.studentShell .studentPanel {
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: 0 12px 34px rgba(19, 50, 101, .06) !important;
+}
+.studentShell .enrolledCourse,
+.studentShell .catalogCourse {
+  cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.studentShell .enrolledCourse:hover,
+.studentShell .catalogCourse:hover {
+  border-color: #aac2ed !important;
+  box-shadow: 0 14px 30px rgba(30, 74, 145, .10);
+}
+.studentShell .enrolledCourse:focus-visible,
+.studentShell .catalogCourse:focus-visible,
+.studentShell .studentGhostButton:focus-visible,
+.studentShell .side nav a:focus-visible {
+  outline: 3px solid rgba(37,99,235,.24);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .tenantAuthTeacherVisual { min-height: 560px !important; }
+  .studentShell .appTop { top: 8px; margin-top: 8px; border-radius: 18px; }
+}
+@media (max-width: 700px) {
+  .skoolaAuthPage .authCardInner,
+  .tenantAuthFormCard { box-shadow: 0 16px 42px rgba(22,55,105,.09) !important; }
+  .academyPickerHeader { height: 74px; }
+  .academyPickerCard { min-height: 0; }
+  .tenantAuthTeacherVisual { min-height: 390px !important; }
+  .tenantAuthVisualQuote { width: calc(100% - 36px) !important; margin-bottom: 18px !important; }
+  .studentShell .appTop { min-height: 72px; }
+  .studentShell .userNotification span:not(.notificationDot) { display: none; }
+  .studentShell .studentKpis .kpi { min-height: 124px; }
+}
+@media (max-width: 430px) {
+  .authSubmit { min-height: 54px !important; }
+  .studentShell .appMain { padding-inline: 10px !important; }
+  .studentShell .appTop { margin-inline: 0; }
+  .studentShell .studentKpis .kpi { min-height: 116px; padding: 13px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .authSubmit, .academyPickerCard, .studentKpis .kpi, .enrolledCourse, .catalogCourse { transition: none !important; }
+}

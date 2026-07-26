@@ -7,11 +7,15 @@ import { AnimatedNumber } from "../skoola-motion";
 import { ActiveAnnouncements } from "../active-announcements";
 import { StudentInviteLink } from "./student-invite-link";
 import {
+  Activity,
   BarChart3,
+  BookOpen,
+  ClipboardCheck,
   CreditCard,
   ExternalLink,
   KeyRound,
   Palette,
+  PlayCircle,
   PlusCircle,
   Users,
 } from "lucide-react";
@@ -93,12 +97,12 @@ export default async function TeacherDashboard() {
   ]);
 
   const cards = [
-    { label: "إجمالي الطلاب", value: students, note: "طلاب مسجلون بالأكاديمية", color: "blue" },
-    { label: "نشطون هذا الشهر", value: activeStudents, note: "تفاعلوا خلال آخر 30 يومًا", color: "green" },
-    { label: "الكورسات المنشورة", value: publishedCourses, note: `من أصل ${courses} كورس`, color: "purple" },
-    { label: "الدروس المتاحة", value: totalLessons, note: "فيديوهات وشروحات", color: "sky" },
-    { label: "الامتحانات والأنشطة", value: totalExams, note: "اختبارات تفاعلية", color: "indigo" },
-    { label: "إجمالي الاشتراكات", value: enrollments, note: `+${newStudents} هذا الشهر`, color: "orange" },
+    { label: "إجمالي الطلاب", value: students, note: "طلاب مسجلون بالأكاديمية", color: "blue", icon: Users },
+    { label: "نشطون هذا الشهر", value: activeStudents, note: "تفاعلوا خلال آخر 30 يومًا", color: "green", icon: Activity },
+    { label: "الكورسات المنشورة", value: publishedCourses, note: `من أصل ${courses} كورس`, color: "purple", icon: BookOpen },
+    { label: "الدروس المتاحة", value: totalLessons, note: "فيديوهات وشروحات", color: "sky", icon: PlayCircle },
+    { label: "الامتحانات والأنشطة", value: totalExams, note: "اختبارات تفاعلية", color: "indigo", icon: ClipboardCheck },
+    { label: "إجمالي الاشتراكات", value: enrollments, note: `+${newStudents} هذا الشهر`, color: "orange", icon: CreditCard },
   ];
 
   const totalGraded = grade1Count + grade2Count + grade3Count || 1;
@@ -168,15 +172,19 @@ export default async function TeacherDashboard() {
 
       {/* Primary KPI Row */}
       <section className="saasKpis teacherKpisGrid">
-        {cards.map((item) => (
-          <article key={item.label} className={`kpiBox ${item.color}`}>
-            <span>{item.label}</span>
-            <b>
-              <AnimatedNumber value={item.value} />
-            </b>
-            <small>{item.note}</small>
-          </article>
-        ))}
+        {cards.map((item) => {
+          const Icon = item.icon;
+          return (
+            <article key={item.label} className={"kpiBox " + item.color}>
+              <div className="teacherKpiHead">
+                <i><Icon size={20} /></i>
+                <span>{item.label}</span>
+              </div>
+              <b><AnimatedNumber value={item.value} /></b>
+              <small>{item.note}</small>
+            </article>
+          );
+        })}
       </section>
 
       {/* Main Grid: Student Distribution Chart + Recent Members & Activity */}

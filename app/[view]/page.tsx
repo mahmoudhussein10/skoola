@@ -7,6 +7,7 @@ import { Side, AppTop, Brand } from "../ui";
 import { ActiveAnnouncements } from "../active-announcements";
 import { StudentActivation } from "../student-activation";
 import { CourseThumbnail } from "../course-thumbnail";
+import { BellRing, ChartNoAxesColumnIncreasing, GraduationCap, Trophy } from "lucide-react";
 
 import { StudentCourseViewer } from "../course/student-course-viewer";
 
@@ -199,27 +200,27 @@ async function Dashboard() {
           </div>
         </section>
 
-        <section className="kpis studentKpis">
-          <div className="kpi">
-            <span>كورساتي</span>
+        <section className="kpis studentKpis" aria-label="ملخص تقدّمك">
+          <article className="kpi studentKpi blue">
+            <div className="studentKpiHead"><i><GraduationCap size={20} /></i><span>كورساتي</span></div>
             <b>{enrollments.length.toLocaleString("en-US")}</b>
             <small>مسجلة على حسابك</small>
-          </div>
-          <div className="kpi">
-            <span>تم إنجازه</span>
+          </article>
+          <article className="kpi studentKpi green">
+            <div className="studentKpiHead"><i><Trophy size={20} /></i><span>تم إنجازه</span></div>
             <b>{completed.toLocaleString("en-US")}</b>
             <small>كورس مكتمل</small>
-          </div>
-          <div className="kpi">
-            <span>متوسط النتائج</span>
+          </article>
+          <article className="kpi studentKpi purple">
+            <div className="studentKpiHead"><i><ChartNoAxesColumnIncreasing size={20} /></i><span>متوسط النتائج</span></div>
             <b>{average.toLocaleString("en-US", { maximumFractionDigits: 1 })}%</b>
             <small>{attempts.length.toLocaleString("en-US")} محاولة</small>
-          </div>
-          <div className="kpi">
-            <span>التنبيهات</span>
+          </article>
+          <article className="kpi studentKpi orange">
+            <div className="studentKpiHead"><i><BellRing size={20} /></i><span>التنبيهات</span></div>
             <b>{unread.toLocaleString("en-US")}</b>
             <small>تحتاج انتباهك</small>
-          </div>
+          </article>
         </section>
 
         <div className="studentContentGrid">
