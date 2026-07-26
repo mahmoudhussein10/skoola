@@ -130,7 +130,7 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
           <h2 id="course-library-title">كورسات الأكاديمية</h2>
           <p>راجع حالة كل كورس وانتقل إلى المحتوى أو التعديل من مكان واحد.</p>
         </div>
-        <label className={styles.search}>
+        <label className={`${styles.search} dashboardSearchControl`}>
           <Search size={19} aria-hidden="true" />
           <span className="srOnly">البحث في الكورسات</span>
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بالاسم أو المادة..." type="search" />

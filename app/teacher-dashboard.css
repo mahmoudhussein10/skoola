@@ -412,3 +412,73 @@
     flex-direction: row !important;
   }
 }
+/* Mobile drawer stability v3: lock document scroll and keep scrolling inside the drawer. */
+html.dashboardMenuOpen,
+body.dashboardMenuOpen {
+  width: 100% !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+body.dashboardMenuOpen { touch-action: none !important; }
+
+@media (max-width: 900px) {
+  .saasShell.teacher .saasSide {
+    position: fixed !important;
+    inset: 0 0 0 auto !important;
+    width: min(88vw, 340px) !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: pan-y !important;
+    transform: translate3d(105%, 0, 0);
+    will-change: transform;
+    isolation: isolate;
+    z-index: 240 !important;
+  }
+
+  .saasShell.teacher .saasSide.mobileOpen {
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  .saasShell.teacher .saasSideHead,
+  .saasShell.teacher .sideMobileProfile,
+  .saasShell.teacher .workspaceLabel,
+  .saasShell.teacher .sideFooter {
+    flex: 0 0 auto !important;
+  }
+
+  .saasShell.teacher .saasSide nav {
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .saasShell.teacher .sideFooter {
+    position: relative !important;
+    z-index: 2;
+    margin-top: 0 !important;
+    padding: 12px 0 max(10px, env(safe-area-inset-bottom)) !important;
+    border-top: 1px solid #e6ecf5;
+    background: #fff;
+  }
+
+  .saasShell.teacher .sideOverlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+    z-index: 230 !important;
+  }
+}

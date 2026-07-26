@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { BarChart3, BookOpen, CheckCircle2, ChevronRight, CreditCard, KeyRound, Images, LayoutDashboard, LogOut, Megaphone, Menu, PanelRightClose, Settings, ShieldCheck, UserCog, Users, X } from "lucide-react";
+import { BarChart3, BookOpen, CheckCircle2, ChevronRight, CircleHelp, CreditCard, KeyRound, Images, LayoutDashboard, LogOut, Megaphone, Menu, PanelRightClose, Settings, ShieldCheck, UserCog, Users, X } from "lucide-react";
 import { Brand } from "./ui";
 
 type NavItem = { href: string; label: string; icon: ComponentType<{ size?: number; strokeWidth?: number }> };
@@ -20,6 +20,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
   const drawerRef = useRef<HTMLElement | null>(null);
   const teacherNav: NavItem[] = [
     { href: "/teacher", label: "نظرة عامة", icon: LayoutDashboard },
+    { href: "/teacher/help", label: "دليل استخدام المنصة", icon: CircleHelp },
     { href: "/teacher/courses", label: "الكورسات", icon: BookOpen },
     { href: "/teacher/students", label: "الطلاب", icon: Users },
     { href: "/teacher/payments", label: "طلبات الدفع والاشتراكات", icon: CreditCard },
@@ -41,7 +42,13 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
   const courseArea = kind === "teacher" && pathname.startsWith("/teacher/courses");
   useEffect(() => {
     if (!mobileOpen) return;
-    const previousOverflow = document.body.style.overflow;
+    const scrollY = window.scrollY;
+    const previousBodyStyles = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+    };
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const menuTrigger = menuButtonRef.current;
     const focusableSelector = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
@@ -64,12 +71,23 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
         first.focus();
       }
     };
+    document.documentElement.classList.add("dashboardMenuOpen");
+    document.body.classList.add("dashboardMenuOpen");
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
     document.addEventListener("keydown", handleDrawerKeys);
     return () => {
       window.cancelAnimationFrame(focusDrawer);
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.classList.remove("dashboardMenuOpen");
+      document.body.classList.remove("dashboardMenuOpen");
+      document.body.style.overflow = previousBodyStyles.overflow;
+      document.body.style.position = previousBodyStyles.position;
+      document.body.style.top = previousBodyStyles.top;
+      document.body.style.width = previousBodyStyles.width;
       document.removeEventListener("keydown", handleDrawerKeys);
+      window.requestAnimationFrame(() => window.scrollTo(0, scrollY));
       (previousFocus ?? menuTrigger)?.focus();
     };
   }, [mobileOpen]);
@@ -82,7 +100,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
 
   useEffect(() => {
     const hrefs = kind === "teacher"
-      ? ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/settings"]
+      ? ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/help", "/teacher/settings"]
       : ["/super-admin", "/super-admin/teachers", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
     hrefs.forEach((href) => router.prefetch(href));
   }, [kind, router]);

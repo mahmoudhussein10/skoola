@@ -172,7 +172,7 @@ export function TeacherExamsClient({
             <h3>قائمة محاولات الطلاب</h3>
 
             <div className="filtersRow">
-              <div className="searchBox">
+              <div className="searchBox dashboardSearchControl">
                 <Search size={16} />
                 <input
                   value={query}

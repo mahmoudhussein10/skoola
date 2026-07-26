@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
@@ -12,9 +13,12 @@ import {
   Download,
   FileText,
   HelpCircle,
+  ListChecks,
   Menu,
   PlayCircle,
+  Trophy,
   X,
+  ZoomIn,
 } from "lucide-react";
 import { Brand } from "../ui";
 
@@ -147,6 +151,7 @@ export function StudentCourseViewer({
   const [examResult, setExamResult] = useState<ExamSubmissionResult | null>(null);
   const [submittingExam, setSubmittingExam] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
+  const [zoomedQuestionImage, setZoomedQuestionImage] = useState<{ src: string; alt: string } | null>(null);
 
   const currentLesson = useMemo(
     () => allLessons.find((l) => l.id === activeLessonId),
@@ -160,6 +165,15 @@ export function StudentCourseViewer({
 
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson = currentIndex >= 0 && currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+  const answeredQuestionsCount = activeExam
+    ? activeExam.questions.filter((question) => Boolean(examAnswers[question.id])).length
+    : 0;
+  const unansweredQuestionsCount = activeExam
+    ? Math.max(0, activeExam.questions.length - answeredQuestionsCount)
+    : 0;
+  const examCompletionPercentage = activeExam?.questions.length
+    ? Math.round((answeredQuestionsCount / activeExam.questions.length) * 100)
+    : 0;
 
   // Countdown timer for active exam
   useEffect(() => {
@@ -178,6 +192,29 @@ export function StudentCourseViewer({
   // The submit handler intentionally reads the latest active exam state when the timer reaches zero.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examStarted, timeRemaining]);
+
+  useEffect(() => {
+    if (!examStarted) return;
+    const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener("beforeunload", warnBeforeLeaving);
+    return () => window.removeEventListener("beforeunload", warnBeforeLeaving);
+  }, [examStarted]);
+
+  useEffect(() => {
+    if (!zoomedQuestionImage) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setZoomedQuestionImage(null);
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [zoomedQuestionImage]);
 
   // Record an actual lesson view without marking the lesson as completed.
   useEffect(() => {
@@ -222,7 +259,17 @@ export function StudentCourseViewer({
     setMobileMenuOpen(false);
   }
 
+  function openExam(exam: Exam) {
+    setActiveExam(exam);
+    setExamResult(null);
+    setExamAnswers({});
+    setExamStarted(false);
+    setTimeRemaining(null);
+    setMobileMenuOpen(false);
+  }
+
   function startExam(exam: Exam) {
+    if (exam.myAttemptsCount >= exam.maxAttempts) return;
     setActiveExam(exam);
     setExamResult(null);
     setExamAnswers({});
@@ -390,15 +437,20 @@ export function StudentCourseViewer({
                       <b>{activeExam.passingScore}%</b>
                       <small>درجة النجاح</small>
                     </div>
+                    <div>
+                      <ListChecks size={20} />
+                      <b>{activeExam.maxAttempts} {activeExam.maxAttempts === 1 ? "محاولة" : "محاولات"}</b>
+                      <small>الحد المتاح</small>
+                    </div>
                   </div>
 
-                  {activeExam.myAttemptsCount >= 1 ? (
+                  {activeExam.myAttemptsCount >= activeExam.maxAttempts ? (
                     <div className="attemptLimitNotice">
-                      لقد استخدمت محاولتك الوحيدة لهذا الاختبار، ولا يمكن إعادته مرة أخرى.
+                      لقد استنفدت عدد المحاولات المتاحة لهذا الاختبار ({activeExam.maxAttempts})، ولا يمكن بدء محاولة جديدة.
                     </div>
                   ) : (
                     <button className="btn primary lg" onClick={() => startExam(activeExam)}>
-                      ابدأ حل الامتحان الآن ←
+                      ابدأ المحاولة {activeExam.myAttemptsCount + 1} من {activeExam.maxAttempts} ←
                     </button>
                   )}
                 </div>
@@ -411,7 +463,7 @@ export function StudentCourseViewer({
                     </div>
 
                     {timeRemaining !== null && (
-                      <div className="examTimer">
+                      <div className={"examTimer" + (timeRemaining <= 300 ? " urgent" : "")} aria-live="polite">
                         <Clock size={18} />
                         <b>
                           {Math.floor(timeRemaining / 60)}:
@@ -421,18 +473,51 @@ export function StudentCourseViewer({
                     )}
                   </header>
 
+                  <section className="examProgressPanel" aria-label="تقدم حل الامتحان">
+                    <div className="examProgressSummary">
+                      <span><ListChecks size={19} /><b>{answeredQuestionsCount} من {activeExam.questions.length}</b> تمت الإجابة</span>
+                      <small>{unansweredQuestionsCount ? "متبقي " + unansweredQuestionsCount + " سؤال" : "أجبت عن كل الأسئلة"}</small>
+                    </div>
+                    <div className="examAnswerProgress" aria-hidden="true">
+                      <span style={{ width: examCompletionPercentage + "%" }} />
+                    </div>
+                    <nav className="examQuestionNavigator" aria-label="الانتقال بين الأسئلة">
+                      {activeExam.questions.map((question, questionIndex) => (
+                        <button
+                          type="button"
+                          key={question.id}
+                          className={examAnswers[question.id] ? "answered" : ""}
+                          aria-label={"الانتقال إلى السؤال " + (questionIndex + 1)}
+                          onClick={() => document.getElementById("exam-question-" + (questionIndex + 1))?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                        >
+                          {questionIndex + 1}
+                        </button>
+                      ))}
+                    </nav>
+                  </section>
+
                   <div className="questionsList">
                     {activeExam.questions.map((q, idx) => (
-                      <div key={q.id} className="questionItem">
+                      <div
+                        id={"exam-question-" + (idx + 1)}
+                        key={q.id}
+                        className={"questionItem" + (examAnswers[q.id] ? " answered" : "")}
+                      >
                         <div className="qTitle">
                           <span>{idx + 1}</span>
                           <h3>{q.text}</h3>
                         </div>
 
                         {q.imageUrl ? (
-                          <div className="studentQuestionImage">
-                            <Image src={q.imageUrl} alt={`صورة سؤال ${idx + 1}`} width={1200} height={675} sizes="(max-width: 760px) calc(100vw - 56px), 760px" />
-                          </div>
+                          <button
+                            type="button"
+                            className="studentQuestionImage"
+                            onClick={() => setZoomedQuestionImage({ src: q.imageUrl as string, alt: "صورة سؤال " + (idx + 1) })}
+                            aria-label={"تكبير صورة السؤال " + (idx + 1)}
+                          >
+                            <Image src={q.imageUrl} alt={"صورة سؤال " + (idx + 1)} width={1200} height={675} sizes="(max-width: 760px) calc(100vw - 56px), 760px" />
+                            <span className="questionImageZoomHint"><ZoomIn size={17} /> تكبير الصورة</span>
+                          </button>
                         ) : null}
 
                         <div className="qOptions">
@@ -460,6 +545,13 @@ export function StudentCourseViewer({
                   </div>
 
                   <footer className="examFooter">
+                    <div className="examFooterSummary">
+                      <ListChecks size={20} />
+                      <span>
+                        <b>{answeredQuestionsCount} إجابة محفوظة</b>
+                        <small>{unansweredQuestionsCount ? "راجع " + unansweredQuestionsCount + " سؤال بدون إجابة" : "جاهز للتسليم"}</small>
+                      </span>
+                    </div>
                     <button
                       className="btn primary lg"
                       onClick={() => setConfirmSubmit(true)}
@@ -477,9 +569,7 @@ export function StudentCourseViewer({
                           examResult.result.passed ? "pass" : "fail"
                         }`}
                       >
-                        <span className="resultIcon">
-                          {examResult.result.passed ? "🏆" : "⚠️"}
-                        </span>
+                        <span className="resultIcon">{examResult.result.passed ? <Trophy size={36} /> : <AlertTriangle size={36} />}</span>
                         <h2>
                           {examResult.result.passed
                             ? "مبروك! لقد نجحت في الامتحان"
@@ -686,7 +776,7 @@ export function StudentCourseViewer({
                         <button
                           key={exam.id}
                           className={`sidebarItem examItem ${isExamActive ? "active" : ""}`}
-                          onClick={() => startExam(exam)}
+                          onClick={() => openExam(exam)}
                         >
                           <span className="icon purple">
                             <HelpCircle size={16} />
@@ -703,6 +793,40 @@ export function StudentCourseViewer({
           </div>
         </aside>
       </div>
+
+      {zoomedQuestionImage && typeof window !== "undefined"
+        ? createPortal(
+            <div
+              className="questionImageLightbox"
+              role="dialog"
+              aria-modal="true"
+              aria-label={zoomedQuestionImage.alt}
+              onClick={() => setZoomedQuestionImage(null)}
+            >
+              <button
+                type="button"
+                className="questionImageLightboxClose"
+                onClick={() => setZoomedQuestionImage(null)}
+                aria-label="إغلاق الصورة المكبرة"
+                autoFocus
+              >
+                <X size={22} /> إغلاق
+              </button>
+              <div className="questionImageLightboxCanvas" onClick={(event) => event.stopPropagation()}>
+                <Image
+                  src={zoomedQuestionImage.src}
+                  alt={zoomedQuestionImage.alt}
+                  width={1800}
+                  height={1200}
+                  sizes="100vw"
+                  priority
+                />
+              </div>
+              <p>اضغط خارج الصورة أو استخدم زر Esc للإغلاق</p>
+            </div>,
+            document.body
+          )
+        : null}
 
       {/* Confirm Exam Submit Modal */}
       {confirmSubmit && typeof window !== "undefined"
@@ -739,8 +863,20 @@ export function StudentCourseViewer({
 
                 <div className="modalBody" style={{ padding: "24px" }}>
                   <p style={{ margin: "0 0 18px", fontSize: "15px", fontWeight: "700", color: "#334155", lineHeight: "1.6" }}>
-                    هل أنت تأكد من رغبتك في إنهاء وتسليم أجوبتك الآن؟ لا يمكنك تعديل الإجابات بعد التسليم.
+                    هل أنت متأكد من رغبتك في إنهاء وتسليم إجاباتك الآن؟ لا يمكنك تعديل الإجابات بعد التسليم.
                   </p>
+
+                  {unansweredQuestionsCount > 0 ? (
+                    <div className="examUnansweredNotice">
+                      <AlertTriangle size={18} />
+                      <span><b>{unansweredQuestionsCount} سؤال بدون إجابة</b><small>يمكنك التسليم الآن أو الرجوع لإكمالها.</small></span>
+                    </div>
+                  ) : (
+                    <div className="examReadyNotice">
+                      <CheckCircle2 size={18} />
+                      <span><b>كل الأسئلة تمت الإجابة عنها</b><small>راجع اختياراتك ثم أكد التسليم.</small></span>
+                    </div>
+                  )}
 
                   {examSubmitError && (
                     <div

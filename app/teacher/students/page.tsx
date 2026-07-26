@@ -51,7 +51,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
       supportMode={context.supportMode}
     >
       <section className="saasPanel pagePanel studentsDirectoryPage">
-        <form className="tableSearch">
+        <form className="tableSearch dashboardSearchToolbar">
           <input name="q" defaultValue={q} placeholder="ابحث بالاسم أو الهاتف أو البريد" aria-label="البحث عن طالب" />
           <button>بحث</button>
         </form>

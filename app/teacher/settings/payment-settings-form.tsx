@@ -46,9 +46,9 @@ export function PaymentSettingsForm({ initial }: { initial: PaymentSettingsState
   return <form className="saasPanel settingsForm paymentSettingsForm" onSubmit={save}>
     <div className="settingsSectionIntro"><i><CreditCard /></i><div><span>التحويل اليدوي</span><h2>إعدادات الدفع والاشتراكات</h2><p>أضف الوسائل المتاحة لديك لاستقبال اشتراكات الطلاب. تظهر هذه البيانات للطلاب عند تفعيلها.</p></div></div>
 
-    <div className="paymentMethodCard">
-      <header><i className="vodafoneIcon"><Smartphone /></i><div><h3>Vodafone Cash</h3><p>استقبال التحويلات عبر رقم المحفظة الإلكترونية.</p></div><label className="methodSwitch"><input type="checkbox" checked={form.vodafoneCashEnabled} onChange={(event) => setForm({ ...form, vodafoneCashEnabled: event.target.checked })} /><span /></label></header>
-      {form.vodafoneCashEnabled && <label>رقم Vodafone Cash<input dir="ltr" inputMode="tel" placeholder="01XXXXXXXXX" value={form.vodafoneCashNumber} onChange={(event) => setForm({ ...form, vodafoneCashNumber: event.target.value })} required={form.vodafoneCashEnabled} /></label>}
+    <div className="paymentMethodCard paymentPhoneCard">
+      <header><i className="vodafoneIcon"><Smartphone /></i><div><span className="paymentPrimaryLabel">وسيلة التحويل الأساسية</span><h3>رقم تحويل اشتراكات الطلاب</h3><p>اكتب رقم المحفظة الذي يحوّل عليه الطالب قيمة الكورس، ثم فعّل ظهوره في نافذة الاشتراك.</p></div><label className="methodSwitch methodSwitchLabeled"><small>{form.vodafoneCashEnabled ? "ظاهر للطلاب" : "غير ظاهر"}</small><input type="checkbox" checked={form.vodafoneCashEnabled} onChange={(event) => setForm({ ...form, vodafoneCashEnabled: event.target.checked })} aria-label="إظهار رقم التحويل للطلاب" /><span /></label></header>
+      <label>رقم الهاتف لاستقبال التحويلات<input dir="ltr" inputMode="tel" autoComplete="tel" placeholder="01XXXXXXXXX" value={form.vodafoneCashNumber} onChange={(event) => setForm({ ...form, vodafoneCashNumber: event.target.value })} required={form.vodafoneCashEnabled} /><small className="paymentFieldHint">{form.vodafoneCashEnabled ? "سيظهر هذا الرقم للطالب مع زر نسخ مباشر عند الاشتراك." : "الرقم محفوظ، لكنه لن يظهر للطلاب حتى تفعيل الزر بالأعلى."}</small></label>
     </div>
 
     <div className="paymentMethodCard">
@@ -69,7 +69,7 @@ export function PaymentSettingsForm({ initial }: { initial: PaymentSettingsState
       <label>اسم صاحب الحساب المستفيد<input placeholder="الاسم كما يظهر في الحساب أو المحفظة" value={form.accountHolderName} onChange={(event) => setForm({ ...form, accountHolderName: event.target.value })} required={form.vodafoneCashEnabled || form.instaPayEnabled || form.bankTransferEnabled} /></label>
     </div>
     <label>تعليمات وإرشادات الدفع للطالب<textarea value={form.paymentInstructions} onChange={(event) => setForm({ ...form, paymentInstructions: event.target.value })} placeholder="اكتب الخطوات التفصيلية للطالب (مثال: قم بالتحويل ثم أرفق صورة الإيصال أو رقم العملية)." maxLength={1200} /></label>
-    <button className="btn primary" disabled={saving}>{saving ? "جارٍ الحفظ…" : "حفظ إعدادات الدفع"}</button>
+    <button className="btn primary" disabled={saving}>{saving ? "جارٍ الحفظ…" : "حفظ رقم التحويل وطرق الدفع"}</button>
     {message ? <p className={success ? "formNotice" : "formError"} role="status">{message}</p> : null}
   </form>;
 }

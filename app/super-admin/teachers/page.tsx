@@ -49,7 +49,7 @@ export default async function TeachersPage({
     <DashboardShell kind="super" title="إدارة منصات المدرسين" subtitle={total.toLocaleString("en-US") + " منصة مسجلة"} userName={user.fullName}>
       <section className="saasPanel pagePanel">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "1rem" }}>
-          <form className="tableSearch" style={{ flex: 1, minWidth: "280px" }}>
+          <form className="tableSearch dashboardSearchToolbar" style={{ flex: 1, minWidth: "280px" }}>
             <input name="q" defaultValue={q} placeholder="ابحث باسم المدرس أو المنصة أو الهاتف" />
             <select name="status" defaultValue={statusFilter} style={{ padding: "0.5rem 0.75rem", borderRadius: "8px", border: "1px solid var(--border-color, #cbd5e1)" }}>
               <option value="ALL">جميع الحالات</option>

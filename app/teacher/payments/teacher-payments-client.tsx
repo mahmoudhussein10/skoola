@@ -253,7 +253,7 @@ export function TeacherPaymentsClient({
             </button>
           </div>
 
-          <div className="searchBox">
+          <div className="searchBox dashboardSearchControl">
             <Search size={18} />
             <input
               type="text"

@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/**" },
       { protocol: "https", hostname: "**.b-cdn.net", pathname: "/**" },
+      { protocol: "https", hostname: "i.postimg.cc", pathname: "/**" },
     ],
   },
   async headers() {
