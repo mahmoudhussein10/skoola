@@ -3,6 +3,7 @@ import { prisma } from "../../../lib/prisma";
 import { DashboardShell } from "../../dashboard-shell";
 import { PaymentSettingsForm } from "./payment-settings-form";
 import { TenantSettingsForm } from "./settings-form";
+import { PushSettingsCard } from "../../notifications/push-client";
 
 export default async function TenantSettingsPage() {
   const context = await requirePermission("tenant.settings.manage");
@@ -38,6 +39,7 @@ export default async function TenantSettingsPage() {
         whatsapp: typeof links.whatsapp === "string" ? links.whatsapp : "",
         publicPageLive: settings?.publicPageLive ?? true,
       }} />
+      <PushSettingsCard />
       <PaymentSettingsForm initial={{
         vodafoneCashEnabled: payment?.vodafoneCashEnabled ?? false,
         vodafoneCashNumber: payment?.vodafoneCashNumber ?? "",

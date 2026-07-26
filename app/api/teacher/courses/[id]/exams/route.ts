@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
+import { notifyExamPublished } from "../../../../../../lib/notifications/events";
 import { isBunnyStorageUrl } from "../../../../../../lib/media/trusted-url";
 
 const stringOrNull = z.union([z.string(), z.null(), z.undefined()]);
@@ -70,7 +71,7 @@ export async function POST(
   const tenantId = auth.context.membership.tenantId;
   const course = await prisma.course.findFirst({
     where: { id: courseId, tenantId },
-    select: { id: true },
+    select: { id: true, title: true },
   });
   if (!course) return NextResponse.json({ ok: false, message: "الكورس غير موجود" }, { status: 404 });
 
@@ -82,7 +83,7 @@ export async function POST(
   if (parsed.data.sectionId) {
     const sec = await prisma.section.findFirst({
       where: { id: parsed.data.sectionId, courseId, tenantId },
-      select: { id: true },
+      select: { id: true, title: true },
     });
     if (!sec) return NextResponse.json({ ok: false, message: "القسم المحدد غير موجود" }, { status: 404 });
   }
@@ -152,6 +153,8 @@ export async function POST(
 
   const hydratedExam = await prisma.exam.findUniqueOrThrow({ where: { id: exam.id }, include: { questions: { orderBy: { order: "asc" } } } });
 
+  if (hydratedExam.status === "PUBLISHED") await notifyExamPublished({ tenantId, courseId, courseTitle: course.title, examId: hydratedExam.id, examTitle: hydratedExam.title, version: hydratedExam.publishVersion }).catch(() => undefined);
+
   revalidatePath(`/teacher/courses/${courseId}`);
   revalidatePath("/teacher/exams");
   revalidatePath(`/t/${auth.context.membership.tenant.slug}`);
@@ -195,6 +198,7 @@ export async function PUT(
         startDate: parsed.data.startDate,
         endDate: parsed.data.endDate,
         status: parsed.data.status,
+        ...(existing.status !== "PUBLISHED" && parsed.data.status === "PUBLISHED" ? { publishVersion: { increment: 1 } } : {}),
       },
     });
 
@@ -223,6 +227,8 @@ export async function PUT(
   });
 
   const hydratedExam = await prisma.exam.findUniqueOrThrow({ where: { id: exam.id }, include: { questions: { orderBy: { order: "asc" } } } });
+
+  if (existing.status !== "PUBLISHED" && hydratedExam.status === "PUBLISHED") await notifyExamPublished({ tenantId, courseId, courseTitle: (await prisma.course.findUniqueOrThrow({ where: { id: courseId }, select: { title: true } })).title, examId: hydratedExam.id, examTitle: hydratedExam.title, version: hydratedExam.publishVersion }).catch(() => undefined);
 
   revalidatePath(`/teacher/courses/${courseId}`);
   revalidatePath("/teacher/exams");

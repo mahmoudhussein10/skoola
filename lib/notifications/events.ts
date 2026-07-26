@@ -1,0 +1,24 @@
+import "server-only";
+import { createNotification } from "@/lib/notifications/service";
+
+export function notifyLessonPublished(input:{tenantId:string;courseId:string;courseTitle:string;lessonId:string;lessonTitle:string;version:number}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"COURSE_STUDENTS",courseId:input.courseId},type:"LESSON_PUBLISHED",category:"COURSE_CONTENT",title:"محاضرة جديدة متاحة 🎬",message:`تم نشر محاضرة «${input.lessonTitle}» في كورس «${input.courseTitle}».`,link:`/course?courseId=${encodeURIComponent(input.courseId)}&lessonId=${encodeURIComponent(input.lessonId)}`,priority:"HIGH",source:"COURSE",idempotencyKey:`lesson-published:${input.lessonId}:${input.version}`});
+}
+export function notifyExamPublished(input:{tenantId:string;courseId:string;courseTitle:string;examId:string;examTitle:string;version:number}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"COURSE_STUDENTS",courseId:input.courseId},type:"EXAM_PUBLISHED",category:"EXAMS",title:"امتحان جديد متاح 📝",message:`تم نشر امتحان «${input.examTitle}» في كورس «${input.courseTitle}».`,link:`/course?courseId=${encodeURIComponent(input.courseId)}`,priority:"HIGH",source:"EXAMS",idempotencyKey:`exam-published:${input.examId}:${input.version}`});
+}
+export function notifyExamResult(input:{tenantId:string;studentId:string;examId:string;examTitle:string;attemptId:string;version:number}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"USER",userId:input.studentId},type:"EXAM_RESULT_RELEASED",category:"RESULTS",title:"نتيجة الامتحان ظهرت ✅",message:`نتيجتك في امتحان «${input.examTitle}» متاحة دلوقتي.`,link:`/course?examId=${encodeURIComponent(input.examId)}`,priority:"HIGH",source:"EXAMS",idempotencyKey:`exam-result-released:${input.attemptId}:${input.version}`});
+}
+export function notifyEnrollmentRequest(input:{tenantId:string;studentId:string;studentName:string}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"ACADEMY_STAFF"},type:"ENROLLMENT_REQUESTED",category:"ENROLLMENTS",title:"طلب اشتراك جديد 👤",message:`وصل طلب اشتراك جديد من ${input.studentName}.`,link:"/teacher/students",priority:"HIGH",source:"ENROLLMENTS",idempotencyKey:`enrollment-request:${input.studentId}:1`});
+}
+export function notifyEnrollmentAccepted(input:{tenantId:string;studentId:string;courseId:string;courseName:string;enrollmentId:string}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"USER",userId:input.studentId},type:"ENROLLMENT_ACCEPTED",category:"ENROLLMENTS",title:"تم قبول اشتراكك 🎉",message:`تم تفعيل وصولك إلى «${input.courseName}».`,link:`/course?courseId=${encodeURIComponent(input.courseId)}`,priority:"HIGH",source:"ENROLLMENTS",idempotencyKey:`enrollment-accepted:${input.enrollmentId}:1`});
+}
+export function notifyPaymentSubmitted(input:{tenantId:string;paymentId:string}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"ACADEMY_STAFF"},type:"PAYMENT_PROOF_SUBMITTED",category:"PAYMENTS",title:"إثبات دفع جديد 💳",message:"تم رفع إثبات دفع جديد ويحتاج إلى المراجعة.",link:"/teacher/payments",priority:"HIGH",source:"PAYMENTS",idempotencyKey:`payment-proof-submitted:${input.paymentId}:1`});
+}
+export function notifyPaymentDecision(input:{tenantId:string;studentId:string;paymentId:string;version:number;approved:boolean;courseId:string}){
+  return createNotification({tenantId:input.tenantId,audience:{kind:"USER",userId:input.studentId},type:input.approved?"PAYMENT_APPROVED":"PAYMENT_REJECTED",category:"PAYMENTS",title:input.approved?"تم تأكيد الدفع ✅":"تعذر تأكيد الدفع",message:input.approved?"تم قبول عملية الدفع وتحديث حالة اشتراكك.":"راجع بيانات الدفع وحاول إرسال الطلب مرة أخرى.",link:input.approved?`/course?courseId=${encodeURIComponent(input.courseId)}`:"/dashboard",priority:"HIGH",source:"PAYMENTS",idempotencyKey:input.approved?`payment-approved:${input.paymentId}:${input.version}`:`payment-rejected:${input.paymentId}:${input.version}`});
+}

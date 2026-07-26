@@ -3,6 +3,14 @@ import { z } from "zod";
 import { prisma } from "../../../../lib/prisma";
 import { getAuthContext } from "../../../../lib/auth";
 import { isSameOrigin } from "../../../../lib/api-auth";
+import { notifyPaymentSubmitted } from "../../../../lib/notifications/events";
+import { configurationMessage } from "../../../../lib/bunny/config";
+import { deleteStorageFile, uploadStorageFile } from "../../../../lib/bunny/storage";
+import { createBunnyStoragePath } from "../../../../lib/media/paths";
+import { processImage } from "../../../../lib/media/image";
+import { extensionForMime, imageMimeTypes, mediaErrorMessage, resolveVerifiedMimeType, validateDescriptor } from "../../../../lib/media/validation";
+
+export const runtime = "nodejs";
 
 const schema = z.object({
   courseId: z.string().min(1, "الكورس مطلوب"),
@@ -21,7 +29,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "يجب تسجيل الدخول كطالب أولاً" }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
+  const contentType = request.headers.get("content-type") ?? "";
+  let proofFile: File | null = null;
+  let body: unknown;
+
+  if (contentType.includes("multipart/form-data")) {
+    const form = await request.formData().catch(() => null);
+    if (!form) return NextResponse.json({ ok: false, message: "تعذر قراءة بيانات الطلب" }, { status: 400 });
+    const file = form.get("proof");
+    proofFile = file instanceof File && file.size > 0 ? file : null;
+    body = {
+      courseId: form.get("courseId"),
+      paymentMethod: form.get("paymentMethod") || "VODAFONE_CASH",
+      referenceNumber: form.get("referenceNumber") || null,
+      proofUrl: null,
+    };
+  } else {
+    body = await request.json().catch(() => null);
+  }
+
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
@@ -65,32 +91,61 @@ export async function POST(request: Request) {
     );
   }
 
-  const payment = await prisma.$transaction(async (tx) => {
-    const created = await tx.payment.create({
-      data: {
-        tenantId,
-        studentId: auth.user.id,
-        courseId: course.id,
-        amount: course.price,
-        paymentMethod: parsed.data.paymentMethod,
-        referenceNumber: parsed.data.referenceNumber || null,
-        proofUrl: parsed.data.proofUrl || null,
-        status: "PENDING",
-      },
-    });
+  let storagePath: string | undefined;
+  let proofUrl = parsed.data.proofUrl || null;
+  let payment;
 
-    await tx.activityLog.create({
-      data: {
-        tenantId,
-        actorId: auth.user.id,
-        action: "تقديم طلب اشتراك ودفع",
-        entityType: "Payment",
-        entityId: created.id,
-      },
-    });
+  try {
+    if (proofFile) {
+      const descriptor = validateDescriptor({
+        fileName: proofFile.name,
+        mimeType: proofFile.type,
+        fileSize: proofFile.size,
+        resourceType: "image",
+      });
+      const originalBytes = new Uint8Array(await proofFile.arrayBuffer());
+      const verifiedMimeType = resolveVerifiedMimeType(originalBytes, descriptor.mimeType);
+      if (!imageMimeTypes.has(verifiedMimeType)) throw new Error("UNSUPPORTED_IMAGE");
+      const processed = await processImage(originalBytes, verifiedMimeType, "image");
+      const extension = extensionForMime[processed.mimeType] ?? processed.extension;
+      storagePath = createBunnyStoragePath(tenantId, "image", extension, course.id);
+      proofUrl = await uploadStorageFile(storagePath, processed.bytes);
+    }
 
-    return created;
-  });
+    payment = await prisma.$transaction(async (tx) => {
+      const created = await tx.payment.create({
+        data: {
+          tenantId,
+          studentId: auth.user.id,
+          courseId: course.id,
+          amount: course.price,
+          paymentMethod: parsed.data.paymentMethod,
+          referenceNumber: parsed.data.referenceNumber || null,
+          proofUrl,
+          status: "PENDING",
+        },
+      });
+
+      await tx.activityLog.create({
+        data: {
+          tenantId,
+          actorId: auth.user.id,
+          action: "تقديم طلب اشتراك ودفع",
+          entityType: "Payment",
+          entityId: created.id,
+        },
+      });
+
+      return created;
+    });
+  } catch (error) {
+    if (storagePath) await deleteStorageFile(storagePath).catch(() => undefined);
+    const isBunnyError = error instanceof Error && (error.message.startsWith("BUNNY_") || error.name === "BunnyConfigurationError");
+    const message = isBunnyError ? configurationMessage(error) : mediaErrorMessage(error);
+    return NextResponse.json({ ok: false, message }, { status: isBunnyError ? 503 : 400 });
+  }
+
+  await notifyPaymentSubmitted({ tenantId, paymentId: payment.id }).catch(() => undefined);
 
   return NextResponse.json({ ok: true, payment }, { status: 201 });
 }

@@ -57,10 +57,13 @@ export default async function TenantDetails({ params }: { params: Promise<{ tena
     prisma.activationCode.count({ where: { tenantId, status: "ACTIVE" } }),
   ]);
 
-  const pricePerStudent = Number(tenant.billingSettings?.pricePerStudent ?? 0);
+  const pricePerStudent = Number(tenant.billingSettings?.pricePerStudent ?? 15);
   const calculatedAmountDue = activeStudents * pricePerStudent;
-  const totalPaid = tenant.teacherPayments.reduce((acc, p) => acc + Number(p.amount), 0);
-  const outstandingBalance = Math.max(0, calculatedAmountDue - totalPaid);
+  const totalPaid = tenant.billingStatements.reduce((acc, statement) => acc + Number(statement.paidAmount), 0);
+  const outstandingBalance = tenant.billingStatements.reduce(
+    (acc, statement) => acc + Math.max(0, Number(statement.finalAmount) - Number(statement.paidAmount)),
+    0,
+  );
 
   const stats = {
     totalStudents,

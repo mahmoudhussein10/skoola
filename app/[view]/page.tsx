@@ -10,6 +10,7 @@ import { CourseThumbnail } from "../course-thumbnail";
 import { BellRing, ChartNoAxesColumnIncreasing, GraduationCap, Trophy } from "lucide-react";
 
 import { StudentCourseViewer } from "../course/student-course-viewer";
+import { PushSettingsCard } from "../notifications/push-client";
 
 function Empty({ icon, title, text, action, href }: { icon: string; title: string; text: string; action?: string; href?: string }) {
   return <div className="emptyState"><span>{icon}</span><h3>{title}</h3><p>{text}</p>{action && href ? <Link className="btn primary" href={href}>{action}</Link> : null}</div>;
@@ -112,7 +113,7 @@ async function Dashboard() {
       orderBy: { submittedAt: "desc" },
       take: 5,
     }),
-    prisma.notification.count({ where: { tenantId, userId: user.id, isRead: false } }),
+    prisma.notificationRecipient.count({ where: { tenantId, userId: user.id, isRead: false, isArchived: false } }),
   ]);
 
   const enrolledIds = enrollments.map((item) => item.courseId);
@@ -148,6 +149,7 @@ async function Dashboard() {
           userName={user.fullName}
         />
         <ActiveAnnouncements tenantId={tenantId} audience="student" />
+        <PushSettingsCard />
 
         <section className="dashboardHero studentDashboardHero">
           <div className="studentHeroCopy">

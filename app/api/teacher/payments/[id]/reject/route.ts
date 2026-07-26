@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
+import { notifyPaymentDecision } from "../../../../../../lib/notifications/events";
 
 const schema = z.object({
   reason: z.string().trim().max(300).optional().nullable(),
@@ -46,20 +47,11 @@ export async function POST(
         rejectionReason,
         reviewedById: auth.context.user.id,
         reviewedAt: new Date(),
+        notificationVersion: { increment: 1 },
       },
     });
 
     // 2. Create Notification for student
-    await tx.notification.create({
-      data: {
-        tenantId,
-        userId: payment.studentId,
-        title: "تنبيه حول طلب الاشتراك",
-        message: `تعذر تفعيل كورس "${payment.course.title}". السبب: ${rejectionReason}`,
-        type: "PAYMENT_REJECTED",
-      },
-    });
-
     // 3. Create Audit Log
     await tx.auditLog.create({
       data: {
@@ -73,6 +65,8 @@ export async function POST(
       },
     });
   });
+
+  await notifyPaymentDecision({ tenantId, studentId: payment.studentId, paymentId: payment.id, version: payment.notificationVersion + 1, approved: false, courseId: payment.courseId }).catch(() => undefined);
 
   revalidatePath("/teacher/payments");
   revalidatePath("/dashboard");

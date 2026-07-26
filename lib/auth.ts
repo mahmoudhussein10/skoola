@@ -112,9 +112,31 @@ export async function createSession(userId: string, _remember = true, tenantId?:
   }) : null;
 
   await prisma.$transaction(async (tx) => {
-    const activeDevices = await tx.deviceSession.count({ where: { userId, revokedAt: null } });
+    const now = new Date();
+    await tx.authSession.deleteMany({ where: { userId, expiresAt: { lte: now } } });
+    const liveDeviceSessions = await tx.authSession.findMany({
+      where: { userId, expiresAt: { gt: now } },
+      select: { deviceId: true },
+      distinct: ["deviceId"],
+    });
+    const liveDeviceIds = liveDeviceSessions.map((session) => session.deviceId);
+    await tx.deviceSession.updateMany({
+      where: {
+        userId,
+        revokedAt: null,
+        ...(liveDeviceIds.length ? { deviceId: { notIn: liveDeviceIds } } : {}),
+      },
+      data: { revokedAt: now },
+    });
+
     const knownDevice = await tx.deviceSession.findUnique({ where: { userId_deviceId: { userId, deviceId } } });
-    if (!knownDevice && activeDevices >= settings.maxDevicesPerStudent) throw new Error("DEVICE_LIMIT");
+    const activeDevices = isStudent
+      ? await tx.deviceSession.count({ where: { userId, revokedAt: null } })
+      : 0;
+    const currentDeviceIsActive = knownDevice?.revokedAt === null;
+    if (isStudent && !currentDeviceIsActive && activeDevices >= settings.maxDevicesPerStudent) {
+      throw new Error("DEVICE_LIMIT");
+    }
     await tx.deviceSession.upsert({
       where: { userId_deviceId: { userId, deviceId } },
       update: { userAgent, ipHash, lastActiveAt: new Date(), revokedAt: null },
@@ -266,6 +288,30 @@ export async function clearSession() {
   await clearSupportMode();
   const jar = await cookies();
   const token = jar.get(SESSION_COOKIE)?.value;
-  if (token) await prisma.authSession.deleteMany({ where: { tokenHash: hashToken(token) } });
+  if (token) {
+    const tokenHash = hashToken(token);
+    const session = await prisma.authSession.findUnique({
+      where: { tokenHash },
+      select: { userId: true, deviceId: true },
+    });
+    if (session) {
+      await prisma.$transaction(async (tx) => {
+        await tx.authSession.deleteMany({ where: { tokenHash } });
+        const otherLiveSessions = await tx.authSession.count({
+          where: {
+            userId: session.userId,
+            deviceId: session.deviceId,
+            expiresAt: { gt: new Date() },
+          },
+        });
+        if (otherLiveSessions === 0) {
+          await tx.deviceSession.updateMany({
+            where: { userId: session.userId, deviceId: session.deviceId, revokedAt: null },
+            data: { revokedAt: new Date() },
+          });
+        }
+      });
+    }
+  }
   jar.delete(SESSION_COOKIE);
 }

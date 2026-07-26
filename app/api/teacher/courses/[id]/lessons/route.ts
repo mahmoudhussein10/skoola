@@ -5,6 +5,7 @@ import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
 import { isBunnyStorageUrl, isBunnyVideoUrl } from "../../../../../../lib/media/trusted-url";
+import { notifyLessonPublished } from "../../../../../../lib/notifications/events";
 
 const lessonSchema = z.object({
   sectionId: z.string().cuid(),
@@ -50,7 +51,7 @@ export async function POST(
 
   const section = await prisma.section.findFirst({
     where: { id: parsed.data.sectionId, courseId, tenantId },
-    select: { id: true },
+    select: { id: true, course: { select: { title: true } } },
   });
   if (!section) return NextResponse.json({ ok: false, message: "القسم المحدد غير موجود" }, { status: 404 });
 
@@ -94,6 +95,8 @@ export async function POST(
     return created;
   });
 
+  if (lesson.status === "PUBLISHED") await notifyLessonPublished({ tenantId, courseId, courseTitle: section.course.title, lessonId: lesson.id, lessonTitle: lesson.title, version: lesson.publishVersion }).catch(() => undefined);
+
   revalidatePath(`/teacher/courses/${courseId}`);
   revalidatePath(`/t/${auth.context.membership.tenant.slug}`);
   return NextResponse.json({ ok: true, lesson }, { status: 201 });
@@ -116,7 +119,7 @@ export async function PUT(
 
   const existing = await prisma.lesson.findFirst({
     where: { id: parsed.data.lessonId, tenantId },
-    include: { section: { select: { courseId: true } } },
+    include: { section: { select: { courseId: true, course: { select: { title: true } } } } },
   });
   if (!existing || existing.section.courseId !== courseId) {
     return NextResponse.json({ ok: false, message: "الدرس غير موجود" }, { status: 404 });
@@ -136,8 +139,11 @@ export async function PUT(
       duration: parsed.data.duration,
       isPreview: parsed.data.isPreview,
       status: parsed.data.status,
+      ...(existing.status !== "PUBLISHED" && parsed.data.status === "PUBLISHED" ? { publishVersion: { increment: 1 } } : {}),
     },
   });
+
+  if (existing.status !== "PUBLISHED" && lesson.status === "PUBLISHED") await notifyLessonPublished({ tenantId, courseId, courseTitle: existing.section.course.title, lessonId: lesson.id, lessonTitle: lesson.title, version: lesson.publishVersion }).catch(() => undefined);
 
   revalidatePath(`/teacher/courses/${courseId}`);
   revalidatePath(`/t/${auth.context.membership.tenant.slug}`);
@@ -159,7 +165,7 @@ export async function PATCH(
 
   const currentLesson = await prisma.lesson.findFirst({
     where: { id: parsed.data.lessonId, tenantId },
-    include: { section: { select: { courseId: true } } },
+    include: { section: { select: { courseId: true, course: { select: { title: true } } } } },
   });
   if (!currentLesson || currentLesson.section.courseId !== courseId) {
     return NextResponse.json({ ok: false, message: "الدرس غير موجود" }, { status: 404 });
@@ -204,7 +210,7 @@ export async function DELETE(
 
   const existing = await prisma.lesson.findFirst({
     where: { id: parsed.data.lessonId, tenantId },
-    include: { section: { select: { courseId: true } } },
+    include: { section: { select: { courseId: true, course: { select: { title: true } } } } },
   });
   if (!existing || existing.section.courseId !== courseId) {
     return NextResponse.json({ ok: false, message: "الدرس غير موجود" }, { status: 404 });

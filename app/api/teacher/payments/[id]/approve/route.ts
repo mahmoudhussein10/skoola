@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
+import { notifyPaymentDecision } from "../../../../../../lib/notifications/events";
 
 export async function POST(
   request: Request,
@@ -41,6 +42,7 @@ export async function POST(
         reviewedById: auth.context.user.id,
         reviewedAt: new Date(),
         rejectionReason: null,
+        notificationVersion: { increment: 1 },
       },
     });
 
@@ -65,17 +67,6 @@ export async function POST(
     });
 
     // 3. Create Notification for student
-    await tx.notification.create({
-      data: {
-        tenantId,
-        userId: payment.studentId,
-        title: "تم قبول الاشتراك!",
-        message: `تم قبول طلب دفعك لكورس "${payment.course.title}". يمكنك البدء في المشاهدة الآن!`,
-        type: "PAYMENT_APPROVED",
-        link: `/course?courseId=${payment.courseId}`,
-      },
-    });
-
     // 4. Create Audit Log
     await tx.auditLog.create({
       data: {
@@ -99,6 +90,8 @@ export async function POST(
       },
     });
   });
+
+  await notifyPaymentDecision({ tenantId, studentId: payment.studentId, paymentId: payment.id, version: payment.notificationVersion + 1, approved: true, courseId: payment.courseId }).catch(() => undefined);
 
   revalidatePath("/teacher/payments");
   revalidatePath("/teacher/students");

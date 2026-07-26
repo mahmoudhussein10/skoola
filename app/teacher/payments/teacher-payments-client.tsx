@@ -1,7 +1,8 @@
 "use client";
 
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   Check,
@@ -72,6 +73,18 @@ export function TeacherPaymentsClient({
   const [rejectReasonInput, setRejectReasonInput] = useState("");
   const [rejectModalPayment, setRejectModalPayment] = useState<PaymentItem | null>(null);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [portalReady, setPortalReady] = useState(false);
+
+  useEffect(() => setPortalReady(true), []);
+
+  useEffect(() => {
+    if (!selectedPayment && !rejectModalPayment) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedPayment, rejectModalPayment]);
 
   const filtered = payments.filter((p) => {
     if (statusFilter !== "ALL" && p.status !== statusFilter) return false;
@@ -366,11 +379,11 @@ export function TeacherPaymentsClient({
       </div>
 
       {/* Payment Details Drawer / Modal */}
-      {selectedPayment && (
-        <div className="modalOverlay" onClick={() => setSelectedPayment(null)}>
-          <div className="modalSheet paymentDetailSheet" onClick={(e) => e.stopPropagation()}>
+      {portalReady && selectedPayment && createPortal(
+        <div className="modalOverlay paymentModalOverlay" role="presentation" onClick={() => setSelectedPayment(null)}>
+          <div className="modalSheet paymentDetailSheet" role="dialog" aria-modal="true" aria-labelledby="payment-detail-title" onClick={(e) => e.stopPropagation()}>
             <header className="modalHeader">
-              <h3>تفاصيل طلب الاشتراك والدفع</h3>
+              <h3 id="payment-detail-title">تفاصيل طلب الاشتراك والدفع</h3>
               <button className="iconBtn" onClick={() => setSelectedPayment(null)}>
                 <X size={20} />
               </button>
@@ -460,12 +473,13 @@ export function TeacherPaymentsClient({
               )}
             </footer>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Reject Reason Modal */}
-      {rejectModalPayment && (
-        <div className="modalOverlay" onClick={() => setRejectModalPayment(null)}>
+      {portalReady && rejectModalPayment && createPortal(
+        <div className="modalOverlay paymentModalOverlay" role="presentation" onClick={() => setRejectModalPayment(null)}>
           <div className="modalSheet confirmSheet" onClick={(e) => e.stopPropagation()}>
             <h3>رفض طلب الاشتراك</h3>
             <p>
@@ -500,7 +514,8 @@ export function TeacherPaymentsClient({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

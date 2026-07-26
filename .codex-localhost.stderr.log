@@ -1,0 +1,785 @@
+⨯ TypeError: controller[kState].transformAlgorithm is not a function
+    at ignore-listed frames {
+  digest: '3865048812'
+}
+[browser] ⨯ unhandledRejection: ChunkLoadError: Failed to load chunk /_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_0yjw1oe._.js from module [turbopack]/browser/dev/hmr-client/hmr-client.ts [app-client] (ecmascript, async loader)
+[browser] Image with src "/skoola-logo.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_115brz8._.js:2477:13)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13851:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13914:21)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13358:52) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13851:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13851:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13914:21)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13358:52) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13851:21)
+[browser] Uncaught Error: ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx
+
+
+    at <unknown> (Error: ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11)
+    at <unknown> (Error: (./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+[browser] ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx:13:11
+Unexpected token `no substitution template literal`. Expected identifier or string
+  11 |   KeyRound,
+  12 |   Landmark,
+> 13 |   ImageUp,`r`n  Smartphone,
+     |           ^^^
+  14 |   Sparkles,
+  15 |   X,
+  16 | } from "lucide-react";
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/t/[tenantSlug]/courses/[courseSlug]/student-checkout-client.tsx
+    ./app/t/[tenantSlug]/courses/[courseSlug]/page.tsx 
+    at handleErrors (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)
+    at processMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2835:28)
+    at <unknown> (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2680:13)
+    at WebSocket.handleMessage (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2325:17) (file://C:/Users/mh/Desktop/منصه تعليميه/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2774:21)

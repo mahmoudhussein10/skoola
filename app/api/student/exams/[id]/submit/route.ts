@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../../../../../../lib/prisma";
 import { getAuthContext } from "../../../../../../lib/auth";
 import { isSameOrigin } from "../../../../../../lib/api-auth";
+import { notifyExamResult } from "../../../../../../lib/notifications/events";
 
 const submitSchema = z.object({
   attemptId: z.string().cuid().optional(),
@@ -116,12 +117,12 @@ export async function POST(
   const startTime = parsed.data.startedAt ? new Date(parsed.data.startedAt) : now;
 
   // Serializable isolation closes the double-submit race without changing the database model.
-  let attempt: { id: string };
+  let attempt: { id: string; resultVersion: number };
   try {
     attempt = await prisma.$transaction(async (tx) => {
       const alreadySubmitted = await tx.examAttempt.findFirst({
         where: { tenantId, examId, studentId, status: { in: ["SUBMITTED", "GRADED"] } },
-        select: { id: true },
+        select: { id: true, resultVersion: true },
       });
       if (alreadySubmitted) throw new Error("EXAM_ATTEMPT_ALREADY_USED");
 
@@ -139,7 +140,7 @@ export async function POST(
           status: "GRADED",
           answers: studentAnswers,
         },
-        select: { id: true },
+        select: { id: true, resultVersion: true },
       });
 
       await tx.activityLog.create({
@@ -169,6 +170,7 @@ export async function POST(
   };
 
   if (exam.showResultImmediately) {
+    await notifyExamResult({ tenantId, studentId, examId, examTitle: exam.title, attemptId: attempt.id, version: attempt.resultVersion }).catch(() => undefined);
     responseData.result = {
       score: earnedScore,
       maxScore: totalMaxScore,

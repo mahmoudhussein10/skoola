@@ -5,6 +5,7 @@ import { prisma } from "../../../../lib/prisma";
 import { createSession, requestFingerprint } from "../../../../lib/auth";
 import { signupSchema } from "../../../../lib/validation";
 import { isSameOrigin } from "../../../../lib/api-auth";
+import { notifyEnrollmentRequest } from "../../../../lib/notifications/events";
 
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
     });
 
     if (user.status === "ACTIVE") await createSession(user.id, false, tenant.id);
+    if (user.status === "PENDING") await notifyEnrollmentRequest({ tenantId: tenant.id, studentId: user.id, studentName: user.fullName }).catch(() => undefined);
     return NextResponse.json({ ok: true, pending: user.status === "PENDING", redirectTo: user.status === "ACTIVE" ? `/t/${tenant.slug}` : "/login" });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

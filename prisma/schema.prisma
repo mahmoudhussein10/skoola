@@ -132,50 +132,91 @@ enum AnnouncementSeverity {
   CRITICAL
 }
 
+enum PushPermissionState {
+  DEFAULT
+  GRANTED
+  DENIED
+  UNSUPPORTED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum NotificationChannel {
+  IN_APP
+  PUSH
+}
+
+enum NotificationDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+  INVALID_TOKEN
+}
+
+enum NotificationCategory {
+  COURSE_CONTENT
+  EXAMS
+  RESULTS
+  ENROLLMENTS
+  PAYMENTS
+  ADMINISTRATIVE
+}
+
 model Tenant {
-  id                String                  @id @default(cuid())
-  name              String
-  slug              String                  @unique
-  status            TenantStatus            @default(TRIAL)
-  ownerId           String?
-  logoUrl           String?
-  faviconUrl        String?
-  description       String?
-  contactEmail      String?
-  contactPhone      String?
-  subject           String?
-  onboardingStep    Int                     @default(1)
-  onboardingDone    Boolean                 @default(false)
-  suspendedAt       DateTime?
-  archivedAt        DateTime?
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  owner             User?                   @relation("TenantOwner", fields: [ownerId], references: [id], onDelete: SetNull)
-  members           TenantMember[]
-  studentProfiles   StudentProfile[]
-  courses           Course[]
-  sections          Section[]
-  lessons           Lesson[]
-  enrollments       Enrollment[]
-  videoProgress     VideoProgress[]
-  exams             Exam[]
-  questions         Question[]
-  examAttempts      ExamAttempt[]
-  payments          Payment[]
-  notifications     Notification[]
-  activationCodes   ActivationCode[]
-  assignments       Assignment[]
-  submissions       Submission[]
-  staffInvitations  StaffInvitation[]
-  auditLogs         AuditLog[]
-  activityLogs      ActivityLog[]
-  theme             ThemeSettings?
-  settings          TenantSettings?
-  supportSessions   SupportSession[]
-  billingSettings   TeacherBillingSettings?
-  billingStatements BillingStatement[]
-  teacherPayments   TeacherPaymentRecord[]
-  mediaAssets       MediaAsset[]
+  id                        String                            @id @default(cuid())
+  name                      String
+  slug                      String                            @unique
+  status                    TenantStatus                      @default(TRIAL)
+  ownerId                   String?
+  logoUrl                   String?
+  faviconUrl                String?
+  description               String?
+  contactEmail              String?
+  contactPhone              String?
+  subject                   String?
+  onboardingStep            Int                               @default(1)
+  onboardingDone            Boolean                           @default(false)
+  suspendedAt               DateTime?
+  archivedAt                DateTime?
+  createdAt                 DateTime                          @default(now())
+  updatedAt                 DateTime                          @updatedAt
+  owner                     User?                             @relation("TenantOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  members                   TenantMember[]
+  studentProfiles           StudentProfile[]
+  courses                   Course[]
+  sections                  Section[]
+  lessons                   Lesson[]
+  enrollments               Enrollment[]
+  videoProgress             VideoProgress[]
+  exams                     Exam[]
+  questions                 Question[]
+  examAttempts              ExamAttempt[]
+  payments                  Payment[]
+  notifications             Notification[]
+  notificationRecipients    NotificationRecipient[]
+  notificationDeliveries    NotificationDelivery[]
+  pushDevices               PushDevice[]
+  notificationPreferences   NotificationPreference[]
+  activationCodes           ActivationCode[]
+  assignments               Assignment[]
+  submissions               Submission[]
+  staffInvitations          StaffInvitation[]
+  auditLogs                 AuditLog[]
+  activityLogs              ActivityLog[]
+  theme                     ThemeSettings?
+  settings                  TenantSettings?
+  supportSessions           SupportSession[]
+  billingSettings           TeacherBillingSettings?
+  billingStatements         BillingStatement[]
+  teacherPayments           TeacherPaymentRecord[]
+  billingPaymentSubmissions TeacherBillingPaymentSubmission[]
+  mediaAssets               MediaAsset[]
 
   @@index([status, createdAt])
   @@index([ownerId])
@@ -199,41 +240,46 @@ model TenantMember {
 }
 
 model User {
-  id               String               @id @default(cuid())
-  fullName         String
-  username         String               @unique
-  email            String?              @unique
-  phone            String               @unique
-  passwordHash     String
-  role             UserRole             @default(STUDENT)
-  status           UserStatus           @default(PENDING)
-  avatarUrl        String?
-  emailVerified    Boolean              @default(false)
-  phoneVerified    Boolean              @default(false)
-  lastLoginAt      DateTime?
-  deletedAt        DateTime?
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  ownedTenants     Tenant[]             @relation("TenantOwner")
-  memberships      TenantMember[]
-  studentProfiles  StudentProfile[]
-  createdCourses   Course[]             @relation("CourseCreator")
-  enrollments      Enrollment[]         @relation("StudentEnrollments")
-  videoProgress    VideoProgress[]
-  examAttempts     ExamAttempt[]
-  payments         Payment[]            @relation("StudentPayments")
-  reviewedPayments Payment[]            @relation("PaymentReviewer")
-  notifications    Notification[]
-  deviceSessions   DeviceSession[]
-  auditLogs        AuditLog[]           @relation("AuditActor")
-  activityLogs     ActivityLog[]        @relation("ActivityActor")
-  sessions         AuthSession[]
-  passwordResets   PasswordResetToken[]
-  loginAttempts    LoginAttempt[]
-  staffInvitations StaffInvitation[]    @relation("InvitationCreator")
-  submissions      Submission[]         @relation("StudentSubmissions")
-  supportSessions  SupportSession[]     @relation("SupportActor")
-  uploadedMedia    MediaAsset[]          @relation("MediaUploadedBy")
+  id                      String                   @id @default(cuid())
+  fullName                String
+  username                String                   @unique
+  email                   String?                  @unique
+  phone                   String                   @unique
+  passwordHash            String
+  role                    UserRole                 @default(STUDENT)
+  status                  UserStatus               @default(PENDING)
+  avatarUrl               String?
+  emailVerified           Boolean                  @default(false)
+  phoneVerified           Boolean                  @default(false)
+  lastLoginAt             DateTime?
+  deletedAt               DateTime?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  ownedTenants            Tenant[]                 @relation("TenantOwner")
+  memberships             TenantMember[]
+  studentProfiles         StudentProfile[]
+  createdCourses          Course[]                 @relation("CourseCreator")
+  enrollments             Enrollment[]             @relation("StudentEnrollments")
+  videoProgress           VideoProgress[]
+  examAttempts            ExamAttempt[]
+  payments                Payment[]                @relation("StudentPayments")
+  reviewedPayments        Payment[]                @relation("PaymentReviewer")
+  notifications           Notification[]           @relation("LegacyUserNotifications")
+  createdNotifications    Notification[]           @relation("NotificationCreator")
+  notificationRecipients  NotificationRecipient[]
+  notificationDeliveries  NotificationDelivery[]
+  pushDevices             PushDevice[]
+  notificationPreferences NotificationPreference[]
+  deviceSessions          DeviceSession[]
+  auditLogs               AuditLog[]               @relation("AuditActor")
+  activityLogs            ActivityLog[]            @relation("ActivityActor")
+  sessions                AuthSession[]
+  passwordResets          PasswordResetToken[]
+  loginAttempts           LoginAttempt[]
+  staffInvitations        StaffInvitation[]        @relation("InvitationCreator")
+  submissions             Submission[]             @relation("StudentSubmissions")
+  supportSessions         SupportSession[]         @relation("SupportActor")
+  uploadedMedia           MediaAsset[]             @relation("MediaUploadedBy")
 
   @@index([role, status])
   @@index([createdAt])
@@ -313,30 +359,31 @@ model Section {
 }
 
 model Lesson {
-  id            String          @id @default(cuid())
-  tenantId      String
-  sectionId     String
-  title         String
-  description   String?
-  content       String?
-  type          LessonType      @default(VIDEO)
-  videoId       String?
-  videoUrl      String?
-  attachmentUrl String?
-  thumbnailUrl  String?
-  videoProvider String?         @default("CLOUDFLARE_STREAM")
-  duration      Int             @default(0)
-  order         Int
-  isPreview     Boolean         @default(false)
-  status        ContentStatus   @default(DRAFT)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  section       Section         @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  progress      VideoProgress[]
-  exams         Exam[]
-  assignments   Assignment[]
-  mediaAssets   MediaAsset[]
+  id             String          @id @default(cuid())
+  tenantId       String
+  sectionId      String
+  title          String
+  description    String?
+  content        String?
+  type           LessonType      @default(VIDEO)
+  videoId        String?
+  videoUrl       String?
+  attachmentUrl  String?
+  thumbnailUrl   String?
+  videoProvider  String?         @default("CLOUDFLARE_STREAM")
+  duration       Int             @default(0)
+  order          Int
+  isPreview      Boolean         @default(false)
+  status         ContentStatus   @default(DRAFT)
+  publishVersion Int             @default(1)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  section        Section         @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  progress       VideoProgress[]
+  exams          Exam[]
+  assignments    Assignment[]
+  mediaAssets    MediaAsset[]
 
   @@unique([sectionId, order])
   @@index([tenantId, sectionId, status])
@@ -401,6 +448,7 @@ model Exam {
   endDate                DateTime?
   order                  Int           @default(0)
   status                 ContentStatus @default(DRAFT)
+  publishVersion         Int           @default(1)
   tenant                 Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   course                 Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
   section                Section?      @relation(fields: [sectionId], references: [id], onDelete: SetNull)
@@ -432,63 +480,170 @@ model Question {
 }
 
 model ExamAttempt {
-  id          String        @id @default(cuid())
-  tenantId    String
-  examId      String
-  studentId   String
-  score       Decimal?      @db.Decimal(6, 2)
-  maxScore    Decimal?      @db.Decimal(6, 2)
-  percentage  Decimal?      @db.Decimal(5, 2)
-  passed      Boolean?
-  startedAt   DateTime      @default(now())
-  submittedAt DateTime?
-  status      AttemptStatus @default(IN_PROGRESS)
-  answers     Json?
-  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  exam        Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
-  student     User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  id            String        @id @default(cuid())
+  tenantId      String
+  examId        String
+  studentId     String
+  score         Decimal?      @db.Decimal(6, 2)
+  maxScore      Decimal?      @db.Decimal(6, 2)
+  percentage    Decimal?      @db.Decimal(5, 2)
+  passed        Boolean?
+  startedAt     DateTime      @default(now())
+  submittedAt   DateTime?
+  status        AttemptStatus @default(IN_PROGRESS)
+  resultVersion Int           @default(1)
+  answers       Json?
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  exam          Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student       User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, studentId, startedAt])
   @@index([tenantId, examId, status])
 }
 
 model Payment {
-  id              String        @id @default(cuid())
-  tenantId        String
-  studentId       String
-  courseId        String
-  amount          Decimal       @db.Decimal(10, 2)
-  paymentMethod   PaymentMethod
-  referenceNumber String?
-  status          PaymentStatus @default(PENDING)
-  proofUrl        String?
-  rejectionReason String?
-  reviewedById    String?
-  reviewedAt      DateTime?
-  createdAt       DateTime      @default(now())
-  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student         User          @relation("StudentPayments", fields: [studentId], references: [id])
-  course          Course        @relation(fields: [courseId], references: [id])
-  reviewedBy      User?         @relation("PaymentReviewer", fields: [reviewedById], references: [id])
+  id                  String        @id @default(cuid())
+  tenantId            String
+  studentId           String
+  courseId            String
+  amount              Decimal       @db.Decimal(10, 2)
+  paymentMethod       PaymentMethod
+  referenceNumber     String?
+  status              PaymentStatus @default(PENDING)
+  notificationVersion Int           @default(1)
+  proofUrl            String?
+  rejectionReason     String?
+  reviewedById        String?
+  reviewedAt          DateTime?
+  createdAt           DateTime      @default(now())
+  tenant              Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student             User          @relation("StudentPayments", fields: [studentId], references: [id])
+  course              Course        @relation(fields: [courseId], references: [id])
+  reviewedBy          User?         @relation("PaymentReviewer", fields: [reviewedById], references: [id])
 
   @@index([tenantId, status, createdAt])
   @@index([tenantId, studentId])
 }
 
 model Notification {
-  id        String   @id @default(cuid())
+  id             String                  @id @default(cuid())
+  tenantId       String
+  userId         String?
+  type           String
+  category       NotificationCategory    @default(ADMINISTRATIVE)
+  title          String
+  message        String
+  link           String?
+  priority       NotificationPriority    @default(NORMAL)
+  source         String                  @default("SYSTEM")
+  metadata       Json?
+  createdById    String?
+  idempotencyKey String?
+  isRead         Boolean                 @default(false)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  tenant         Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user           User?                   @relation("LegacyUserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy      User?                   @relation("NotificationCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  recipients     NotificationRecipient[]
+  deliveries     NotificationDelivery[]
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, type, createdAt])
+  @@index([tenantId, userId, isRead, createdAt])
+}
+
+model NotificationRecipient {
+  id             String                 @id @default(cuid())
+  notificationId String
+  tenantId       String
+  userId         String
+  isRead         Boolean                @default(false)
+  isSeen         Boolean                @default(false)
+  isArchived     Boolean                @default(false)
+  readAt         DateTime?
+  seenAt         DateTime?
+  archivedAt     DateTime?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  notification   Notification           @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  tenant         Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveries     NotificationDelivery[]
+
+  @@unique([notificationId, userId])
+  @@index([tenantId, userId, isArchived, createdAt])
+  @@index([tenantId, userId, isRead, createdAt])
+}
+
+model PushDevice {
+  id                String                 @id @default(cuid())
+  tenantId          String
+  userId            String
+  installationId    String
+  token             String?                @unique
+  enabled           Boolean                @default(true)
+  permissionState   PushPermissionState    @default(DEFAULT)
+  browser           String?
+  platform          String?
+  userAgentSummary  String?
+  promptCount       Int                    @default(0)
+  lastPromptedAt    DateTime?
+  promptDismissedAt DateTime?
+  lastFailureCode   String?
+  lastFailureAt     DateTime?
+  lastSeenAt        DateTime               @default(now())
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveries        NotificationDelivery[]
+
+  @@unique([tenantId, userId, installationId])
+  @@index([tenantId, enabled, updatedAt])
+  @@index([userId, enabled])
+}
+
+model NotificationDelivery {
+  id                String                     @id @default(cuid())
+  notificationId    String
+  recipientId       String
+  tenantId          String
+  userId            String
+  deviceId          String?
+  channel           NotificationChannel
+  status            NotificationDeliveryStatus @default(PENDING)
+  providerMessageId String?
+  errorCode         String?
+  attemptCount      Int                        @default(0)
+  sentAt            DateTime?
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+  notification      Notification               @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  recipient         NotificationRecipient      @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  tenant            Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device            PushDevice?                @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@unique([notificationId, userId, deviceId, channel])
+  @@index([tenantId, status, createdAt])
+  @@index([deviceId, status])
+}
+
+model NotificationPreference {
+  id        String               @id @default(cuid())
   tenantId  String
   userId    String
-  title     String
-  message   String
-  type      String
-  isRead    Boolean  @default(false)
-  link      String?
-  createdAt DateTime @default(now())
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  NotificationCategory
+  inApp     Boolean              @default(true)
+  push      Boolean              @default(true)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  tenant    Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId, userId, isRead, createdAt])
+  @@unique([tenantId, userId, category])
+  @@index([tenantId, userId])
 }
 
 model ActivationCode {
@@ -550,112 +705,113 @@ model Submission {
 }
 
 model ThemeSettings {
-  id                String   @id @default(cuid())
-  tenantId          String   @unique
-  primaryColor      String   @default("#1565f5")
-  secondaryColor    String   @default("#081b3a")
-  accentColor       String   @default("#7b2ff7")
-  backgroundColor   String   @default("#f8fafc")
-  surfaceColor      String   @default("#ffffff")
-  textColor         String   @default("#0f172a")
-  mutedColor        String   @default("#64748b")
-  primaryForeground String   @default("#ffffff")
-  borderRadius      Int      @default(16)
-  buttonRadius      Int      @default(14)
-  fontFamily        String   @default("Tajawal")
-  headingFont       String   @default("Tajawal")
-  bodyFont          String   @default("Tajawal")
-  buttonFont        String   @default("Tajawal")
-  buttonColor       String   @default("#1565f5")
-  successColor      String   @default("#15803d")
-  warningColor      String   @default("#b45309")
-  dangerColor       String   @default("#dc2626")
-  navbarColor       String   @default("#ffffff")
-  footerColor       String   @default("#081b3a")
-  linkColor         String   @default("#1565f5")
-  hoverColor        String   @default("#0f4ed8")
-  sidebarColor      String   @default("#081b3a")
-  cardStyle         String   @default("ELEVATED")
-  buttonStyle       String   @default("GRADIENT")
-  animationStyle    String   @default("SMOOTH")
-  heroLayout        String   @default("SPLIT")
-  heroImageUrl      String?
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  primaryColor       String   @default("#1565f5")
+  secondaryColor     String   @default("#081b3a")
+  accentColor        String   @default("#7b2ff7")
+  backgroundColor    String   @default("#f8fafc")
+  surfaceColor       String   @default("#ffffff")
+  textColor          String   @default("#0f172a")
+  mutedColor         String   @default("#64748b")
+  primaryForeground  String   @default("#ffffff")
+  borderRadius       Int      @default(16)
+  buttonRadius       Int      @default(14)
+  fontFamily         String   @default("Tajawal")
+  headingFont        String   @default("Tajawal")
+  bodyFont           String   @default("Tajawal")
+  buttonFont         String   @default("Tajawal")
+  buttonColor        String   @default("#1565f5")
+  successColor       String   @default("#15803d")
+  warningColor       String   @default("#b45309")
+  dangerColor        String   @default("#dc2626")
+  navbarColor        String   @default("#ffffff")
+  footerColor        String   @default("#081b3a")
+  linkColor          String   @default("#1565f5")
+  hoverColor         String   @default("#0f4ed8")
+  sidebarColor       String   @default("#081b3a")
+  cardStyle          String   @default("ELEVATED")
+  buttonStyle        String   @default("GRADIENT")
+  animationStyle     String   @default("SMOOTH")
+  heroLayout         String   @default("SPLIT")
+  heroImageUrl       String?
   teacherPortraitUrl String?
-  heroImagePosition String   @default("50% 50%")
-  heroOverlay       Int      @default(18)
-  heroTitle         String?
-  heroSubtitle      String?
-  heroCtaLabel      String   @default("أنشئ حسابك مجانًا")
-  heroSecondaryLabel String  @default("استكشف الكورسات")
-  homepageSections  Json?
-  loginCoverUrl     String?
-  preset            String   @default("SKOOLA")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  heroImagePosition  String   @default("50% 50%")
+  heroOverlay        Int      @default(18)
+  heroTitle          String?
+  heroSubtitle       String?
+  heroCtaLabel       String   @default("أنشئ حسابك مجانًا")
+  heroSecondaryLabel String   @default("استكشف الكورسات")
+  homepageSections   Json?
+  loginCoverUrl      String?
+  preset             String   @default("SKOOLA")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model TenantSettings {
-  id             String   @id @default(cuid())
-  tenantId       String   @unique
-  platformName   String
-  heroTitle      String?
-  description    String?
-  supportPhone   String?
-  supportEmail   String?
-  socialLinks    Json?
-  locale         String   @default("ar-EG")
-  timezone       String   @default("Africa/Cairo")
-  publicPageLive Boolean  @default(false)
+  id                      String   @id @default(cuid())
+  tenantId                String   @unique
+  platformName            String
+  heroTitle               String?
+  description             String?
+  supportPhone            String?
+  supportEmail            String?
+  socialLinks             Json?
+  locale                  String   @default("ar-EG")
+  timezone                String   @default("Africa/Cairo")
+  publicPageLive          Boolean  @default(false)
   bunnyStreamCollectionId String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  tenant                  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model MediaAsset {
-  id                 String   @id @default(cuid())
-  tenantId           String
-  uploadedById       String
-  courseId           String?
-  lessonId           String?
-  resourceType       String
-  provider           String
-  originalFileName   String
-  storedFileName     String?
-  mimeType           String
-  fileExtension      String
-  fileSizeBytes      BigInt   @db.BigInt
-  title              String?
-  altText            String?
-  bunnyVideoId       String?  @unique
-  bunnyCollectionId  String?
-  bunnyStoragePath   String?
-  publicUrl          String?
-  thumbnailUrl       String?
-  playbackUrl        String?
-  embedUrl           String?
-  uploadStatus       String   @default("PENDING")
-  processingStatus   String   @default("WAITING")
-  uploadProgress     Int      @default(0)
-  width              Int?
-  height             Int?
-  durationSeconds    Int?
-  errorMessage       String?
-  metadata           Json?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  deletedAt          DateTime?
-  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  uploadedBy         User     @relation("MediaUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
-  course             Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  lesson             Lesson?  @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  id                String    @id @default(cuid())
+  tenantId          String
+  uploadedById      String
+  courseId          String?
+  lessonId          String?
+  resourceType      String
+  provider          String
+  originalFileName  String
+  storedFileName    String?
+  mimeType          String
+  fileExtension     String
+  fileSizeBytes     BigInt    @db.BigInt
+  title             String?
+  altText           String?
+  bunnyVideoId      String?   @unique
+  bunnyCollectionId String?
+  bunnyStoragePath  String?
+  publicUrl         String?
+  thumbnailUrl      String?
+  playbackUrl       String?
+  embedUrl          String?
+  uploadStatus      String    @default("PENDING")
+  processingStatus  String    @default("WAITING")
+  uploadProgress    Int       @default(0)
+  width             Int?
+  height            Int?
+  durationSeconds   Int?
+  errorMessage      String?
+  metadata          Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+  tenant            Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  uploadedBy        User      @relation("MediaUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
+  course            Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  lesson            Lesson?   @relation(fields: [lessonId], references: [id], onDelete: SetNull)
 
   @@index([tenantId, resourceType, createdAt])
   @@index([tenantId, provider, processingStatus])
   @@index([tenantId, courseId])
   @@index([uploadedById, createdAt])
 }
+
 model StaffInvitation {
   id          String           @id @default(cuid())
   tenantId    String
@@ -799,22 +955,30 @@ model SupportSession {
 }
 
 model PlatformSettings {
-  id                         String       @id @default("default")
-  platformName               String       @default("Skoola")
-  logoUrl                    String?
-  supportPhone               String?
-  supportWhatsApp            String?
-  supportEmail               String?
-  primaryColor               String       @default("#1565f5")
-  registrationEnabled        Boolean      @default(true)
-  teacherRegistrationEnabled Boolean      @default(true)
-  maxDevicesPerStudent       Int          @default(2)
-  maintenanceMode            Boolean      @default(false)
-  requireAdminApproval       Boolean      @default(false)
-  defaultTenantStatus        TenantStatus @default(TRIAL)
-  allowedUploadTypes         Json?
-  maxUploadSizeMb            Int          @default(25)
-  updatedAt                  DateTime     @updatedAt
+  id                            String       @id @default("default")
+  platformName                  String       @default("Skoola")
+  logoUrl                       String?
+  supportPhone                  String?
+  supportWhatsApp               String?
+  supportEmail                  String?
+  primaryColor                  String       @default("#1565f5")
+  registrationEnabled           Boolean      @default(true)
+  teacherRegistrationEnabled    Boolean      @default(true)
+  maxDevicesPerStudent          Int          @default(2)
+  maintenanceMode               Boolean      @default(false)
+  requireAdminApproval          Boolean      @default(false)
+  defaultTenantStatus           TenantStatus @default(TRIAL)
+  allowedUploadTypes            Json?
+  maxUploadSizeMb               Int          @default(25)
+  defaultTeacherPricePerStudent Decimal      @default(15) @db.Decimal(10, 2)
+  teacherBillingDueDay          Int          @default(10)
+  billingVodafoneCashEnabled    Boolean      @default(false)
+  billingVodafoneCashNumber     String?
+  billingInstaPayEnabled        Boolean      @default(false)
+  billingInstaPayAddress        String?
+  billingAccountName            String?
+  billingPaymentInstructions    String?
+  updatedAt                     DateTime     @updatedAt
 }
 
 enum BillingStatementStatus {
@@ -828,7 +992,7 @@ enum BillingStatementStatus {
 model TeacherBillingSettings {
   id                  String    @id @default(cuid())
   tenantId            String    @unique
-  pricePerStudent     Decimal   @default(0) @db.Decimal(10, 2)
+  pricePerStudent     Decimal   @default(15) @db.Decimal(10, 2)
   billingCycle        String    @default("MONTHLY")
   studentLimit        Int       @default(100)
   subscriptionStart   DateTime  @default(now())
@@ -850,26 +1014,27 @@ model TeacherBillingSettings {
 }
 
 model BillingStatement {
-  id               String                 @id @default(cuid())
-  tenantId         String
-  statementNumber  String                 @unique
-  periodStart      DateTime
-  periodEnd        DateTime
-  billableStudents Int
-  pricePerStudent  Decimal                @db.Decimal(10, 2)
-  subtotal         Decimal                @db.Decimal(10, 2)
-  adjustments      Decimal                @default(0) @db.Decimal(10, 2)
-  discount         Decimal                @default(0) @db.Decimal(10, 2)
-  finalAmount      Decimal                @db.Decimal(10, 2)
-  paidAmount       Decimal                @default(0) @db.Decimal(10, 2)
-  status           BillingStatementStatus @default(UNPAID)
-  issueDate        DateTime               @default(now())
-  dueDate          DateTime
-  internalNote     String?
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
-  tenant           Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  payments         TeacherPaymentRecord[]
+  id                 String                            @id @default(cuid())
+  tenantId           String
+  statementNumber    String                            @unique
+  periodStart        DateTime
+  periodEnd          DateTime
+  billableStudents   Int
+  pricePerStudent    Decimal                           @db.Decimal(10, 2)
+  subtotal           Decimal                           @db.Decimal(10, 2)
+  adjustments        Decimal                           @default(0) @db.Decimal(10, 2)
+  discount           Decimal                           @default(0) @db.Decimal(10, 2)
+  finalAmount        Decimal                           @db.Decimal(10, 2)
+  paidAmount         Decimal                           @default(0) @db.Decimal(10, 2)
+  status             BillingStatementStatus            @default(UNPAID)
+  issueDate          DateTime                          @default(now())
+  dueDate            DateTime
+  internalNote       String?
+  createdAt          DateTime                          @default(now())
+  updatedAt          DateTime                          @updatedAt
+  tenant             Tenant                            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  payments           TeacherPaymentRecord[]
+  paymentSubmissions TeacherBillingPaymentSubmission[]
 
   @@index([tenantId, status, createdAt])
 }
@@ -888,4 +1053,24 @@ model TeacherPaymentRecord {
   statement       BillingStatement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
 
   @@index([tenantId, paymentDate])
+}
+
+model TeacherBillingPaymentSubmission {
+  id              String           @id @default(cuid())
+  tenantId        String
+  statementId     String
+  amount          Decimal          @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod
+  referenceNumber String?
+  notes           String?
+  status          PaymentStatus    @default(PENDING)
+  rejectionReason String?
+  reviewedAt      DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  statement       BillingStatement @relation(fields: [statementId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status, createdAt])
+  @@index([statementId, status])
 }

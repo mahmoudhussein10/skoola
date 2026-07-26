@@ -10,6 +10,7 @@ import {
   CreditCard,
   KeyRound,
   Landmark,
+  ImageUp,
   Smartphone,
   Sparkles,
   X,
@@ -23,6 +24,12 @@ type ActivePaymentMethod = {
   iban?: string | null;
   holder?: string | null;
 };
+
+function paymentMethodTitle(method: ActivePaymentMethod) {
+  if (method.type === "vodafone") return "فودافون كاش";
+  if (method.type === "instapay") return "إنستا باي";
+  return method.bankName || method.title;
+}
 
 export function StudentCheckoutClient({
   courseId,
@@ -50,7 +57,7 @@ export function StudentCheckoutClient({
   );
 
   const [referenceNumber, setReferenceNumber] = useState("");
-  const [proofUrl, setProofUrl] = useState("");
+  const [proofFile, setProofFile] = useState<File | null>(null);
   const [activationCode, setActivationCode] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
@@ -79,15 +86,15 @@ export function StudentCheckoutClient({
     };
 
     try {
+      const formData = new FormData();
+      formData.set("courseId", courseId);
+      formData.set("paymentMethod", selectedMethod ? enumMap[selectedMethod.type] || "VODAFONE_CASH" : "VODAFONE_CASH");
+      if (referenceNumber.trim()) formData.set("referenceNumber", referenceNumber.trim());
+      if (proofFile) formData.set("proof", proofFile);
+
       const res = await fetch("/api/student/payments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          courseId,
-          paymentMethod: selectedMethod ? enumMap[selectedMethod.type] || "VODAFONE_CASH" : "VODAFONE_CASH",
-          referenceNumber: referenceNumber.trim() || null,
-          proofUrl: proofUrl.trim() || null,
-        }),
+        body: formData,
       });
 
       const data = await res.json();
@@ -171,7 +178,7 @@ export function StudentCheckoutClient({
                 }}
               >
                 <Smartphone size={17} />
-                تحويل مالية (فودافون كاش / إنستا باي)
+                فودافون كاش / إنستا باي
               </button>
               <button
                 type="button"
@@ -200,7 +207,7 @@ export function StudentCheckoutClient({
                         {m.type === "vodafone" && <Smartphone size={16} />}
                         {m.type === "instapay" && <Landmark size={16} />}
                         {m.type === "bank" && <CreditCard size={16} />}
-                        <span>{m.title}</span>
+                        <span>{paymentMethodTitle(m)}</span>
                       </button>
                     ))}
                   </div>
@@ -209,7 +216,7 @@ export function StudentCheckoutClient({
                     <div className="methodDetailCard">
                       <div className="copyRow">
                         <div>
-                          <small>{selectedMethod.type === "bank" ? selectedMethod.bankName : selectedMethod.title}</small>
+                          <small>{paymentMethodTitle(selectedMethod)}</small>
                           <b dir="ltr" className="copyValue">{selectedMethod.value}</b>
                         </div>
                         <button
@@ -268,15 +275,28 @@ export function StudentCheckoutClient({
                       />
                     </label>
 
-                    <label>
-                      <span>رابط صورة إثبات الدفع / الإيصال (اختياري):</span>
+                    <label className="paymentProofUpload">
+                      <span>صورة إثبات الدفع / الإيصال (اختياري):</span>
                       <input
-                        type="text"
-                        dir="ltr"
-                        placeholder="https://..."
-                        value={proofUrl}
-                        onChange={(e) => setProofUrl(e.target.value)}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/avif"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] ?? null;
+                          if (file && file.size > 10 * 1024 * 1024) {
+                            e.target.value = "";
+                            setProofFile(null);
+                            setMessage({ text: "حجم الصورة يجب ألا يزيد عن 10 ميجابايت", type: "error" });
+                            return;
+                          }
+                          setProofFile(file);
+                          setMessage(null);
+                        }}
                       />
+                      <span className={`paymentProofPicker${proofFile ? " selected" : ""}`}>
+                        <ImageUp size={22} />
+                        <b>{proofFile ? proofFile.name : "اضغط لاختيار صورة من جهازك"}</b>
+                        <small>{proofFile ? `${(proofFile.size / 1024 / 1024).toFixed(1)} MB` : "JPG أو PNG أو WebP — بحد أقصى 10MB"}</small>
+                      </span>
                     </label>
 
                     {message && (

@@ -1,5 +1,6 @@
 
 import type { CSSProperties } from "react";
+import Link from "next/link";
 import { ArrowLeft, BookOpenCheck, GraduationCap, Sparkles } from "lucide-react";
 import { prisma } from "../../../../lib/prisma";
 import { requirePublicTenant } from "../../../../lib/tenant";
@@ -8,12 +9,6 @@ import { TenantPublicHeader } from "../../../components/tenant-public-header";
 import { CourseCatalogClient } from "./course-catalog-client";
 
 export const dynamic = "force-dynamic";
-
-const gradeLabels = {
-  FIRST_SECONDARY: "الأول الثانوي",
-  SECOND_SECONDARY: "الثاني الثانوي",
-  THIRD_SECONDARY: "الثالث الثانوي",
-} as const;
 
 export default async function TenantCourseCatalogPage({
   params,
@@ -100,7 +95,7 @@ export default async function TenantCourseCatalogPage({
           <p>{tenant.settings?.description ?? tenant.description ?? "محتوى مرتب وشرح واضح يساعدك تفهم وتراجع وتتابع تقدمك في مكان واحد."}</p>
           <div className="catalogHeroActions">
             <a className="btn tenantPrimary" href="#catalog-grid">شوف الكورسات <ArrowLeft size={18} /></a>
-            {isLoggedInStudent ? <a className="tenantTextButton" href="/dashboard">ارجع للوحة التعلم</a> : <a className="tenantTextButton" href={"/t/" + tenant.slug + "/register"}>أنشئ حساب طالب</a>}
+            {isLoggedInStudent ? <Link className="tenantTextButton" href="/dashboard">ارجع للوحة التعلم</Link> : <Link className="tenantTextButton" href={"/t/" + tenant.slug + "/register"}>أنشئ حساب طالب</Link>}
           </div>
           <div className="catalogHeroMetrics">
             <span><b>{courses.length.toLocaleString("en-US")}</b><small>كورس منشور</small></span>

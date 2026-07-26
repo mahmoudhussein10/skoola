@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isSameOrigin } from "../../../../lib/api-auth";
+import { notifyEnrollmentAccepted } from "../../../../lib/notifications/events";
 import { getAuthContext, hashToken } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
 
@@ -94,6 +95,8 @@ export async function POST(request: Request) {
   if (!result) {
     return NextResponse.json({ ok: false, message: "تم استخدام الكود للتو. اطلب كودًا جديدًا" }, { status: 409 });
   }
+
+  if (!result.alreadyActive) await notifyEnrollmentAccepted({ tenantId, studentId: auth.user.id, courseId: code.course.id, courseName: code.course.title, enrollmentId: result.enrollment.id }).catch(() => undefined);
 
   return NextResponse.json({
     ok: true,
