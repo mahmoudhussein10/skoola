@@ -540,8 +540,9 @@
 .teacherSignupTerms{margin:4px 2px!important}
 .teacherSignupSubmit{min-height:56px!important;border-radius:16px!important;background:#4f46e5!important}
 .teacherSignupSubmit:hover{background:#4338ca!important}
-.teacherSignupLogin{margin:20px 0 0;text-align:center;color:#6c7890;font-size:13px}
-.teacherSignupLogin a{color:#4f46e5;font-weight:900}
+.teacherSignupLogin{margin:22px 0 0;padding:16px;display:grid;gap:10px;text-align:center;color:#526176;font-size:14px;font-weight:800;border:1px solid #d9e3f3;border-radius:17px;background:#f8faff}
+.teacherSignupLogin a{width:100%;min-height:52px;padding:12px 18px;display:flex;align-items:center;justify-content:center;border-radius:13px;color:#fff!important;background:linear-gradient(135deg,#246cf5,#743af2);box-shadow:0 10px 24px rgba(49,91,225,.2);font-size:15px;font-weight:900;transition:filter .2s ease,box-shadow .2s ease}
+.teacherSignupLogin a:hover{filter:brightness(.97);box-shadow:0 13px 28px rgba(49,91,225,.27)}
 .formSuccess{padding:12px 14px;border:1px solid #a7e7c4;border-radius:13px;background:#edfdf4;color:#126b3b;font-size:13px;font-weight:800}
 @media(max-width:1000px){.teacherSelfSignupPage .authVisual{display:none}.teacherSelfSignupShell{width:100%!important;padding:30px 20px!important}.teacherSelfSignupCard{margin-inline:auto}}
 @media(max-width:760px){.teacherSelfSignupShell{padding:18px 12px calc(30px + env(safe-area-inset-bottom))!important}.teacherSelfSignupCard{padding:24px 16px!important;border-radius:22px!important}.teacherSignupIntro{margin-bottom:20px}.teacherSignupSection{padding:16px;border-radius:17px}.teacherSignupSectionHead{margin-bottom:14px}.teacherGradeChoices{grid-template-columns:1fr 1fr}.teacherPhotoPicker{align-items:flex-start}.teacherPhotoPicker>svg{display:none}.teacherPhotoPicker small{white-space:normal}.teacherSignupForm .fieldWide{grid-column:auto}}
