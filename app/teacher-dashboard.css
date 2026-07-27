@@ -419,7 +419,8 @@ body.dashboardMenuOpen {
   overflow: hidden !important;
   overscroll-behavior: none !important;
 }
-body.dashboardMenuOpen { touch-action: none !important; }
+/* Keep the page locked while still allowing the drawer's internal list to scroll on mobile. */
+body.dashboardMenuOpen { touch-action: pan-y !important; }
 
 @media (max-width: 900px) {
   .saasShell.teacher .saasSide {
