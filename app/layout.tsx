@@ -7,6 +7,7 @@ import "./mobile-system.css";
 import "./teacher-dashboard.css";
 import "./platform-pages.css";
 import { SkoolaExperience } from "./skoola-motion";
+import { MetaPixel } from "./components/analytics/meta-pixel";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001"),
@@ -26,5 +27,13 @@ export const viewport: Viewport = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <html lang="ar" dir="rtl" data-scroll-behavior="smooth"><body><a className="skipLink" href="#main-content">تخطَّ إلى المحتوى الرئيسي</a><SkoolaExperience>{children}</SkoolaExperience></body></html>;
+  return (
+    <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
+      <body>
+        <MetaPixel />
+        <a className="skipLink" href="#main-content">تخطَّ إلى المحتوى الرئيسي</a>
+        <SkoolaExperience>{children}</SkoolaExperience>
+      </body>
+    </html>
+  );
 }

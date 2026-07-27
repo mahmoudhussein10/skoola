@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, Camera, CheckCircle2, GraduationCap, ShieldCheck, Upload, UserRound } from "lucide-react";
+import * as metaPixel from "@/lib/meta-pixel";
 
 const grades = [
   ["FIRST_PREPARATORY", "الأول الإعدادي"],
@@ -68,6 +69,10 @@ export function TeacherSignupForm() {
         setMessage(result.message || "تعذر إنشاء الحساب.");
         return;
       }
+
+      metaPixel.completeRegistration({ content_name: "Teacher Registration", status: true });
+      metaPixel.startTrial({ content_name: "Skoola 24 Hour Trial", currency: "EGP", value: 0 });
+
       setSuccess(true);
       setMessage(result.warning || "تم إنشاء منصتك بنجاح. جارٍ فتح لوحة التحكم...");
       if (result.warning) await new Promise((resolve) => window.setTimeout(resolve, 1800));

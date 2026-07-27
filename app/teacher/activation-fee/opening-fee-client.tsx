@@ -28,6 +28,11 @@ export function OpeningFeeClient({ teacherName, academyName, amount, dueAt, stat
     setBusy(false);
     if (!response.ok) return setMessage(result?.message || "تعذر إرسال طلب الدفع");
     setSubmitted(true);
+    
+    // TODO: Meta Pixel - Do NOT fire 'Purchase' here because the payment is only PENDING admin approval.
+    // The Purchase event should be fired only when the backend confirms payment.
+    // This can be done by redirecting to a success page after activation, or by using Facebook Conversions API (CAPI) on the server.
+    
     setMessage("وصل طلب الدفع إلى السوبر أدمن بالتاريخ والوقت. سيتم تفعيل حسابك بعد اعتماد التحويل.");
   }
 
