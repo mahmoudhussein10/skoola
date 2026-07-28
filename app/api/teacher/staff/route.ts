@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "../../../../lib/prisma";
+import { PUBLIC_SITE_ORIGIN } from "../../../../lib/public-site-url";
 import { authorizeTenant, isSameOrigin } from "../../../../lib/api-auth";
 import { hashToken, requestFingerprint } from "../../../../lib/auth";
 
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
     return created;
   });
   if (process.env.NODE_ENV === "development") {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
+    const baseUrl = PUBLIC_SITE_ORIGIN;
     console.info(`Staff invitation URL: ${baseUrl}/staff-invite/${rawToken}`);
   }
   return NextResponse.json({ ok: true, invitation: { id: invitation.id, email: invitation.email, role: invitation.role, expiresAt: invitation.expiresAt } }, { status: 201 });

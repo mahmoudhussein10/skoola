@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { PUBLIC_SITE_ORIGIN } from "@/lib/public-site-url";
 
 export function CreateTeacherClient() {
   const [loading, setLoading] = useState(false);
@@ -149,13 +150,13 @@ export function CreateTeacherClient() {
                 <input
                   dir="ltr"
                   readOnly
-                  value={`${typeof window !== "undefined" ? window.location.origin : ""}${createdData.teacherLoginUrl}`}
+                  value={`${PUBLIC_SITE_ORIGIN}${createdData.teacherLoginUrl}`}
                   style={{ flex: 1, padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", background: "#ffffff", fontSize: "0.9rem", fontWeight: 600 }}
                 />
                 <button
                   type="button"
                   className="btn primary"
-                  onClick={() => copyToClipboard(`${window.location.origin}${createdData.teacherLoginUrl}`, "link")}
+                  onClick={() => copyToClipboard(`${PUBLIC_SITE_ORIGIN}${createdData.teacherLoginUrl}`, "link")}
                   style={{ padding: "0.65rem 1.25rem", fontSize: "0.85rem" }}
                 >
                   {copiedLink ? "تم النسخ ✓" : "نسخ رابط دخول المدرس 🔗"}
@@ -180,7 +181,7 @@ export function CreateTeacherClient() {
                 type="button"
                 className="btn secondary"
                 style={{ marginTop: "0.75rem", width: "100%", padding: "0.65rem", fontSize: "0.85rem" }}
-                onClick={() => copyToClipboard(`اسم المستخدم: ${createdData.username}\nكلمة المرور: ${createdData.tempPassword}\nرابط دخول لوحة التحكم: ${window.location.origin}${createdData.teacherLoginUrl}`, "creds")}
+                onClick={() => copyToClipboard(`اسم المستخدم: ${createdData.username}\nكلمة المرور: ${createdData.tempPassword}\nرابط دخول لوحة التحكم: ${PUBLIC_SITE_ORIGIN}${createdData.teacherLoginUrl}`, "creds")}
               >
                 {copiedCreds ? "تم النسخ ✓" : "📋 نسخ الرسالة النصية الكاملة للمدرس"}
               </button>

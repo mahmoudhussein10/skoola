@@ -85,18 +85,22 @@ export async function POST(
   let correctCount = 0;
   let wrongCount = 0;
 
+  const hasEssayQuestions = exam.questions.some((question) => question.type === "ESSAY");
   const questionResults = exam.questions.map((q) => {
     const qPoints = Number(q.points);
     totalMaxScore += qPoints;
     const studentAns = (studentAnswers[q.id] ?? "").trim();
-    const correctAns = (typeof q.correctAnswer === "string" ? q.correctAnswer : JSON.stringify(q.correctAnswer)).trim();
+    const isEssay = q.type === "ESSAY";
+    const correctAns = isEssay ? "" : (typeof q.correctAnswer === "string" ? q.correctAnswer : JSON.stringify(q.correctAnswer)).trim();
+    const isCorrect = !isEssay && studentAns !== "" && studentAns === correctAns;
 
-    const isCorrect = studentAns !== "" && studentAns === correctAns;
-    if (isCorrect) {
-      earnedScore += qPoints;
-      correctCount++;
-    } else {
-      wrongCount++;
+    if (!isEssay) {
+      if (isCorrect) {
+        earnedScore += qPoints;
+        correctCount++;
+      } else {
+        wrongCount++;
+      }
     }
 
     return {
@@ -105,12 +109,12 @@ export async function POST(
       type: q.type,
       points: qPoints,
       studentAnswer: studentAns,
-      isCorrect,
-      correctAnswer: exam.showAnswersAfterSubmit ? correctAns : undefined,
-      explanation: exam.showAnswersAfterSubmit ? q.explanation : undefined,
+      isCorrect: isEssay ? undefined : isCorrect,
+      requiresManualGrading: isEssay,
+      correctAnswer: !isEssay && exam.showAnswersAfterSubmit ? correctAns : undefined,
+      explanation: !isEssay && exam.showAnswersAfterSubmit ? q.explanation : undefined,
     };
   });
-
   const percentage = totalMaxScore > 0 ? Math.round((earnedScore / totalMaxScore) * 10000) / 100 : 0;
   const passed = percentage >= Number(exam.passingScore);
 
@@ -134,10 +138,10 @@ export async function POST(
           score: earnedScore,
           maxScore: totalMaxScore,
           percentage,
-          passed,
+          passed: hasEssayQuestions ? null : passed,
           startedAt: startTime,
           submittedAt: now,
-          status: "GRADED",
+          status: hasEssayQuestions ? "SUBMITTED" : "GRADED",
           answers: studentAnswers,
         },
         select: { id: true, resultVersion: true },
@@ -150,7 +154,7 @@ export async function POST(
           action: "حل امتحان",
           entityType: "Exam",
           entityId: examId,
-          metadata: { score: earnedScore, percentage, passed },
+          metadata: { score: earnedScore, percentage, passed: hasEssayQuestions ? null : passed, manualReviewRequired: hasEssayQuestions },
         },
       });
       return record;
@@ -166,10 +170,11 @@ export async function POST(
   const responseData: Record<string, unknown> = {
     ok: true,
     attemptId: attempt.id,
-    showResultImmediately: exam.showResultImmediately,
+    showResultImmediately: exam.showResultImmediately && !hasEssayQuestions,
+    manualReviewRequired: hasEssayQuestions,
   };
 
-  if (exam.showResultImmediately) {
+  if (exam.showResultImmediately && !hasEssayQuestions) {
     await notifyExamResult({ tenantId, studentId, examId, examTitle: exam.title, attemptId: attempt.id, version: attempt.resultVersion }).catch(() => undefined);
     responseData.result = {
       score: earnedScore,

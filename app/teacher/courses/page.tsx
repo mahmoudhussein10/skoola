@@ -1,4 +1,5 @@
-import { ArrowUpLeft, BookOpen, CheckCircle2, ChevronDown, Plus, Sparkles, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpLeft, BookOpen, CheckCircle2, ChevronDown, ClipboardCheck, PlayCircle, Plus, Sparkles, Users } from "lucide-react";
+import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
 import { requirePermission } from "../../../lib/auth";
 import { DashboardShell } from "../../dashboard-shell";
@@ -6,8 +7,14 @@ import { hasPermission } from "../../../lib/permissions";
 import { CourseForm } from "./course-form";
 import { CourseHub } from "./course-hub";
 import styles from "./course-studio.module.css";
+import prerequisiteStyles from "./prerequisite-card.module.css";
+import { parseOnboardingStep } from "../../../lib/onboarding-progress";
 
-export default async function CoursesPage() {
+export default async function CoursesPage({ searchParams }: { searchParams: Promise<{ onboarding?: string; intent?: string }> }) {
+  const query = await searchParams;
+  const onboardingStep = parseOnboardingStep(query.onboarding);
+  const contentIntent = query.intent === "lesson" || query.intent === "exam" ? query.intent : undefined;
+  if (contentIntent) redirect("/teacher/content/create?mode=" + contentIntent);
   const context = await requirePermission("courses.view");
   const tenantId = context.membership.tenantId;
   const canManage = hasPermission(context.membership.role, "courses.manage", context.membership.permissions);
@@ -16,8 +23,26 @@ export default async function CoursesPage() {
   const publishedCourses = items.filter((course) => course.status === "PUBLISHED").length;
   const totalStudents = items.reduce((sum, course) => sum + course.enrollments, 0);
 
+  const prerequisite = contentIntent === "lesson" ? {
+    title: "قبل ما تضيف أول درس، محتاج تنشئ كورس",
+    description: "كل درس لازم يكون جوه كورس، عشان المحتوى يفضل منظم والطالب يعرف يوصل له بسهولة. أنشئ الكورس الأول، وبعدها ضيف الدرس من إدارة محتوى الكورس.",
+    label: "إضافة درس",
+    Icon: PlayCircle,
+  } : contentIntent === "exam" ? {
+    title: "قبل ما تنشئ أول امتحان، محتاج تنشئ كورس",
+    description: "كل امتحان لازم يكون تابع لكورس، عشان يظهر للطلاب في المكان الصح وتقدر تتابع نتائجه بسهولة. أنشئ الكورس الأول، وبعدها أضف الامتحان من محتوى الكورس.",
+    label: "إنشاء امتحان",
+    Icon: ClipboardCheck,
+  } : null;
+
   return <DashboardShell kind="teacher" title="الكورسات" subtitle="أنشئ محتواك، نظّمه وانشره لطلابك من مساحة عمل واحدة" userName={context.user.fullName} tenantSlug={context.membership.tenant.slug} supportMode={context.supportMode}>
     <div className={styles.page}>
+      {canManage && items.length === 0 && prerequisite ? <aside className={prerequisiteStyles.card} aria-labelledby="content-prerequisite-title">
+        <div className={prerequisiteStyles.icon}><prerequisite.Icon size={25} aria-hidden="true" /></div>
+        <div className={prerequisiteStyles.copy}><span>خطوة بسيطة قبل {prerequisite.label}</span><h2 id="content-prerequisite-title">{prerequisite.title}</h2><p>{prerequisite.description}</p></div>
+        <a className={prerequisiteStyles.action} href="#create-course"><Plus size={18} /> إنشاء كورس جديد <ArrowLeft size={17} /></a>
+      </aside> : null}
+
       <section className={styles.hero} aria-labelledby="courses-studio-title">
         <div className={styles.heroGlow} aria-hidden="true" />
         <div className={styles.heroCopy}>
@@ -39,12 +64,12 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      {canManage ? <details className={styles.creator} id="create-course">
+      {canManage ? <details className={styles.creator} id="create-course" open={Boolean(prerequisite && items.length === 0)}>
         <summary><span className={styles.creatorIcon}><Plus size={21} /></span><span className={styles.creatorCopy}><b>إنشاء كورس جديد</b><small>أدخل البيانات الأساسية وارفع صورة الكورس ثم ابدأ إضافة المحتوى.</small></span><span className={styles.creatorAction}>فتح النموذج <ChevronDown size={18} /></span></summary>
         <CourseForm />
       </details> : null}
 
-      <CourseHub key={items.map((item) => item.id).join(":")} initialCourses={items} canManage={canManage} />
+      <CourseHub key={items.map((item) => item.id).join(":")} initialCourses={items} canManage={canManage} onboardingStep={onboardingStep} />
     </div>
   </DashboardShell>;
 }

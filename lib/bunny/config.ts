@@ -51,6 +51,6 @@ export function getBunnyWebhookSecret() {
 }
 
 export function configurationMessage(error: unknown) {
-  if (error instanceof BunnyConfigurationError) return `خدمة Bunny غير مكتملة الإعداد (${error.missing.join(", ")})`;
+  if (error instanceof BunnyConfigurationError) return `خدمة رفع الملفات غير متاحة حاليًا`;
   return "تعذر الاتصال بخدمة الوسائط";
 }

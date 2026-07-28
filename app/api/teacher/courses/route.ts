@@ -6,7 +6,7 @@ import { authorizeTenant, isSameOrigin } from "../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../lib/auth";
 import { isBunnyStorageUrl } from "../../../../lib/media/trusted-url";
 
-const schema = z.object({ title: z.string().trim().min(3).max(120), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), description: z.string().trim().min(10).max(2000), grade: z.enum(["FIRST_PREPARATORY", "SECOND_PREPARATORY", "THIRD_PREPARATORY", "FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]), subject: z.string().trim().min(2).max(80), price: z.coerce.number().min(0).max(100000), thumbnailUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع غلاف الكورس من خلال Bunny"), z.literal("")]).transform((value) => value || null), status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED") });
+const schema = z.object({ title: z.string().trim().min(3).max(120), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), description: z.string().trim().min(10).max(2000), grade: z.enum(["FIRST_PREPARATORY", "SECOND_PREPARATORY", "THIRD_PREPARATORY", "FIRST_SECONDARY", "SECOND_SECONDARY", "THIRD_SECONDARY"]), subject: z.string().trim().min(2).max(80), price: z.coerce.number().min(0).max(100000), thumbnailUrl: z.union([z.string().trim().url().refine(isBunnyStorageUrl, "ارفع غلاف الكورس من جهازك"), z.literal("")]).transform((value) => value || null), status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED") });
 const statusSchema = z.object({ courseId: z.string().cuid(), status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]) });
 const updateSchema = schema.extend({ courseId: z.string().cuid(), status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]) });
 
@@ -14,7 +14,10 @@ export async function POST(request: Request) {
   const auth = await authorizeTenant("courses.manage");
   if (!auth.ok) return auth.response;
   if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
-  const parsed = schema.safeParse(await request.json().catch(() => null));
+  const requestBody = await request.json().catch(() => ({}));
+  const body = requestBody && typeof requestBody === "object" ? requestBody : {};
+  const subject = auth.context.membership.tenant.subject?.trim() || "عام";
+  const parsed = schema.safeParse({ ...body, subject });
   if (!parsed.success) {
     const issues = parsed.error.issues;
     let msg = "تحقق من بيانات الكورس";
@@ -23,7 +26,7 @@ export async function POST(request: Request) {
     } else if (issues.some((i) => i.path.includes("title"))) {
       msg = "عنوان الكورس يجب أن يكون بين 3 و 120 حرفًا";
     } else if (issues.some((i) => i.path.includes("thumbnailUrl"))) {
-      msg = "ارفع غلاف الكورس من جهازك عبر Bunny بدل إدخال رابط مباشر";
+      msg = "ارفع غلاف الكورس من جهازك بدل إدخال رابط مباشر";
     } else if (issues.some((i) => i.path.includes("description"))) {
       msg = "وصف الكورس يجب أن يكون 10 أحرف على الأقل";
     }

@@ -1,0 +1,11 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {buildOnboardingProgress,buildOnboardingTenantQuery,type OnboardingFacts} from "../lib/onboarding-progress.ts";
+
+const empty:OnboardingFacts={hasAcademyLogo:false,hasTeacherPhoto:false,hasAcademyDescription:false,hasCourse:false,hasLesson:false,hasExam:false,isAcademyPublished:false,hasStudent:false,hasLessonView:false,hasExamAttempt:false};
+test("empty academy is zero percent",()=>{const p=buildOnboardingProgress(empty);assert.equal(p.progressPercentage,0);assert.equal(p.currentStep?.id,"academy_logo")});
+test("identity is thirty percent",()=>{const p=buildOnboardingProgress({...empty,hasAcademyLogo:true,hasTeacherPhoto:true,hasAcademyDescription:true});assert.equal(p.progressPercentage,30);assert.equal(p.nextRecommendedStep?.id,"first_course")});
+test("identity plus course lesson and exam is sixty percent",()=>{const p=buildOnboardingProgress({...empty,hasAcademyLogo:true,hasTeacherPhoto:true,hasAcademyDescription:true,hasCourse:true,hasLesson:true,hasExam:true});assert.equal(p.progressPercentage,60);assert.equal(p.nextRecommendedStep?.id,"academy_published")});
+test("published academy with student is eighty percent",()=>{const p=buildOnboardingProgress({...empty,hasAcademyLogo:true,hasTeacherPhoto:true,hasAcademyDescription:true,hasCourse:true,hasLesson:true,hasExam:true,isAcademyPublished:true,hasStudent:true});assert.equal(p.progressPercentage,80);assert.equal(p.nextRecommendedStep?.id,"first_lesson_view")});
+test("lesson view and exam attempt complete journey",()=>{const all=Object.fromEntries(Object.keys(empty).map(key=>[key,true])) as unknown as OnboardingFacts;const p=buildOnboardingProgress(all);assert.equal(p.progressPercentage,100);assert.equal(p.isCompleted,true);assert.equal(p.currentStep,null)});
+test("tenant query is isolated",()=>{const q=buildOnboardingTenantQuery("tenant-a");assert.equal(q.where.id,"tenant-a");assert.equal(q.select._count.select.videoProgress.where.student.memberships.some.tenantId,"tenant-a");assert.equal(q.select._count.select.examAttempts.where.student.memberships.some.tenantId,"tenant-a");assert.notEqual(q.where.id,"tenant-b")});

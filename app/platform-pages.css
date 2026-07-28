@@ -579,3 +579,201 @@
 .teacherSlugGuide{padding:14px 15px;display:grid;gap:7px;border:1px solid #dbe4f2;border-radius:15px;background:#f8faff;text-align:right;direction:rtl}
 .teacherSlugGuide>b{color:#24324d;font-size:13px}.teacherSlugGuide p{margin:0;color:#53627c;font-size:12px;font-weight:600;line-height:1.8}.teacherSlugGuide>span{color:#66758e;font-size:11px;font-weight:600}.teacherSlugGuide code{padding:2px 6px;border-radius:6px;background:#e9edff;color:#3730a3;font-family:Consolas,monospace;direction:ltr}.teacherSlugGuide>small{margin-top:3px;color:#78869d;font-size:11px}.teacherSlugPreview{padding:10px 12px;overflow:hidden;border:1px solid #cfd8ea;border-radius:11px;background:#fff;color:#315ecf;font:700 12px/1.4 Consolas,monospace;text-align:left;text-overflow:ellipsis;white-space:nowrap}.teacherSlugError{color:#b4232f!important;font-size:12px!important;font-weight:800!important}
 @media(max-width:760px){.teacherOnlySignupPage .teacherSelfSignupShell{padding:14px 10px 34px!important}.teacherOnlySignupPage .teacherSelfSignupCard{margin-top:10px!important}.teacherSignupBrand{justify-content:flex-start;padding-inline:8px}.teacherSlugGuide{padding:13px}.teacherSlugPreview{font-size:10px}}
+
+/* Quiz experience 2026 */
+.quizBuilderOverlay{position:fixed!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;padding:16px!important;z-index:12000!important}
+.quizBuilderOverlay .modalSheet.extraWide{width:min(900px,100%)!important;height:min(920px,calc(100dvh - 32px))!important;max-height:calc(100dvh - 32px)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-radius:24px!important}
+.quizBuilderOverlay .modalSheet>header,.quizBuilderOverlay .modalSheet>footer{position:relative!important;inset:auto!important;flex:0 0 auto!important;z-index:4!important}
+.quizBuilderOverlay .modalBody{min-height:0!important;flex:1 1 auto!important;overflow-y:auto!important;overscroll-behavior:contain;padding:20px 24px 28px!important;scrollbar-gutter:stable}
+.quizBuilderOverlay .modalSheet>footer{display:flex!important;justify-content:flex-start!important;background:rgba(255,255,255,.98)!important}
+.quizBuilderOverlay .checkboxGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quizBuilderOverlay .checkboxLabel{min-width:0;display:flex!important;align-items:center!important;gap:10px!important;padding:12px 14px;border:1px solid #dfe7f3;border-radius:14px;background:#f8faff;font-size:12px!important;line-height:1.65}
+.quizBuilderOverlay input[type="checkbox"],.quizBuilderOverlay input[type="radio"]{appearance:auto!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;margin:0!important;padding:0!important;box-shadow:none!important;accent-color:#2563eb;cursor:pointer}
+.questionsEditor{display:grid;gap:14px}.questionsHeader,.questionHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.questionBox{display:grid;gap:14px;padding:18px!important}.questionRow{display:grid;grid-template-columns:1fr 160px;gap:12px}.optionsEditor{display:grid;gap:9px}.optionsEditor>small{color:#53647e;font-size:11px;line-height:1.7}.optionRow{display:grid;grid-template-columns:22px minmax(0,1fr) 40px;align-items:center;gap:9px;min-width:0}.optionRow>input:not([type="radio"]){min-width:0;width:100%}.optionRow>button{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:11px;color:#b42318;background:#fff0ef;cursor:pointer}.tfRadio{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tfRadio label{display:flex!important;align-items:center!important;gap:9px!important;min-height:48px;padding:10px 13px;border:1px solid #dce5f2;border-radius:13px;background:#fff;cursor:pointer}
+.questionImageDisclosure{border:1px solid #dfe7f2;border-radius:14px;background:#f9fbff;overflow:hidden}.questionImageDisclosure>summary{min-height:48px;display:flex;align-items:center;gap:9px;padding:10px 13px;list-style:none;color:#334967;cursor:pointer}.questionImageDisclosure>summary::-webkit-details-marker{display:none}.questionImageDisclosure>summary>span{display:flex;flex:1;flex-direction:column}.questionImageDisclosure>summary b{font-size:12px}.questionImageDisclosure>summary small{color:#7a8aa1;font-size:9px}.questionImageDisclosure>summary>svg:last-child{transition:transform .2s ease}.questionImageDisclosure[open]>summary>svg:last-child{transform:rotate(180deg)}.questionImageDisclosure .questionBunnyImage{margin:0;border:0;border-top:1px solid #e5ebf4;border-radius:0;background:#fff}.questionImageDisclosure .questionBunnyImage>p{margin:0 0 9px;color:#66758d;font-size:10px}.questionImagePreview{margin-top:10px;max-width:420px;max-height:220px;overflow:hidden;border:1px solid #e2e8f0;border-radius:12px}.questionImagePreview img{display:block;width:100%;height:auto;max-height:220px;object-fit:contain}.essayQuestionNotice{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;border:1px solid #f1d49b;border-radius:14px;color:#754b00;background:#fff9e9}.essayQuestionNotice>svg{flex:none;margin-top:2px}.essayQuestionNotice>span{display:flex;flex-direction:column;gap:2px}.essayQuestionNotice b{font-size:12px}.essayQuestionNotice small{font-size:10px;line-height:1.7}
+.studentEssayAnswer{display:grid;gap:8px;width:100%;color:#263852;font-weight:800}.studentEssayAnswer textarea{width:100%;min-height:150px;padding:14px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;color:#17213b;font:inherit;font-size:15px;line-height:1.8;resize:vertical}.studentEssayAnswer textarea:focus{outline:3px solid rgba(37,99,235,.16);border-color:#2563eb}.studentEssayAnswer small{color:#7a5a14;font-size:10px;font-weight:700;line-height:1.7}
+@media(max-width:760px){.quizBuilderOverlay{padding:0!important;align-items:stretch!important}.quizBuilderOverlay .modalSheet.extraWide{width:100%!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important}.quizBuilderOverlay .modalBody{padding:16px 14px 24px!important}.quizBuilderOverlay .modalSheet>header{padding:14px 16px!important}.quizBuilderOverlay .modalSheet>footer{display:grid!important;grid-template-columns:1fr 1fr!important;padding:10px 14px calc(10px + env(safe-area-inset-bottom))!important}.quizBuilderOverlay .checkboxGrid,.questionRow{grid-template-columns:1fr}.questionBox{padding:14px!important}.questionHead{align-items:flex-start}.optionRow{grid-template-columns:20px minmax(0,1fr) 38px}.tfRadio{grid-template-columns:1fr 1fr}.questionsHeader{align-items:stretch;flex-direction:column}.questionsHeader .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.questionImageDisclosure>summary>svg:last-child{transition:none}}
+.manualGradingOverlay{position:fixed;inset:0;z-index:12050;display:grid;place-items:center;padding:16px;background:rgba(4,14,34,.68);backdrop-filter:blur(10px)}.manualGradingSheet{width:min(720px,100%);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,.8);border-radius:24px;background:#fff;box-shadow:0 35px 100px rgba(4,14,34,.3)}.manualGradingSheet>header,.manualGradingSheet>footer{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;background:#f8fafc}.manualGradingSheet>header{border-bottom:1px solid #e2e8f0}.manualGradingSheet>header>div{display:flex;flex-direction:column}.manualGradingSheet>header span{color:#6366f1;font-size:10px;font-weight:900}.manualGradingSheet h3{margin:2px 0;color:#17213b;font-size:18px}.manualGradingSheet>header>button{width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:11px;color:#53647e;background:#eef2f7;cursor:pointer}.manualGradingBody{min-height:0;overflow-y:auto;display:grid;gap:13px;padding:18px 20px;overscroll-behavior:contain}.manualGradingIntro{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:14px;color:#4338ca;background:#eef2ff}.manualGradingIntro p{margin:0;color:#4a5870;font-size:11px;line-height:1.7}.manualEssayCard{display:grid;gap:10px;padding:15px;border:1px solid #dfe7f2;border-radius:16px;background:#fff}.manualEssayCard>div{display:flex;flex-direction:column;gap:3px}.manualEssayCard>div span{color:#6366f1;font-size:9px;font-weight:900}.manualEssayCard>div b{color:#1f2d44;font-size:13px}.manualEssayCard blockquote{margin:0;padding:13px;border-inline-start:4px solid #9aa9ff;border-radius:10px;color:#334155;background:#f8faff;font-size:13px;line-height:1.8;white-space:pre-wrap}.manualEssayCard label{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:10px;color:#45566f;font-size:11px;font-weight:850}.manualEssayCard input{width:100%;min-height:44px;border:1px solid #ccd8e8;border-radius:11px;padding:0 10px;font:inherit}.manualGradingSheet>footer{justify-content:flex-start;border-top:1px solid #e2e8f0}.passTag.pending{color:#9a6700;background:#fff8df}.gradingComplete{color:#718096;font-size:10px}.manualGradingSheet>footer .btn{gap:7px}
+@media(max-width:640px){.manualGradingOverlay{padding:0;align-items:stretch}.manualGradingSheet{width:100%;height:100dvh;max-height:100dvh;border-radius:0}.manualGradingBody{padding:14px}.manualGradingSheet>footer{display:grid;grid-template-columns:1fr 1fr;padding:10px 14px calc(10px + env(safe-area-inset-bottom))}.manualEssayCard label{grid-template-columns:1fr 88px}}
+.manualReviewStudentNotice{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border:1px solid #f0d59d;border-radius:15px;color:#805500;background:#fff9e9}.manualReviewStudentNotice>svg{flex:none;margin-top:2px}.manualReviewStudentNotice>span{display:flex;flex-direction:column;gap:3px}.manualReviewStudentNotice b{font-size:13px}.manualReviewStudentNotice small{font-size:11px;line-height:1.75}
+
+.essayExamRule{grid-column:1/-1;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid #f0d59d;border-radius:14px;color:#805500;background:#fff9e9}.essayExamRule>svg{flex:none;margin-top:2px}.essayExamRule>span{display:flex;flex-direction:column}.essayExamRule b{font-size:12px}.essayExamRule small{font-size:10px;line-height:1.7}
+
+/* Teacher navigation polish: full-width mobile tabs and a clean compact header. */
+.saasShell.teacher .saasTop::after {
+  content: none !important;
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .saasShell.teacher .saasSide nav {
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .saasShell.teacher .saasSide nav a,
+  .saasShell.teacher .saasSide nav a:nth-child(n) {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 50px !important;
+    box-sizing: border-box !important;
+    justify-content: flex-start !important;
+    padding: 12px 16px !important;
+    overflow: hidden !important;
+    border: 1px solid transparent !important;
+    border-radius: 14px !important;
+  }
+
+  .saasShell.teacher .saasSide nav a > svg {
+    position: relative !important;
+    z-index: 1 !important;
+    width: 21px !important;
+    height: 21px !important;
+    flex: 0 0 21px !important;
+  }
+
+  .saasShell.teacher .saasSide nav a > span {
+    position: relative !important;
+    z-index: 1 !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    text-align: start !important;
+  }
+
+  .saasShell.teacher .saasSide nav a.active,
+  .saasShell.teacher .saasSide nav a[aria-current="page"] {
+    border-color: #cdddf8 !important;
+    background: linear-gradient(110deg, #eaf2ff, #f2edff) !important;
+    color: #1f62d7 !important;
+    box-shadow: 0 8px 22px rgba(45, 83, 174, .11), inset 0 0 0 1px rgba(255, 255, 255, .65) !important;
+  }
+
+  .saasShell.teacher .saasSide nav a .activeRail {
+    position: absolute !important;
+    inset-inline-start: 0 !important;
+    inset-inline-end: auto !important;
+    top: 50% !important;
+    width: 4px !important;
+    height: 28px !important;
+    margin-top: -14px !important;
+    border-radius: 0 999px 999px 0 !important;
+    background: linear-gradient(180deg, #286cf3, #743cf1) !important;
+  }
+
+  .saasShell.teacher .saasTop,
+  .saasShell.teacher .saasMain > .saasTop {
+    position: sticky !important;
+    top: max(8px, env(safe-area-inset-top)) !important;
+    width: 100% !important;
+    min-height: 70px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 8px 0 16px !important;
+    padding: 10px 12px !important;
+    overflow: visible !important;
+    border: 1px solid #dfe7f3 !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, .96) !important;
+    box-shadow: 0 12px 30px rgba(19, 43, 82, .09) !important;
+    backdrop-filter: blur(18px) saturate(1.16) !important;
+  }
+
+  .saasShell.teacher .saasTopIdentity {
+    width: auto !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .saasShell.teacher .mobileMenuButton {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    border: 1px solid #d6e2f5 !important;
+    border-radius: 14px !important;
+    background: #eef4ff !important;
+    color: #2468e8 !important;
+    box-shadow: none !important;
+  }
+
+  .saasShell.teacher .saasTopCopy {
+    width: 100% !important;
+    min-width: 0 !important;
+    align-items: flex-start !important;
+    text-align: start !important;
+  }
+
+  .saasShell.teacher .saasMobileSection {
+    max-width: 100% !important;
+    color: #2468e8 !important;
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+  }
+
+  .saasShell.teacher .saasMobileGreeting {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 3px !important;
+    color: #13213c !important;
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+  }
+
+  .saasShell.teacher .saasTopActions,
+  .saasShell.teacher .saasTopActions .notificationBellWrap,
+  .saasShell.teacher .saasTopActions .notificationBellButton {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .saasShell.teacher .saasTopActions {
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .saasShell.teacher .notificationBellButton {
+    border-color: #dfe7f3 !important;
+    border-radius: 14px !important;
+    background: #f9fbff !important;
+    color: #314763 !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .saasShell.teacher .saasTop,
+  .saasShell.teacher .saasMain > .saasTop {
+    grid-template-columns: minmax(0, 1fr) 42px !important;
+    gap: 8px !important;
+    padding: 9px 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .saasShell.teacher .saasTopIdentity {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .saasShell.teacher .mobileMenuButton,
+  .saasShell.teacher .saasTopActions,
+  .saasShell.teacher .saasTopActions .notificationBellWrap,
+  .saasShell.teacher .saasTopActions .notificationBellButton {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+  }
+
+  .saasShell.teacher .saasMobileGreeting {
+    font-size: 15px !important;
+  }
+}

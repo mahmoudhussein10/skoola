@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -31,12 +33,13 @@ import {
 } from "lucide-react";
 import { CourseThumbnail } from "../../../course-thumbnail";
 import { MediaUploader, type UploadedAsset } from "../../../components/media-uploader";
+import { ONBOARDING_RETURN_PATH } from "../../../../lib/onboarding-progress";
 
 type Question = {
   id?: string;
   text: string;
   imageUrl?: string | null;
-  type: "MCQ" | "TRUE_FALSE";
+  type: "MCQ" | "TRUE_FALSE" | "ESSAY";
   options: string[];
   correctAnswer: string;
   explanation?: string | null;
@@ -112,7 +115,12 @@ const lessonTypeLabels = {
   VIDEO_WITH_ATTACHMENT: "فيديو مع مرفقات",
 } as const;
 
-export function CourseContentManager({ course }: { course: Course }) {
+const subscribeToClient = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
+export function CourseContentManager({ course, initialIntent, initialSectionId }: { course: Course; initialIntent?: "lesson" | "exam"; initialSectionId?: string }) {
+  const router = useRouter();
   const [sections, setSections] = useState<Section[]>(course.sections);
   const [unassignedExams, setUnassignedExams] = useState<Exam[]>(course.unassignedExams);
   const [courseStatus, setCourseStatus] = useState(course.status);
@@ -124,15 +132,25 @@ export function CourseContentManager({ course }: { course: Course }) {
 
   const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const mounted = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
+  const lessonFormRef = useRef<HTMLFormElement>(null);
+  const lessonDraftPromiseRef = useRef<Promise<string> | null>(null);
+
 
   // Modals state
   const [sectionModal, setSectionModal] = useState<{ open: boolean; data?: Section | null }>({ open: false });
-  const [lessonModal, setLessonModal] = useState<{ open: boolean; sectionId?: string; data?: Lesson | null }>({ open: false });
-  const [examModal, setExamModal] = useState<{ open: boolean; sectionId?: string | null; data?: Exam | null }>({ open: false });
+  const [lessonModal, setLessonModal] = useState<{ open: boolean; sectionId?: string; data?: Lesson | null }>({ open: initialIntent === "lesson" && Boolean(initialSectionId), sectionId: initialSectionId });
+  const [examModal, setExamModal] = useState<{ open: boolean; sectionId?: string | null; data?: Exam | null }>({ open: initialIntent === "exam", sectionId: initialSectionId ?? null });
+  useEffect(() => {
+    if (!examModal.open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [examModal.open]);
   const [confirmDelete, setConfirmDelete] = useState<{ open: boolean; type: "section" | "lesson" | "exam"; id: string; name: string } | null>(null);
 
   // Exam question form temporary state
-  const [examQuestions, setExamQuestions] = useState<Question[]>([]);
+  const [examQuestions, setExamQuestions] = useState<Question[]>(() => initialIntent === "exam" ? [{ text: "", imageUrl: "", type: "MCQ", options: ["أ", "ب", "ج", "د"], correctAnswer: "أ", points: 1 }] : []);
 
   // Statistics calculation
   const totalLessons = sections.reduce((sum, s) => sum + s.lessons.length, 0);
@@ -291,6 +309,61 @@ export function CourseContentManager({ course }: { course: Course }) {
     setConfirmDelete(null);
   }
 
+  async function ensureLessonForUpload() {
+    if (lessonModal.data?.id) return { lessonId: lessonModal.data.id };
+    if (lessonDraftPromiseRef.current) return { lessonId: await lessonDraftPromiseRef.current };
+
+    const createDraft = async () => {
+      const formElement = lessonFormRef.current;
+      if (!formElement) throw new Error("تعذر قراءة بيانات الدرس. حاول مرة أخرى.");
+
+      const form = new FormData(formElement);
+      const title = String(form.get("title") ?? "").trim();
+      if (title.length < 2) {
+        formElement.querySelector<HTMLInputElement>('input[name="title"]')?.focus();
+        throw new Error("اكتب عنوان الدرس أولًا، وبعدها ابدأ رفع الفيديو.");
+      }
+
+      const sectionId = lessonModal.sectionId ?? lessonModal.data?.sectionId;
+      if (!sectionId) throw new Error("اختر القسم التابع له الدرس أولًا.");
+
+      const response = await fetch(`/api/teacher/courses/${course.id}/lessons`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          sectionId,
+          title,
+          description: String(form.get("description") ?? "").trim(),
+          content: String(form.get("content") ?? "").trim(),
+          type: "VIDEO",
+          videoUrl: "",
+          attachmentUrl: "",
+          thumbnailUrl: "",
+          duration: Number(form.get("duration") ?? 0),
+          isPreview: form.get("isPreview") === "on",
+          status: "DRAFT",
+        }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.lesson?.id) {
+        throw new Error(result?.message ?? "تعذر حفظ الدرس تلقائيًا قبل رفع الفيديو.");
+      }
+
+      setSections((items) => items.map((section) => section.id === sectionId && !section.lessons.some((lesson) => lesson.id === result.lesson.id)
+        ? { ...section, lessons: [...section.lessons, result.lesson] }
+        : section));
+      setLessonModal((current) => ({ ...current, sectionId, data: result.lesson }));
+      showMessage("تم حفظ الدرس تلقائيًا كمسودة، وبدأ رفع الفيديو.");
+      return result.lesson.id as string;
+    };
+
+    lessonDraftPromiseRef.current = createDraft();
+    try {
+      return { lessonId: await lessonDraftPromiseRef.current };
+    } finally {
+      lessonDraftPromiseRef.current = null;
+    }
+  }
   // Save Lesson
   async function saveLesson(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -302,7 +375,7 @@ export function CourseContentManager({ course }: { course: Course }) {
       title: String(form.get("title") ?? "").trim(),
       description: String(form.get("description") ?? "").trim(),
       content: String(form.get("content") ?? "").trim(),
-      type: String(form.get("type") ?? "VIDEO"),
+      type: "VIDEO",
       videoUrl: String(form.get("videoUrl") ?? "").trim(),
       attachmentUrl: String(form.get("attachmentUrl") ?? "").trim(),
       thumbnailUrl: String(form.get("thumbnailUrl") ?? "").trim(),
@@ -340,6 +413,9 @@ export function CourseContentManager({ course }: { course: Course }) {
       );
       showMessage(payload.status === "PUBLISHED" ? (lessonModal.data ? "تم تحديث الدرس ونشره للطلاب بنجاح." : "تم إنشاء الدرس ونشره للطلاب بنجاح.") : (lessonModal.data ? "تم تحديث الدرس وحفظه كمسودة." : "تم إنشاء الدرس وحفظه كمسودة."));
       setLessonModal({ open: false });
+      if (!lessonModal.data && new URLSearchParams(window.location.search).get("onboarding") === "first_lesson") {
+        router.replace(ONBOARDING_RETURN_PATH);
+      }
     }
   }
 
@@ -398,7 +474,7 @@ export function CourseContentManager({ course }: { course: Course }) {
       exam?.questions.map((q) => ({
         ...q,
         imageUrl: q.imageUrl ?? "",
-        options: Array.isArray(q.options) && q.options.length ? (q.options as string[]) : (q.type === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"]),
+        options: q.type === "ESSAY" ? [] : (Array.isArray(q.options) && q.options.length ? (q.options as string[]) : (q.type === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"])),
         correctAnswer: typeof q.correctAnswer === "string" ? q.correctAnswer : String(q.correctAnswer),
       })) ?? [
         {
@@ -435,8 +511,8 @@ export function CourseContentManager({ course }: { course: Course }) {
       const img = (q.imageUrl ?? "").trim();
 
       const cleanOpts = q.options.map((o) => o.trim()).filter(Boolean);
-      const finalOpts = cleanOpts.length >= 2 ? cleanOpts : (q.type === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"]);
-      const finalCorrect = finalOpts.includes(q.correctAnswer) ? q.correctAnswer : finalOpts[0];
+      const finalOpts = q.type === "ESSAY" ? [] : (cleanOpts.length >= 2 ? cleanOpts : (q.type === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"]));
+      const finalCorrect = q.type === "ESSAY" ? "" : (finalOpts.includes(q.correctAnswer) ? q.correctAnswer : finalOpts[0]);
       return {
         ...q,
         text: q.text.trim() || (img ? "سؤال مصور (انظر الصورة)" : "سؤال بدون نص"),
@@ -500,6 +576,9 @@ export function CourseContentManager({ course }: { course: Course }) {
 
       showMessage(payload.status === "PUBLISHED" ? (examModal.data ? "تم تحديث الاختبار ونشره للطلاب بنجاح." : "تم إنشاء الاختبار ونشره للطلاب بنجاح.") : (examModal.data ? "تم تحديث الاختبار وحفظه كمسودة." : "تم إنشاء الاختبار وحفظه كمسودة."));
       setExamModal({ open: false });
+      if (!examModal.data && new URLSearchParams(window.location.search).get("onboarding") === "first_exam") {
+        router.replace(ONBOARDING_RETURN_PATH);
+      }
     }
   }
 
@@ -722,7 +801,7 @@ export function CourseContentManager({ course }: { course: Course }) {
                       {section.lessons.length === 0 && section.exams.length === 0 ? (
                         <div className="sectionEmptyActions">
                           <div><strong>القسم جاهز لإضافة المحتوى</strong><span>ابدأ بفيديو المحاضر، ثم أضف كويزًا لقياس الاستيعاب.</span></div>
-                          <button className="contentChoice videoChoice" onClick={() => setLessonModal({ open: true, sectionId: section.id, data: null })}><i><Video size={21}/></i><span><b>إضافة فيديو أو درس</b><small>ارفع الفيديو عبر Bunny وأضف الشرح</small></span><ArrowLeft size={18}/></button>
+                          <button className="contentChoice videoChoice" onClick={() => setLessonModal({ open: true, sectionId: section.id, data: null })}><i><Video size={21}/></i><span><b>إضافة فيديو أو درس</b><small>ارفع الفيديو وأضف الشرح</small></span><ArrowLeft size={18}/></button>
                           <button className="contentChoice quizChoice" onClick={() => openExamModal(section.id, null)}><i><ClipboardCheck size={22}/></i><span><b>إنشاء كويز</b><small>أسئلة اختيار من متعدد أو صح وخطأ</small></span><ArrowLeft size={18}/></button>
                         </div>
                       ) : (
@@ -928,9 +1007,9 @@ export function CourseContentManager({ course }: { course: Course }) {
       {/* Lesson Modal */}
       {lessonModal.open && (
         <div className="modalOverlay">
-          <form className="modalSheet wide" onSubmit={saveLesson}>
+          <form ref={lessonFormRef} className="modalSheet wide" onSubmit={saveLesson} role="dialog" aria-modal="true" aria-labelledby="lesson-form-title">
             <header>
-              <div><span className="modalEyebrow">محتوى القسم</span><h3>{lessonModal.data ? "تعديل الدرس" : "إضافة فيديو أو درس"}</h3></div>
+              <div><span className="modalEyebrow">محتوى القسم</span><h3 id="lesson-form-title">{lessonModal.data ? "تعديل الدرس" : "إضافة درس جديد"}</h3></div>
               <button type="button" onClick={() => setLessonModal({ open: false })}>
                 <X size={18} />
               </button>
@@ -947,16 +1026,6 @@ export function CourseContentManager({ course }: { course: Course }) {
               </label>
 
               <label>
-                نوع الدرس
-                <select name="type" defaultValue={lessonModal.data?.type ?? "VIDEO"}>
-                  <option value="VIDEO">فيديو</option>
-                  <option value="TEXT">شرح نصي / ملاحظات</option>
-                  <option value="FILE">ملف مرفوع عبر Bunny</option>
-                  <option value="VIDEO_WITH_ATTACHMENT">فيديو مع مرفقات</option>
-                </select>
-              </label>
-
-              <label>
                 المدة بالدقائق
                 <input
                   name="duration"
@@ -967,8 +1036,8 @@ export function CourseContentManager({ course }: { course: Course }) {
               </label>
 
               <div className="full lessonBunnyUploads">
-  <div><b>رفع وسائط الدرس على Bunny</b><small>الفيديو يُرفع مباشرةً إلى Bunny Stream ويمكن استكماله إذا انقطع الإنترنت.</small></div>
-  {lessonModal.data?.id ? <div className="lessonUploadGrid"><div className="bunnyUploadKind"><Video size={17}/><b>فيديو الدرس</b><MediaUploader resourceType="video" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={(asset) => applyLessonAsset("video", asset)} onUploadError={(message) => showMessage(message, "error")} /></div><div className="bunnyUploadKind"><Paperclip size={17}/><b>ملف أو PDF</b><MediaUploader resourceType="attachment" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={(asset) => applyLessonAsset("attachment", asset)} onUploadError={(message) => showMessage(message, "error")} /></div><div className="bunnyUploadKind"><ImageIcon size={17}/><b>صورة الدرس</b><MediaUploader resourceType="image" courseId={course.id} lessonId={lessonModal.data.id} aspectRatio={16/9} onUploadComplete={(asset) => applyLessonAsset("thumbnail", asset)} onUploadError={(message) => showMessage(message, "error")} /></div></div> : <p className="managerNotice">احفظ الدرس أولًا، ثم افتحه للتعديل وارفع الفيديو أو المرفق.</p>}
+  <div><b>ملفات الدرس</b><small>ارفع الفيديو مباشرةً، ويمكنك استكماله إذا انقطع الإنترنت.</small></div>
+  <div className="lessonUploadGrid"><div className="bunnyUploadKind"><Video size={17}/><b>فيديو الدرس</b><MediaUploader resourceType="video" courseId={course.id} lessonId={lessonModal.data?.id} beforeUpload={ensureLessonForUpload} onUploadComplete={(asset) => applyLessonAsset("video", asset)} onUploadError={(message) => showMessage(message, "error")} /></div>{lessonModal.data?.id ? <><div className="bunnyUploadKind"><Paperclip size={17}/><b>ملف أو PDF</b><MediaUploader resourceType="attachment" courseId={course.id} lessonId={lessonModal.data.id} onUploadComplete={(asset) => applyLessonAsset("attachment", asset)} onUploadError={(message) => showMessage(message, "error")} /></div><div className="bunnyUploadKind"><ImageIcon size={17}/><b>صورة الدرس</b><MediaUploader resourceType="image" courseId={course.id} lessonId={lessonModal.data.id} aspectRatio={16/9} onUploadComplete={(asset) => applyLessonAsset("thumbnail", asset)} onUploadError={(message) => showMessage(message, "error")} /></div></> : null}</div>
 </div>
 
                             <input type="hidden" name="videoUrl" value={lessonModal.data?.videoUrl ?? ""} readOnly />
@@ -976,7 +1045,7 @@ export function CourseContentManager({ course }: { course: Course }) {
               <input type="hidden" name="thumbnailUrl" value={lessonModal.data?.thumbnailUrl ?? ""} readOnly />
 
               <label className="full">
-                نص الشرح أو ملاحظات الدرس (لنوع الشرح النصي)
+                ملاحظات أو شرح إضافي للدرس
                 <textarea
                   name="content"
                   defaultValue={lessonModal.data?.content ?? ""}
@@ -1013,11 +1082,11 @@ export function CourseContentManager({ course }: { course: Course }) {
       )}
 
       {/* Exam Modal */}
-      {examModal.open && (
-        <div className="modalOverlay">
-          <form className="modalSheet extraWide" onSubmit={saveExam} noValidate>
+      {mounted && examModal.open ? createPortal(
+        <div className="modalOverlay quizBuilderOverlay">
+          <form className="modalSheet extraWide" onSubmit={saveExam} noValidate role="dialog" aria-modal="true" aria-labelledby="exam-form-title">
             <header>
-              <div><span className="modalEyebrow">تقييم الطالب</span><h3>{examModal.data ? "تعديل الكويز" : "إنشاء كويز جديد"}</h3></div>
+              <div><span className="modalEyebrow">تقييم الطالب</span><h3 id="exam-form-title">{examModal.data ? "تعديل الكويز" : "إنشاء كويز جديد"}</h3></div>
               <button type="button" onClick={() => setExamModal({ open: false })}>
                 <X size={18} />
               </button>
@@ -1084,6 +1153,8 @@ export function CourseContentManager({ course }: { course: Course }) {
                 </label>
               </div>
 
+              {examQuestions.some((question) => question.type === "ESSAY") ? <div className="essayExamRule"><Clock size={18}/><span><b>النتيجة النهائية بعد تصحيحك</b><small>سيتم تسليم إجابات الطالب وحجز النتيجة حتى تنتهي من تصحيح الأسئلة المقالية.</small></span></div> : null}
+
               {/* Questions Editor */}
               <div className="full questionsEditor">
                 <div className="questionsHeader">
@@ -1114,18 +1185,14 @@ export function CourseContentManager({ course }: { course: Course }) {
                         placeholder="أدخل نص السؤال (أو اتركه إذا أضفت رابط صورة)..."
                       />
                     </label>
-
-                                        <div className="questionBunnyImage">
-                      <div className="bunnyFieldHeading"><ImageIcon size={17}/><span><b>صورة السؤال عبر Bunny</b><small>ارفع الصورة من جهازك؛ لا توجد روابط مباشرة.</small></span></div>
-                      <MediaUploader resourceType="image" courseId={course.id} onUploadComplete={(asset) => updateQuestion(qIdx, { imageUrl: asset.publicUrl ?? "" })} />
-                      {q.imageUrl ? <button type="button" className="removeQuestionImage" onClick={() => updateQuestion(qIdx, { imageUrl: "" })}>حذف صورة السؤال</button> : null}
-                    </div>
-
-                    {q.imageUrl ? (
-                      <div className="questionImagePreview" style={{ marginBlock: "8px", borderRadius: "12px", overflow: "hidden", border: "1px solid #e2e8f0", maxWidth: "420px", maxHeight: "220px" }}>
-                        <Image src={q.imageUrl} alt="معاينة صورة السؤال" width={900} height={500} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+                    <details className="questionImageDisclosure" open={Boolean(q.imageUrl)}>
+                      <summary><ImageIcon size={17}/><span><b>إضافة صورة للسؤال</b><small>اختياري</small></span><ChevronDown size={17}/></summary>
+                      <div className="questionBunnyImage">
+                        <p>ارفع صورة توضيحية فقط لو السؤال محتاجها.</p>
+                        <MediaUploader resourceType="image" courseId={course.id} onUploadComplete={(asset) => updateQuestion(qIdx, { imageUrl: asset.publicUrl ?? "" })} />
+                        {q.imageUrl ? <><div className="questionImagePreview"><Image src={q.imageUrl} alt="معاينة صورة السؤال" width={900} height={500} /></div><button type="button" className="removeQuestionImage" onClick={() => updateQuestion(qIdx, { imageUrl: "" })}>حذف صورة السؤال</button></> : null}
                       </div>
-                    ) : null}
+                    </details>
 
                     <div className="questionRow">
                       <label>
@@ -1133,17 +1200,18 @@ export function CourseContentManager({ course }: { course: Course }) {
                         <select
                           value={q.type}
                           onChange={(e) => {
-                            const newType = e.target.value as "MCQ" | "TRUE_FALSE";
-                            const defaultOpts = newType === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"];
+                            const newType = e.target.value as "MCQ" | "TRUE_FALSE" | "ESSAY";
+                            const defaultOpts = newType === "ESSAY" ? [] : (newType === "TRUE_FALSE" ? ["صح", "خطأ"] : ["أ", "ب", "ج", "د"]);
                             updateQuestion(qIdx, {
                               type: newType,
                               options: defaultOpts,
-                              correctAnswer: defaultOpts[0],
+                              correctAnswer: defaultOpts[0] ?? "",
                             });
                           }}
                         >
                           <option value="MCQ">اختيار من متعدد</option>
                           <option value="TRUE_FALSE">صح أو خطأ</option>
+                          <option value="ESSAY">سؤال مقالي</option>
                         </select>
                       </label>
 
@@ -1217,7 +1285,7 @@ export function CourseContentManager({ course }: { course: Course }) {
                           </button>
                         ) : null}
                       </div>
-                    ) : (
+                     ) : q.type === "TRUE_FALSE" ? (
                       <div className="optionsEditor">
                         <small>الإجابة الصحيحة:</small>
                         <div className="tfRadio">
@@ -1241,6 +1309,10 @@ export function CourseContentManager({ course }: { course: Course }) {
                           </label>
                         </div>
                       </div>
+                    ) : (
+                      <div className="essayQuestionNotice" role="note">
+                        <FileText size={18}/><span><b>إجابة كتابية طويلة</b><small>السؤال المقالي لا يُصحَّح تلقائيًا، وسيحتاج منك تصحيحًا يدويًا بعد تسليم الطالب.</small></span>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -1259,8 +1331,9 @@ export function CourseContentManager({ course }: { course: Course }) {
               </button>
             </footer>
           </form>
-        </div>
-      )}
+        </div>,
+        document.body
+      ) : null}
 
       {/* Delete Confirmation Modal */}
       {confirmDelete && (

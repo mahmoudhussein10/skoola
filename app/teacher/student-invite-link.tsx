@@ -1,20 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { Check, Copy, ExternalLink, Link2, Share2, UserPlus } from "lucide-react";
+import { PUBLIC_SITE_ORIGIN } from "@/lib/public-site-url";
 
-const subscribeToOrigin = () => () => {};
-const readBrowserOrigin = () => window.location.origin;
-const readServerOrigin = () => "";
 
 export function StudentInviteLink({ tenantSlug }: { tenantSlug: string }) {
   const [copied, setCopied] = useState(false);
-  const origin = useSyncExternalStore(subscribeToOrigin, readBrowserOrigin, readServerOrigin);
 
   const loginPath = `/t/${tenantSlug}/login`;
   const registerPath = `/t/${tenantSlug}/register`;
-  const studentLoginUrl = origin ? `${origin}${loginPath}` : loginPath;
+  const studentLoginUrl = `${PUBLIC_SITE_ORIGIN}${loginPath}`;
 
   async function copyToClipboard() {
     await navigator.clipboard.writeText(studentLoginUrl);

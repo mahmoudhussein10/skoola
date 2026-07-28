@@ -2,10 +2,13 @@
 
 import { FormEvent, useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ONBOARDING_RETURN_PATH } from "../../../lib/onboarding-progress";
 
 import { CourseImageField } from "../../course-thumbnail";
 
 export function CourseForm() {
+  const router = useRouter();
 
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -36,6 +39,14 @@ export function CourseForm() {
       window.dispatchEvent(new CustomEvent("course-created", { detail: result.course }));
       form.reset();
       setImageVersion((version) => version + 1);
+      if (new URLSearchParams(window.location.search).get("onboarding") === "first_course") {
+        router.replace(ONBOARDING_RETURN_PATH);
+      } else {
+        const intent = new URLSearchParams(window.location.search).get("intent");
+        if ((intent === "lesson" || intent === "exam") && result?.course?.id) {
+          router.push("/teacher/courses/" + result.course.id + "?intent=" + intent);
+        }
+      }
     } catch {
       setMessage("تعذر الاتصال بالخادم. بياناتك ما زالت موجودة؛ حاول مرة أخرى.");
     } finally {
@@ -49,7 +60,6 @@ export function CourseForm() {
       <label>عنوان الكورس<input name="title" placeholder="اكتب عنوان الكورس" required /></label>
       <label>الرابط المختصر<input name="slug" dir="ltr" placeholder="course-name" required pattern="[a-z0-9-]+" /></label>
       <label>الصف الدراسي<select name="grade"><option value="FIRST_PREPARATORY">الأول الإعدادي</option><option value="SECOND_PREPARATORY">الثاني الإعدادي</option><option value="THIRD_PREPARATORY">الثالث الإعدادي</option><option value="FIRST_SECONDARY">الأول الثانوي</option><option value="SECOND_SECONDARY">الثاني الثانوي</option><option value="THIRD_SECONDARY">الثالث الثانوي</option></select></label>
-      <label>المادة الدراسية<input name="subject" placeholder="اكتب اسم المادة" required /></label>
       <label>السعر بالجنيه<input name="price" type="number" min="0" defaultValue="0" required dir="ltr" /></label>
       <label>الظهور للطلاب<select name="status" defaultValue="PUBLISHED"><option value="PUBLISHED">منشور — يظهر فورًا</option><option value="DRAFT">مسودة — مخفي</option></select></label>
     </div>

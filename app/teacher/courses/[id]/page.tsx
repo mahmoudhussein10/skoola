@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "../../../../lib/prisma";
 import { requireTenantMember } from "../../../../lib/auth";
 import { CourseContentManager } from "./course-content-manager";
@@ -7,10 +7,13 @@ export const dynamic = "force-dynamic";
 
 export default async function TeacherCourseContentPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ intent?: string; sectionId?: string }>;
 }) {
   const { id: courseId } = await params;
+  const query = await searchParams;
   const context = await requireTenantMember(["TEACHER_OWNER", "TEACHER_ADMIN", "TEACHER_EDITOR"]);
   const tenantId = context.membership.tenantId;
 
@@ -43,6 +46,12 @@ export default async function TeacherCourseContentPage({
   ]);
 
   if (!course) notFound();
+
+  const initialIntent = query.intent === "lesson" || query.intent === "exam" ? query.intent : undefined;
+  const initialSectionId = query.sectionId && course.sections.some((section) => section.id === query.sectionId) ? query.sectionId : undefined;
+  if (initialIntent === "lesson" && !initialSectionId) {
+    redirect("/teacher/content/create?mode=lesson&courseId=" + course.id);
+  }
 
   const formattedCourse = {
     id: course.id,
@@ -133,5 +142,5 @@ export default async function TeacherCourseContentPage({
     })),
   };
 
-  return <CourseContentManager course={formattedCourse} />;
+  return <CourseContentManager course={formattedCourse} initialIntent={initialIntent} initialSectionId={initialSectionId} />;
 }

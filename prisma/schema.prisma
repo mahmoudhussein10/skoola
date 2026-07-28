@@ -71,6 +71,7 @@ enum EnrollmentStatus {
 enum QuestionType {
   MCQ
   TRUE_FALSE
+  ESSAY
 }
 
 enum AttemptStatus {

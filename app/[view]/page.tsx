@@ -53,7 +53,7 @@ type ViewerCourseRecord = {
         id: string;
         text: string;
         imageUrl: string | null;
-        type: "MCQ" | "TRUE_FALSE";
+        type: "MCQ" | "TRUE_FALSE" | "ESSAY";
         options: unknown;
         points: unknown;
       }>;
@@ -62,6 +62,7 @@ type ViewerCourseRecord = {
         maxScore: unknown;
         percentage: unknown;
         passed: boolean | null;
+        status: "IN_PROGRESS" | "SUBMITTED" | "GRADED";
         submittedAt: Date | null;
         startedAt: Date;
       }>;
@@ -527,6 +528,7 @@ async function Course({ courseId, lessonId }: { courseId?: string; lessonId?: st
                 maxScore: Number(lastAtt.maxScore ?? 0),
                 percentage: Number(lastAtt.percentage ?? 0),
                 passed: Boolean(lastAtt.passed),
+                status: lastAtt.status === "SUBMITTED" ? "SUBMITTED" as const : "GRADED" as const,
                 submittedAt: lastAtt.submittedAt?.toISOString() ?? lastAtt.startedAt.toISOString(),
               }
             : null,

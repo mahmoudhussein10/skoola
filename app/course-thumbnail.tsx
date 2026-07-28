@@ -21,7 +21,7 @@ export function CourseImageField({ initialUrl = "", courseId }: { initialUrl?: s
   const [url, setUrl] = useState(initialUrl ?? "");
   return <div className="courseImageField bunnyCourseImageField">
     <input name="thumbnailUrl" type="hidden" value={url} />
-    <div className="bunnyFieldHeading"><ImagePlus size={18}/><span><b>غلاف الكورس عبر Bunny</b><small>اختر الصورة من جهازك؛ سيتم تحسينها وحفظها تلقائيًا داخل مساحة أكاديميتك.</small></span></div>
+    <div className="bunnyFieldHeading"><ImagePlus size={18}/><span><b>غلاف الكورس</b><small>اختر الصورة من جهازك؛ سيتم تحسينها وحفظها تلقائيًا داخل مساحة أكاديميتك.</small></span></div>
     <MediaUploader resourceType="course_cover" courseId={courseId} aspectRatio={16/9} onUploadComplete={(asset) => setUrl(asset.publicUrl ?? "")} />
     {url ? <CourseThumbnail src={url} alt="معاينة غلاف الكورس" className="courseImagePreview" /> : null}
   </div>;

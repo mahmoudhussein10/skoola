@@ -33,13 +33,14 @@ const grades = {
 
 const statusText = { DRAFT: "مسودة", PUBLISHED: "منشور", ARCHIVED: "مؤرشف" } as const;
 
-export function CourseHub({ initialCourses, canManage }: { initialCourses: CourseItem[]; canManage: boolean }) {
+export function CourseHub({ initialCourses, canManage, onboardingStep }: { initialCourses: CourseItem[]; canManage: boolean; onboardingStep?: string }) {
   const router = useRouter();
   const [courses, setCourses] = useState(initialCourses);
   const [editing, setEditing] = useState<CourseItem | null>(null);
   const [query, setQuery] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
 
   useEffect(() => {
     const created = (event: Event) => {
@@ -169,7 +170,7 @@ export function CourseHub({ initialCourses, canManage }: { initialCourses: Cours
               </div>
 
               {canManage ? <div className={styles.cardActions}>
-                <Link className={styles.manageAction} href={'/teacher/courses/' + course.id}><Layers3 size={18} /><span>إدارة المحتوى والدروس</span><ArrowUpLeft size={17} /></Link>
+                <Link className={styles.manageAction} href={'/teacher/courses/' + course.id + (onboardingStep === "first_lesson" || onboardingStep === "first_exam" ? `?onboarding=${onboardingStep}` : "")}><Layers3 size={18} /><span>إدارة المحتوى والدروس</span><ArrowUpLeft size={17} /></Link>
                 <div>
                   <button className={styles.editAction} type="button" onClick={() => setEditing(course)}><Edit3 size={16} /> تعديل</button>
                   <button className={styles.visibilityAction} type="button" disabled={busyId === course.id} onClick={() => toggle(course)}>

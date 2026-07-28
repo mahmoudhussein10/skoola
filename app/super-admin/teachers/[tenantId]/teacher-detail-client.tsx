@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PUBLIC_SITE_ORIGIN } from "@/lib/public-site-url";
 
 export interface PrintableStatement {
   statementNumber?: string;
@@ -108,7 +109,7 @@ export function TeacherDetailClient({ tenant, stats, financial }: TeacherDetailP
   const [activePrintStatement, setActivePrintStatement] = useState<PrintableStatement | null>(null);
 
   async function copyTeacherLoginLink() {
-    await navigator.clipboard.writeText(`${window.location.origin}/login/${tenant.slug}`);
+    await navigator.clipboard.writeText(`${PUBLIC_SITE_ORIGIN}/login/${tenant.slug}`);
     setMsg({ type: "success", text: "تم نسخ رابط دخول المدرس. أرسله مع بيانات الحساب." });
   }
   // Status toggle handler

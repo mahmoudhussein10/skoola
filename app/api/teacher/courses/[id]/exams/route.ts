@@ -11,22 +11,23 @@ const stringOrNull = z.union([z.string(), z.null(), z.undefined()]);
 
 const questionSchema = z.object({
   text: stringOrNull.transform((v) => (v ? String(v).trim() : "")),
-  imageUrl: stringOrNull.transform((v) => (v ? String(v).trim() : null)).refine(isBunnyStorageUrl, "ارفع صورة السؤال عبر Bunny بدل إدخال رابط مباشر"),
-  type: z.enum(["MCQ", "TRUE_FALSE"]).default("MCQ"),
+  imageUrl: stringOrNull.transform((v) => (v ? String(v).trim() : null)).refine(isBunnyStorageUrl, "ارفع صورة السؤال من جهازك بدل إدخال رابط مباشر"),
+  type: z.enum(["MCQ", "TRUE_FALSE", "ESSAY"]).default("MCQ"),
   options: z.array(stringOrNull).transform((opts) => opts.map((o) => (o ? String(o).trim() : "")).filter(Boolean)),
   correctAnswer: stringOrNull.transform((v) => (v ? String(v).trim() : "")),
   explanation: stringOrNull.transform((v) => (v ? String(v).trim() : null)),
   points: z.coerce.number().min(0.5).default(1),
 }).refine(
   (q) => (q.text.length >= 1 || Boolean(q.imageUrl && q.imageUrl.length > 3)),
-  { message: "يرجى كتابة نص السؤال أو رفع صورة للسؤال عبر Bunny" }
+  { message: "يرجى كتابة نص السؤال أو رفع صورة للسؤال من جهازك" }
 ).refine(
-  (q) => q.options.length >= 2,
+  (q) => q.type === "ESSAY" || q.options.length >= 2,
   { message: "السؤال يتطلب خيارين غير فارغين على الأقل" }
 ).transform((q) => {
   const text = q.text || "سؤال مصور (انظر الصورة)";
-  const correctAnswer = q.options.includes(q.correctAnswer) ? q.correctAnswer : (q.options[0] || "");
-  return { ...q, text, correctAnswer };
+  const options = q.type === "ESSAY" ? [] : q.options;
+  const correctAnswer = q.type === "ESSAY" ? "" : (options.includes(q.correctAnswer) ? q.correctAnswer : (options[0] || ""));
+  return { ...q, text, options, correctAnswer };
 });
 
 const examSchema = z.object({

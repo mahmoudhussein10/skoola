@@ -26,7 +26,7 @@ type Question = {
   id: string;
   text: string;
   imageUrl?: string | null;
-  type: "MCQ" | "TRUE_FALSE";
+  type: "MCQ" | "TRUE_FALSE" | "ESSAY";
   options: string[];
   points: number;
 };
@@ -41,6 +41,7 @@ type ExamReviewQuestion = {
 };
 
 type ExamSubmissionResult = {
+  manualReviewRequired?: boolean;
   result?: {
     passed: boolean;
     percentage: number;
@@ -68,6 +69,7 @@ type Exam = {
     maxScore: number;
     percentage: number;
     passed: boolean;
+    status: "SUBMITTED" | "GRADED";
     submittedAt: string;
   } | null;
 };
@@ -444,7 +446,9 @@ export function StudentCourseViewer({
                     </div>
                   </div>
 
-                  {activeExam.myAttemptsCount >= activeExam.maxAttempts ? (
+                  {activeExam.lastAttempt?.status === "SUBMITTED" ? (
+                    <div className="manualReviewStudentNotice"><Clock size={19}/><span><b>تم تسليم إجابتك بنجاح</b><small>يوجد سؤال مقالي ينتظر تصحيح المدرس. ستظهر النتيجة النهائية بعد المراجعة.</small></span></div>
+                  ) : activeExam.myAttemptsCount >= activeExam.maxAttempts ? (
                     <div className="attemptLimitNotice">
                       لقد استنفدت عدد المحاولات المتاحة لهذا الاختبار ({activeExam.maxAttempts})، ولا يمكن بدء محاولة جديدة.
                     </div>
@@ -521,20 +525,28 @@ export function StudentCourseViewer({
                         ) : null}
 
                         <div className="qOptions">
-                          {q.options.map((opt, oIdx) => (
+                          {q.type === "ESSAY" ? (
+                            <label className="studentEssayAnswer">
+                              <span>اكتب إجابتك بالتفصيل</span>
+                              <textarea
+                                rows={6}
+                                maxLength={4000}
+                                value={examAnswers[q.id] ?? ""}
+                                onChange={(event) => setExamAnswers((prev) => ({ ...prev, [q.id]: event.target.value }))}
+                                placeholder="اكتب إجابتك هنا..."
+                              />
+                              <small>سيقوم المدرس بمراجعة الإجابة وتصحيحها يدويًا بعد التسليم.</small>
+                            </label>
+                          ) : q.options.map((opt, oIdx) => (
                             <label
                               key={oIdx}
-                              className={`optionLabel ${
-                                examAnswers[q.id] === opt ? "selected" : ""
-                              }`}
+                              className={`optionLabel ${examAnswers[q.id] === opt ? "selected" : ""}`}
                             >
                               <input
                                 type="radio"
                                 name={`q_${q.id}`}
                                 checked={examAnswers[q.id] === opt}
-                                onChange={() =>
-                                  setExamAnswers((prev) => ({ ...prev, [q.id]: opt }))
-                                }
+                                onChange={() => setExamAnswers((prev) => ({ ...prev, [q.id]: opt }))}
                               />
                               <span>{opt}</span>
                             </label>

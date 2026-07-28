@@ -26,7 +26,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         ...state, uploadProgress: state.processingStatus === "READY" ? 100 : Math.min(99, Math.max(0, video.encodeProgress ?? 0)),
         durationSeconds: video.length ? Math.round(video.length) : asset.durationSeconds,
         width: video.width ?? asset.width, height: video.height ?? asset.height, thumbnailUrl, embedUrl, playbackUrl,
-        errorMessage: state.processingStatus === "FAILED" ? "فشل Bunny في تجهيز الفيديو" : null,
+        errorMessage: state.processingStatus === "FAILED" ? "تعذر تجهيز الفيديو" : null,
       } });
       if (asset.lessonId && state.processingStatus === "READY") {
         await tx.lesson.updateMany({ where: { id: asset.lessonId, tenantId: asset.tenantId }, data: { videoId: null, videoUrl: embedUrl, videoProvider: "BUNNY_STREAM", thumbnailUrl, duration: video.length ? Math.max(1, Math.ceil(video.length / 60)) : undefined } });

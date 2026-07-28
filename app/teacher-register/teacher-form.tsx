@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, Camera, CheckCircle2, GraduationCap, ShieldCheck, Upload, UserRound } from "lucide-react";
 import * as metaPixel from "@/lib/meta-pixel";
+import { PUBLIC_SITE_HOST } from "@/lib/public-site-url";
 
 const grades = [
   ["FIRST_PREPARATORY", "الأول الإعدادي"],
@@ -130,7 +131,7 @@ export function TeacherSignupForm() {
               <p>اكتب اسمك أو اسم الأكاديمية <strong>بالإنجليزي</strong>، ومن غير مسافات. استخدم شرطة <strong dir="ltr">-</strong> بين الكلمات.</p>
               <span>أمثلة صحيحة: <code>ahmed-math</code> · <code>reem-academy</code> · <code>mostafa-science</code></span>
               <small>رابطك الذي سترسله للطلاب:</small>
-              <strong className="teacherSlugPreview" dir="ltr">skoola-rho.vercel.app/t/{slug || "ahmed-math"}</strong>
+              <strong className="teacherSlugPreview" dir="ltr">{PUBLIC_SITE_HOST}/t/{slug || "ahmed-math"}</strong>
             </div>
             {slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? <small className="teacherSlugError">اكتب الرابط بحروف إنجليزية صغيرة وأرقام فقط. مثال: ahmed-math</small> : null}
           </label>

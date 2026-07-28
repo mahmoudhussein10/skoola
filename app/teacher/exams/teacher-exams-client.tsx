@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Clock,
   HelpCircle,
+  FileText,
+  Save,
+  X,
   Search,
   Users,
   XCircle,
@@ -30,7 +34,10 @@ type StudentAttempt = {
   score: number;
   maxScore: number;
   percentage: number;
-  passed: boolean;
+  passed: boolean | null;
+  status: "SUBMITTED" | "GRADED";
+  needsManualGrading: boolean;
+  essayQuestions: Array<{ id: string; text: string; points: number; answer: string; awardedPoints: number }>;
   submittedAt: string;
 };
 
@@ -41,6 +48,7 @@ type Analytics = {
   minPercentage: number;
   passedCount: number;
   passRate: number;
+  pendingManualCount: number;
 };
 
 type Pagination = {
@@ -65,6 +73,11 @@ export function TeacherExamsClient({
   const [filterPassed, setFilterPassed] = useState<string>("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [gradingAttempt, setGradingAttempt] = useState<StudentAttempt | null>(null);
+  const [manualScores, setManualScores] = useState<Record<string, number>>({});
+  const [gradingSaving, setGradingSaving] = useState(false);
+  const [gradingMessage, setGradingMessage] = useState("");
 
   const [data, setData] = useState<{
     exam?: { id: string; title: string; courseTitle: string; passingScore: number };
@@ -94,8 +107,33 @@ export function TeacherExamsClient({
     }
 
     fetchResults();
-  }, [activeExamId, page, query, filterPassed]);
+  }, [activeExamId, page, query, filterPassed, refreshKey]);
 
+  function openManualGrading(attempt: StudentAttempt) {
+    setGradingAttempt(attempt);
+    setManualScores(Object.fromEntries(attempt.essayQuestions.map((question) => [question.id, question.awardedPoints])));
+    setGradingMessage("");
+  }
+
+  async function saveManualGrading(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!gradingAttempt || !activeExamId) return;
+    setGradingSaving(true);
+    setGradingMessage("");
+    const response = await fetch(`/api/teacher/exams/${activeExamId}/results`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ attemptId: gradingAttempt.id, scores: manualScores }),
+    });
+    const result = await response.json().catch(() => null);
+    setGradingSaving(false);
+    if (!response.ok) {
+      setGradingMessage(result?.message ?? "تعذر حفظ التصحيح، حاول مرة أخرى.");
+      return;
+    }
+    setGradingAttempt(null);
+    setRefreshKey((value) => value + 1);
+  }
   const activeExamMeta = examsList.find((e) => e.id === activeExamId);
 
   return (
@@ -212,6 +250,7 @@ export function TeacherExamsClient({
                     <th>النسبة المئوية</th>
                     <th>حالة النجاح</th>
                     <th>تاريخ المحاولة</th>
+                    <th>الإجراء</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -228,19 +267,12 @@ export function TeacherExamsClient({
                         <b>{item.percentage}%</b>
                       </td>
                       <td>
-                        <span className={`passTag ${item.passed ? "pass" : "fail"}`}>
-                          {item.passed ? (
-                            <>
-                              <CheckCircle2 size={14} /> ناجح
-                            </>
-                          ) : (
-                            <>
-                              <XCircle size={14} /> راسب
-                            </>
-                          )}
+                        <span className={`passTag ${item.status === "SUBMITTED" ? "pending" : item.passed ? "pass" : "fail"}`}>
+                          {item.status === "SUBMITTED" ? <><Clock size={14}/> بانتظار التصحيح</> : item.passed ? <><CheckCircle2 size={14}/> ناجح</> : <><XCircle size={14}/> راسب</>}
                         </span>
                       </td>
                       <td>{new Date(item.submittedAt).toLocaleDateString("ar-EG")}</td>
+                      <td>{item.needsManualGrading ? <button type="button" className="btn sm primary" onClick={() => openManualGrading(item)}>تصحيح المقالي</button> : <span className="gradingComplete">تم التصحيح</span>}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -282,6 +314,25 @@ export function TeacherExamsClient({
           <p>يمكنك إنشاء امتحان جديد من صفحة إدارة محتوى الكورس.</p>
         </div>
       )}
+      {gradingAttempt && typeof document !== "undefined" ? createPortal(
+        <div className="manualGradingOverlay" onClick={() => setGradingAttempt(null)}>
+          <form className="manualGradingSheet" onSubmit={saveManualGrading} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="manual-grading-title">
+            <header><div><span>تصحيح يدوي</span><h3 id="manual-grading-title">إجابات {gradingAttempt.studentName}</h3></div><button type="button" onClick={() => setGradingAttempt(null)} aria-label="إغلاق"><X size={19}/></button></header>
+            <div className="manualGradingBody">
+              <div className="manualGradingIntro"><FileText size={20}/><p>راجع كل إجابة وحدد درجتها من الحد الأقصى. الأسئلة الموضوعية محسوبة تلقائيًا.</p></div>
+              {gradingAttempt.essayQuestions.map((question, index) => (
+                <article key={question.id} className="manualEssayCard">
+                  <div><span>سؤال {index + 1}</span><b>{question.text}</b></div>
+                  <blockquote>{question.answer || "لم يكتب الطالب إجابة."}</blockquote>
+                  <label>درجة السؤال من {question.points}<input type="number" min="0" max={question.points} step="0.5" value={manualScores[question.id] ?? 0} onChange={(event) => setManualScores((scores) => ({ ...scores, [question.id]: Number(event.target.value) }))}/></label>
+                </article>
+              ))}
+              {gradingMessage ? <p className="formError">{gradingMessage}</p> : null}
+            </div>
+            <footer><button type="button" className="btn outline" onClick={() => setGradingAttempt(null)}>إلغاء</button><button className="btn primary" disabled={gradingSaving}><Save size={16}/>{gradingSaving ? "جارٍ الحفظ..." : "حفظ النتيجة النهائية"}</button></footer>
+          </form>
+        </div>, document.body
+      ) : null}
     </div>
   );
 }

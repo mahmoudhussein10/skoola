@@ -4,8 +4,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import * as metaPixel from "@/lib/meta-pixel";
 
-const FB_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
-
 function MetaPixelEvents() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
