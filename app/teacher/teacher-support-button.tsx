@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { MessageCircle } from "lucide-react";
 import styles from "./teacher-support.module.css";
 
-const SUPPORT_WHATSAPP_NUMBER = "20155457735";
+const SUPPORT_WHATSAPP_NUMBER = "201558457735";
 const SUPPORT_MESSAGE = encodeURIComponent("مرحبًا، أحتاج مساعدة في استخدام منصة Skoola.");
 const subscribe = () => () => undefined;
 
