@@ -32,6 +32,12 @@ export function resolveSubscriptionStatus(input: { status: TenantSubscriptionSta
 export function subscriptionAllowsDashboard(status: TenantSubscriptionStatus) { return status === "TRIALING" || status === "ACTIVE" || status === "GRACE_PERIOD"; }
 
 async function applyPendingDowngrade(tenantId: string, now: Date) {
+  const pending = await prisma.tenantSubscription.findUnique({
+    where: { tenantId },
+    select: { pendingPlanId: true, pendingDowngradeAt: true, pendingPeriodEnd: true },
+  });
+  if (!pending?.pendingPlanId || !pending.pendingDowngradeAt || pending.pendingDowngradeAt > now || !pending.pendingPeriodEnd) return null;
+
   return prisma.$transaction(async (tx) => {
     await tx.$queryRaw<Array<{ locked: string }>>(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${tenantId}))::text AS locked`);
     const subscription = await tx.tenantSubscription.findUnique({ where: { tenantId } });
@@ -61,12 +67,16 @@ export async function syncTenantSubscriptionState(tenantId: string, now = new Da
   const graceChanged = lifecycle.gracePeriodEndsAt?.getTime() !== current.gracePeriodEndsAt?.getTime();
   if (lifecycle.status === current.status && !graceChanged) return { subscription: current, effectiveStatus: lifecycle.status, tenantStatus: current.tenant.status };
   return prisma.$transaction(async (tx) => {
-    await tx.$queryRaw<Array<{ locked: string }>>(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${tenantId}))::text AS locked`);
     const fresh = await tx.tenantSubscription.findUniqueOrThrow({ where: { tenantId }, include: { tenant: { select: { status: true } } } });
     const next = resolveLifecycle(fresh, policy.graceDays, now);
     const freshGraceChanged = next.gracePeriodEndsAt?.getTime() !== fresh.gracePeriodEndsAt?.getTime();
     if (next.status === fresh.status && !freshGraceChanged) return { subscription: fresh, effectiveStatus: next.status, tenantStatus: fresh.tenant.status };
-    const subscription = await tx.tenantSubscription.update({ where: { id: fresh.id }, data: { status: next.status, gracePeriodEndsAt: next.gracePeriodEndsAt, version: { increment: 1 } } });
+    const claimed = await tx.tenantSubscription.updateMany({ where: { id: fresh.id, version: fresh.version }, data: { status: next.status, gracePeriodEndsAt: next.gracePeriodEndsAt, version: { increment: 1 } } });
+    if (claimed.count === 0) {
+      const concurrent = await tx.tenantSubscription.findUniqueOrThrow({ where: { tenantId }, include: { tenant: { select: { status: true } } } });
+      return { subscription: concurrent, effectiveStatus: resolveLifecycle(concurrent, policy.graceDays, now).status, tenantStatus: concurrent.tenant.status };
+    }
+    const subscription = await tx.tenantSubscription.findUniqueOrThrow({ where: { id: fresh.id } });
     const shouldSuspend = !subscriptionAllowsDashboard(next.status) && fresh.tenant.status !== "ARCHIVED" && fresh.tenant.status !== "DISABLED";
     let tenantStatus = fresh.tenant.status;
     if (shouldSuspend && fresh.tenant.status !== "SUSPENDED") tenantStatus = (await tx.tenant.update({ where: { id: tenantId }, data: { status: "SUSPENDED", suspendedAt: now } })).status;

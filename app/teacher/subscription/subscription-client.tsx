@@ -19,8 +19,14 @@ const cycleLabels: Record<string, string> = { MONTHLY: "شهري", QUARTERLY: "3
 const statusLabels: Record<string, string> = { TRIALING: "تجربة مجانية", ACTIVE: "نشط", GRACE_PERIOD: "فترة سماح", PAST_DUE: "مطلوب تجديد", EXPIRED: "انتهى", CANCELLED: "ملغي", PENDING: "قيد المراجعة", NEEDS_REVIEW: "يحتاج مراجعة", APPROVED: "تمت الموافقة", REJECTED: "مرفوض" };
 
 function Countdown({ endsAt, compact = false }: { endsAt: string; compact?: boolean }) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const update = () => setNow(Date.now());
+    update();
+    const timer = window.setInterval(update, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+  if (now === null) return <span className={compact ? styles.compactCountdown : styles.countdown} dir="ltr">--:--:--</span>;
   const remaining = Math.max(0, new Date(endsAt).getTime() - now);
   const hours = Math.floor(remaining / 3_600_000);
   const minutes = Math.floor((remaining % 3_600_000) / 60_000);
@@ -142,10 +148,12 @@ export function SubscriptionManager({ subscription, plans, payments, paymentSett
   const selectedMethod = availableMethods.some((item) => item.key === method) ? method : (availableMethods[0]?.key ?? method);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setBusy(true); setMessage("");
-    const response = await fetch("/api/teacher/subscription/payment-request", { method: "POST", body: new FormData(event.currentTarget) });
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    setBusy(true); setMessage("");
+    const response = await fetch("/api/teacher/subscription/payment-request", { method: "POST", body: new FormData(formElement) });
     const data = await response.json().catch(() => null); setBusy(false); setMessage(response.ok ? "تم إرسال طلب الدفع بأمان، وسنراجع التحويل في أقرب وقت." : data?.message ?? "تعذر إرسال الطلب");
-    if (response.ok) { event.currentTarget.reset(); router.refresh(); }
+    if (response.ok) { formElement.reset(); router.refresh(); }
   }
   async function copy(value: string) { await navigator.clipboard.writeText(value); setMessage("تم نسخ بيانات التحويل"); }
 
