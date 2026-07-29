@@ -10,14 +10,14 @@
     "dev": "next dev --turbo -p 3001",
     "build": "next build --webpack",
     "start": "next start -p 3001",
-    "test": "node --experimental-strip-types --test tests/tenant-isolation.test.ts tests/media-security.test.ts tests/notifications.test.ts tests/onboarding-progress.test.ts",
+    "test": "node --experimental-strip-types --test tests/tenant-isolation.test.ts tests/media-security.test.ts tests/notifications.test.ts tests/onboarding-progress.test.ts tests/subscriptions.test.ts",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "node prisma/seed.mjs",
-    "test:tenant": "node --experimental-strip-types --test tests/tenant-isolation.test.ts tests/media-security.test.ts tests/notifications.test.ts tests/onboarding-progress.test.ts",
+    "test:tenant": "node --experimental-strip-types --test tests/tenant-isolation.test.ts tests/media-security.test.ts tests/notifications.test.ts tests/onboarding-progress.test.ts tests/subscriptions.test.ts",
     "db:validate-tenant": "node prisma/validate-tenant-migration.mjs"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "../../../../../../lib/prisma";
-import { getAuthContext } from "../../../../../../lib/auth";
+import { authorizeStudentSubscription } from "../../../../../../lib/api-auth";
 import { isSameOrigin } from "../../../../../../lib/api-auth";
 import { notifyExamResult } from "../../../../../../lib/notifications/events";
 
@@ -16,10 +16,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: examId } = await params;
-  const auth = await getAuthContext();
-  if (!auth || !auth.membership || auth.user.role !== "STUDENT") {
-    return NextResponse.json({ ok: false, message: "يرجى تسجيل الدخول أولاً لتأدية الامتحان" }, { status: 401 });
-  }
+  const authorization = await authorizeStudentSubscription();
+  if (!authorization.ok) return authorization.response;
+  const auth = authorization.context;
   if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
 
   const tenantId = auth.membership.tenantId;

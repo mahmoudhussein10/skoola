@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { BarChart3, BookOpen, CheckCircle2, ChevronRight, CircleHelp, CreditCard, KeyRound, Images, LayoutDashboard, LogOut, Megaphone, Menu, PanelRightClose, Settings, ShieldCheck, UserCog, Users, X } from "lucide-react";
+import { BadgeDollarSign, BarChart3, BookOpen, CheckCircle2, ChevronRight, CircleHelp, CreditCard, KeyRound, Images, LayoutDashboard, LogOut, Megaphone, Menu, PanelRightClose, Settings, ShieldCheck, UserCog, Users, X } from "lucide-react";
 import { Brand } from "./ui";
 import { NotificationBell, PushBootstrap } from "./notifications/push-client";
 
@@ -24,9 +24,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
     { href: "/teacher/help", label: "دليل استخدام المنصة", icon: CircleHelp },
     { href: "/teacher/courses", label: "الكورسات", icon: BookOpen },
     { href: "/teacher/students", label: "الطلاب", icon: Users },
-    { href: "/teacher/activation-fee", label: "رسوم فتح الحساب", icon: CreditCard },
-    { href: "/teacher/billing", label: "فواتير اشتراك Skoola", icon: CreditCard },
-    { href: "/teacher/payments", label: "طلبات الدفع والاشتراكات", icon: CreditCard },
+    { href: "/teacher/subscription", label: "اشتراك Skoola", icon: BadgeDollarSign },    { href: "/teacher/payments", label: "طلبات الدفع والاشتراكات", icon: CreditCard },
     { href: "/teacher/exams", label: "الامتحانات والنتائج", icon: CheckCircle2 },
     { href: "/teacher/assignments", label: "الواجبات", icon: BookOpen },
     { href: "/teacher/activation-codes", label: "أكواد التفعيل", icon: KeyRound },
@@ -38,7 +36,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
     { href: "/teacher/settings", label: "إعدادات المنصة", icon: Settings },
   ];
   const superNav: NavItem[] = [
-    { href: "/super-admin", label: "نظرة عامة", icon: BarChart3 }, { href: "/super-admin/teachers", label: "المدرسون", icon: Users }, { href: "/super-admin/billing", label: "فواتير المدرسين", icon: CreditCard }, { href: "/super-admin/audit-logs", label: "سجل التدقيق", icon: ShieldCheck }, { href: "/super-admin/announcements", label: "الإعلانات", icon: Megaphone }, { href: "/super-admin/settings", label: "إعدادات النظام", icon: Settings },
+    { href: "/super-admin", label: "نظرة عامة", icon: BarChart3 }, { href: "/super-admin/teachers", label: "المدرسون", icon: Users }, { href: "/super-admin/subscriptions", label: "اشتراكات المدرسين", icon: BadgeDollarSign }, { href: "/super-admin/audit-logs", label: "سجل التدقيق", icon: ShieldCheck }, { href: "/super-admin/announcements", label: "الإعلانات", icon: Megaphone }, { href: "/super-admin/settings", label: "إعدادات النظام", icon: Settings },
   ];
   const nav = kind === "teacher" ? teacherNav : superNav;
   const isActive = (href: string) => pathname === href || (href !== "/teacher" && href !== "/super-admin" && pathname.startsWith(href + "/"));
@@ -104,8 +102,8 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
 
   useEffect(() => {
     const hrefs = kind === "teacher"
-      ? ["/teacher", "/teacher/activation-fee", "/teacher/courses", "/teacher/students", "/teacher/billing", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/help", "/teacher/notifications", "/teacher/settings"]
-      : ["/super-admin", "/super-admin/teachers", "/super-admin/billing", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
+      ? ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/subscription", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/help", "/teacher/notifications", "/teacher/settings"]
+      : ["/super-admin", "/super-admin/teachers", "/super-admin/subscriptions", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
     hrefs.forEach((href) => router.prefetch(href));
   }, [kind, router]);
   return <div className={`saasShell ${kind}${courseArea ? " courseArea" : ""}${collapsed ? " isCollapsed" : ""}`}>

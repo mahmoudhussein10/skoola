@@ -5,6 +5,7 @@ import type { Prisma, TenantStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { authorizeSuperAdmin, isSameOrigin } from "@/lib/api-auth";
 import { requestFingerprint } from "@/lib/auth";
+import { calculateSubscriptionPrice, getSubscriptionPolicy, trialWindow } from "@/lib/subscriptions";
 
 const createTenantSchema = z.object({
   fullName: z.string().min(2, "اسم المدرس مطلوب"),
@@ -18,12 +19,6 @@ const createTenantSchema = z.object({
   logoUrl: z.string().optional().nullable(),
   primaryColor: z.string().optional().default("#1565f5"),
   secondaryColor: z.string().optional().default("#081b3a"),
-  subscriptionStart: z.string().optional(),
-  subscriptionEnd: z.string().optional().nullable(),
-  pricePerStudent: z.number().min(0).default(0),
-  studentLimit: z.number().min(1).default(100),
-  status: z.enum(["TRIAL", "ACTIVE", "SUSPENDED", "DISABLED", "ARCHIVED"]).default("ACTIVE"),
-  internalNotes: z.string().optional().nullable(),
 });
 
 export async function GET(request: Request) {
@@ -109,11 +104,11 @@ export async function POST(request: Request) {
   }
 
   const passwordHash = await hash(data.tempPassword, 12);
+  const subscriptionPolicy = await getSubscriptionPolicy();
   const { ipHash } = await requestFingerprint();
 
   try {
     const result = await prisma.$transaction(async (tx) => {
-      const openingFeeDueAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
       // 1. Create teacher User
       const teacherUser = await tx.user.create({
         data: {
@@ -133,7 +128,7 @@ export async function POST(request: Request) {
         data: {
           name: data.name,
           slug: slugClean,
-          status: data.status,
+          status: "TRIAL",
           ownerId: teacherUser.id,
           subject: data.subject || null,
           logoUrl: data.logoUrl,
@@ -169,25 +164,14 @@ export async function POST(request: Request) {
         },
       });
 
-      // 6. Save Billing Settings
-      await tx.teacherBillingSettings.create({
-        data: {
-          tenantId: tenant.id,
-          pricePerStudent: data.pricePerStudent,
-          studentLimit: data.studentLimit,
-          subscriptionStart: data.subscriptionStart ? new Date(data.subscriptionStart) : new Date(),
-          subscriptionEnd: data.subscriptionEnd ? new Date(data.subscriptionEnd) : null,
-          internalNotes: data.internalNotes || null,
-          openingFeeAmount: 500,
-          openingFeeDueAt,
-          openingFeeStatus: "PENDING",
-        },
-      });
+      await tx.teacherBillingSettings.create({ data: { tenantId: tenant.id } });
+      const starterPlan = await tx.subscriptionPlan.findUniqueOrThrow({ where: { code: "STARTER" } });
+      const trial = trialWindow(new Date(), subscriptionPolicy.trialHours);
+      const pricing = calculateSubscriptionPrice(Number(starterPlan.monthlyPrice), "MONTHLY", subscriptionPolicy.pricing);
+      const subscription = await tx.tenantSubscription.create({ data: { tenantId: tenant.id, planId: starterPlan.id, status: "TRIALING", billingCycle: "MONTHLY", baseMonthlyPrice: starterPlan.monthlyPrice!, billedAmount: pricing.amountEgp, discountPercent: 0, activeStudentLimit: starterPlan.activeStudentLimit, storageLimitGb: starterPlan.storageLimitGb, ...trial } });
+      await tx.subscriptionEvent.create({ data: { tenantId: tenant.id, subscriptionId: subscription.id, actorUserId: auth.context.user.id, type: "TRIAL_STARTED", payload: { trialHours: subscriptionPolicy.trialHours, planCode: starterPlan.code } } });
 
-      const openingStatement = await tx.billingStatement.create({ data: { tenantId: tenant.id, statementNumber: `OPEN-${tenant.id}`, periodStart: new Date(), periodEnd: openingFeeDueAt, billableStudents: 0, pricePerStudent: 0, subtotal: 500, finalAmount: 500, paidAmount: 0, dueDate: openingFeeDueAt, status: "UNPAID", internalNote: "رسوم فتح حساب المدرس" } });
-      await tx.auditLog.create({ data: { tenantId: tenant.id, actorId: auth.context.user.id, action: "OPENING_FEE_STATEMENT_CREATED", entityType: "BillingStatement", entityId: openingStatement.id, metadata: { amount: 500, dueAt: openingFeeDueAt.toISOString() }, ipHash } });
-
-      // 7. Audit Log
+      // Audit Log
       await tx.auditLog.create({
         data: {
           tenantId: tenant.id,

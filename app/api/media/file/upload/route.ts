@@ -7,6 +7,7 @@ import { createBunnyStoragePath } from "../../../../../lib/media/paths";
 import { processImage } from "../../../../../lib/media/image";
 import { mediaDescriptorSchema, mediaErrorMessage, imageMimeTypes, extensionForMime, resolveVerifiedMimeType, validateDescriptor } from "../../../../../lib/media/validation";
 import { mediaJson, verifyMediaRelations } from "../../../../../lib/media/permissions";
+import { assertTenantStorageCapacity } from "../../../../../lib/subscriptions";
 
 export const runtime = "nodejs";
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
     if (descriptor.resourceType === "video") return NextResponse.json({ ok: false, message: "استخدم رافع الفيديو للفيديوهات" }, { status: 400 });
     const tenantId = auth.context.membership.tenantId;
     await verifyMediaRelations(tenantId, descriptor.courseId, descriptor.lessonId);
+    await assertTenantStorageCapacity(tenantId, descriptor.fileSize);
     const originalBytes = new Uint8Array(await file.arrayBuffer());
     const verifiedMimeType = resolveVerifiedMimeType(originalBytes, descriptor.mimeType);
     if (verifiedMimeType !== descriptor.mimeType) {
@@ -68,7 +70,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, asset: mediaJson(asset) }, { status: 201 });
   } catch (error) {
     if (storagePath) await deleteStorageFile(storagePath).catch(() => undefined);
-    const message = error instanceof Error && error.message.startsWith("BUNNY_") ? configurationMessage(error) : mediaErrorMessage(error);
+    const message = error instanceof Error && error.message === "STORAGE_LIMIT_REACHED" ? "وصلت للحد الأقصى للمساحة. رقِّ الخطة قبل رفع ملف جديد." : error instanceof Error && error.message.startsWith("BUNNY_") ? configurationMessage(error) : mediaErrorMessage(error);
     return NextResponse.json({ ok: false, message }, { status: error instanceof Error && error.name === "BunnyConfigurationError" ? 503 : 400 });
   }
 }

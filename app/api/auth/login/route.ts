@@ -5,6 +5,7 @@ import { createSession, homeForRole, requestFingerprint } from "../../../../lib/
 import { loginSchema } from "../../../../lib/validation";
 import { isSameOrigin } from "../../../../lib/api-auth";
 import { tenantStaffRoles } from "../../../../lib/permissions";
+import { subscriptionAllowsDashboard, syncTenantSubscriptionState } from "../../../../lib/subscriptions";
 
 const GENERIC_ERROR = "بيانات الدخول غير صحيحة";
 
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     include: {
       memberships: {
         where: { status: "ACTIVE" },
-        include: { tenant: { select: { id: true, slug: true, status: true } } },
+        include: { tenant: { select: { id: true, slug: true, status: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true } } } } },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -46,17 +47,24 @@ export async function POST(request: Request) {
   let activeTenantId: string | undefined = undefined;
 
   if (user.role === "STUDENT") {
-    const studentMembership = user.memberships.find(
-      (m) => (!parsed.data.tenantSlug || m.tenant.slug === parsed.data.tenantSlug) && m.tenant.status !== "SUSPENDED" && m.tenant.status !== "DISABLED" && m.tenant.status !== "ARCHIVED"
-    );
+    const syncedStudents = await Promise.all(user.memberships.map((membership) => syncTenantSubscriptionState(membership.tenantId)));
+    const studentMembership = user.memberships.find((membership, index) => {
+      const tenantStatus = syncedStudents[index]?.tenantStatus ?? membership.tenant.status;
+      return (!parsed.data.tenantSlug || membership.tenant.slug === parsed.data.tenantSlug) && tenantStatus !== "SUSPENDED" && tenantStatus !== "DISABLED" && tenantStatus !== "ARCHIVED";
+    });
     if (!studentMembership) {
       return NextResponse.json({ ok: false, message: "حساب الطالب غير مرتبط بمدرس نشط حاليًا" }, { status: 403 });
     }
     activeTenantId = studentMembership.tenantId;
   } else if (user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") {
-    const availableMemberships = user.memberships.filter(
-      (membership) => membership.tenant.status !== "SUSPENDED" && membership.tenant.status !== "DISABLED" && membership.tenant.status !== "ARCHIVED"
-    );
+    const syncedSubscriptions = await Promise.all(user.memberships.map((membership) => syncTenantSubscriptionState(membership.tenantId)));
+    const availableMemberships = user.memberships.filter((membership, index) => {
+      const synced = syncedSubscriptions[index];
+      const tenantStatus = synced?.tenantStatus ?? membership.tenant.status;
+      const subscriptionStatus = synced?.effectiveStatus ?? membership.tenant.subscriptions[0]?.status;
+      const subscriptionLocked = Boolean(subscriptionStatus && !subscriptionAllowsDashboard(subscriptionStatus));
+      return tenantStatus !== "DISABLED" && tenantStatus !== "ARCHIVED" && (tenantStatus !== "SUSPENDED" || subscriptionLocked);
+    });
     const staffMembership = parsed.data.tenantSlug
       ? availableMemberships.find((membership) => membership.tenant.slug === parsed.data.tenantSlug)
       : availableMemberships.length === 1 ? availableMemberships[0] : null;

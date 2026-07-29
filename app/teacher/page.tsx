@@ -12,6 +12,8 @@ import { DashboardShell } from "../dashboard-shell";
 import { ActiveAnnouncements } from "../active-announcements";
 import { TeacherOnboardingJourneySection } from "./onboarding-journey-section";
 import { OnboardingJourneySkeleton } from "./onboarding-journey";
+import { getSubscriptionPlansWithQuotes, getTenantSubscriptionSnapshot } from "../../lib/subscriptions";
+import { DashboardTrialExperience, type PlanView, type SubscriptionView } from "./subscription/subscription-client";
 import styles from "./teacher-dashboard.module.css";
 
 type DashboardIcon = ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean }>;
@@ -30,10 +32,24 @@ export default async function TeacherDashboard() {
   const context = await requireTenantMember(tenantStaffRoles);
   const canViewAnalytics = hasPermission(context.membership.role, "analytics.view", context.membership.permissions);
   const { tenant, tenantId } = context.membership;
+  const [subscriptionSnapshot, subscriptionPlans] = await Promise.all([getTenantSubscriptionSnapshot(tenantId), getSubscriptionPlansWithQuotes(tenantId)]);
+  const trialExperience = subscriptionSnapshot ? <DashboardTrialExperience subscription={{
+    status: subscriptionSnapshot.effectiveStatus,
+    planName: subscriptionSnapshot.subscription.plan.name,
+    planCode: subscriptionSnapshot.subscription.plan.code,
+    trialEndsAt: subscriptionSnapshot.subscription.trialEndsAt.toISOString(),
+    currentPeriodEnd: subscriptionSnapshot.subscription.currentPeriodEnd?.toISOString() ?? null,
+    trialOfferDismissedAt: subscriptionSnapshot.subscription.trialOfferDismissedAt?.toISOString() ?? null,
+    activeStudents: subscriptionSnapshot.usage.activeStudents,
+    activeStudentLimit: subscriptionSnapshot.limits.activeStudents,
+    storageGb: Math.round(Number(subscriptionSnapshot.usage.storageBytes) / 1024 / 1024 / 1024 * 100) / 100,
+    storageLimitGb: subscriptionSnapshot.subscription.storageLimitGb,
+  } satisfies SubscriptionView} plans={subscriptionPlans as PlanView[]} /> : null;
 
   if (!canViewAnalytics) {
     return (
       <DashboardShell kind="teacher" title="لوحة التحكم" subtitle={tenant.name} userName={context.user.fullName} tenantSlug={tenant.slug} supportMode={context.supportMode}>
+        {trialExperience}
         <section className={styles.restrictedWelcome}>
           <span><Sparkles size={16} /> مساحة عملك</span>
           <h2>مرحبًا، {context.user.fullName}</h2>
@@ -65,6 +81,7 @@ export default async function TeacherDashboard() {
 
   return (
     <DashboardShell kind="teacher" title="لوحة التحكم" subtitle={`${tenant.name} — ملخص واضح لما يحدث الآن`} userName={context.user.fullName} tenantSlug={tenant.slug} supportMode={context.supportMode}>
+      {trialExperience}
       <ActiveAnnouncements tenantId={tenantId} audience="teacher" />
 
       <section className={styles.welcome} aria-labelledby="teacher-welcome-title">

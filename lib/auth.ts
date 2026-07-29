@@ -4,6 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import type { UserRole } from "@prisma/client";
 import { prisma } from "./prisma";
 import { hasPermission, type Permission, tenantStaffRoles } from "./permissions";
+import { subscriptionAllowsDashboard, syncTenantSubscriptionState } from "./subscriptions";
 
 export const SESSION_COOKIE = "chemistry_session";
 export const SUPPORT_COOKIE = "chemistry_support";
@@ -182,7 +183,7 @@ export async function getAuthContext() {
           lastLoginAt: true,
           memberships: {
             where: { status: "ACTIVE" },
-            include: { tenant: { include: { theme: true, settings: true } } },
+            include: { tenant: { include: { theme: true, settings: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true } } } } },
             orderBy: { createdAt: "asc" },
           },
         },
@@ -225,7 +226,11 @@ export async function getTenantContext() {
   const context = await getAuthContext();
   if (!context) return null;
   if (context.membership) {
-    const membership = context.membership;
+    let membership = context.membership;
+    if (tenantStaffRoles.includes(context.user.role)) {
+      const synced = await syncTenantSubscriptionState(membership.tenantId);
+      if (synced) membership = { ...membership, tenant: { ...membership.tenant, status: synced.tenantStatus, subscriptions: membership.tenant.subscriptions.map((item, index) => index === 0 ? { ...item, status: synced.effectiveStatus } : item) } };
+    }
     if (membership.tenant.status === "SUSPENDED" || membership.tenant.status === "DISABLED") {
       return { ...context, membership, blocked: true as const, supportMode: false as const };
     }
@@ -237,7 +242,7 @@ export async function getTenantContext() {
   if (!supportToken) return null;
   const support = await prisma.supportSession.findUnique({
     where: { tokenHash: hashToken(supportToken) },
-    include: { tenant: { include: { theme: true, settings: true } } },
+    include: { tenant: { include: { theme: true, settings: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true } } } } },
   });
   if (!support || support.actorUserId !== context.user.id || support.endedAt || support.expiresAt <= new Date()) return null;
 
@@ -258,25 +263,25 @@ export async function getTenantContext() {
 export async function requireTenantMember(roles?: UserRole | UserRole[]) {
   const context = await getTenantContext();
   if (!context) redirect("/login");
-  if (!context.supportMode && tenantStaffRoles.includes(context.membership.role)) {
-    const openingFee = await prisma.teacherBillingSettings.findUnique({ where: { tenantId: context.membership.tenantId }, select: { openingFeeStatus: true, openingFeeDueAt: true } });
-    const feeExpired = openingFee?.openingFeeDueAt && openingFee.openingFeeDueAt <= new Date() && ["PENDING", "SUBMITTED"].includes(openingFee.openingFeeStatus);
-    if (feeExpired) {
-      if (context.membership.tenant.status !== "SUSPENDED") {
-        await prisma.$transaction([
-          prisma.tenant.update({ where: { id: context.membership.tenantId }, data: { status: "SUSPENDED", suspendedAt: new Date() } }),
-          prisma.auditLog.create({ data: { tenantId: context.membership.tenantId, actorId: context.user.id, action: "OPENING_FEE_AUTO_SUSPENDED", entityType: "Tenant", entityId: context.membership.tenantId, metadata: { dueAt: openingFee.openingFeeDueAt!.toISOString(), feeStatus: openingFee.openingFeeStatus } } }),
-        ]);
-      }
-      redirect("/teacher/activation-fee");
-    }
+  if (context.blocked) {
+    const subscription = context.membership.tenant.subscriptions?.[0];
+    if (tenantStaffRoles.includes(context.user.role) && subscription && !subscriptionAllowsDashboard(subscription.status)) redirect("/teacher/subscription");
+    redirect("/tenant-unavailable");
   }
-  if (context.blocked) redirect("/tenant-unavailable");
   const allowed = roles ? (Array.isArray(roles) ? roles : [roles]) : null;
   if (allowed && !allowed.includes(context.membership.role)) redirect(homeForRole(context.user.role));
   return context;
 }
 
+export async function requireTeacherSubscriptionContext(roles?: UserRole | UserRole[]) {
+  const context = await getTenantContext();
+  if (!context || !tenantStaffRoles.includes(context.user.role)) redirect("/login?role=teacher");
+  const allowed = roles ? (Array.isArray(roles) ? roles : [roles]) : null;
+  if (allowed && !allowed.includes(context.membership.role)) redirect(homeForRole(context.user.role));
+  const subscription = context.membership.tenant.subscriptions?.[0];
+  if (context.blocked && (!subscription || subscriptionAllowsDashboard(subscription.status))) redirect("/tenant-unavailable");
+  return context;
+}
 export async function requireTenantRole(roles: UserRole | UserRole[]) {
   return requireTenantMember(roles);
 }

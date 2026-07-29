@@ -9,6 +9,7 @@ import { uploadStorageFile, deleteStorageFile } from "../../../../lib/bunny/stor
 import { createBunnyStoragePath } from "../../../../lib/media/paths";
 import { processImage } from "../../../../lib/media/image";
 import { extensionForMime, resolveVerifiedMimeType, validateDescriptor } from "../../../../lib/media/validation";
+import { calculateSubscriptionPrice, getSubscriptionPolicy, trialWindow } from "../../../../lib/subscriptions";
 
 export const runtime = "nodejs";
 
@@ -79,18 +80,21 @@ export async function POST(request: Request) {
   }
 
   const passwordHash = await hash(data.password, 12);
+  const subscriptionPolicy = await getSubscriptionPolicy();
   let result: { tenant: { id: string; slug: string }; teacher: { id: string } };
   try {
     result = await prisma.$transaction(async (tx) => {
-      const openingFeeDueAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
       const teacher = await tx.user.create({ data: { fullName: data.fullName, username: data.username, email: data.email, phone: data.phone, passwordHash, role: "TEACHER_OWNER", status: "ACTIVE" }, select: { id: true } });
       const tenant = await tx.tenant.create({ data: { name: data.platformName, slug: data.slug, status: "TRIAL", ownerId: teacher.id, subject: data.subject, onboardingStep: 1, onboardingDone: false }, select: { id: true, slug: true } });
       await tx.tenantMember.create({ data: { tenantId: tenant.id, userId: teacher.id, role: "TEACHER_OWNER", status: "ACTIVE" } });
       await tx.themeSettings.create({ data: { tenantId: tenant.id } });
       await tx.tenantSettings.create({ data: { tenantId: tenant.id, platformName: data.platformName, publicPageLive: false, supportedGrades: data.grades } });
-      await tx.teacherBillingSettings.create({ data: { tenantId: tenant.id, pricePerStudent: 15, studentLimit: 100, openingFeeAmount: 500, openingFeeDueAt, openingFeeStatus: "PENDING" } });
-      const openingStatement = await tx.billingStatement.create({ data: { tenantId: tenant.id, statementNumber: `OPEN-${tenant.id}`, periodStart: new Date(), periodEnd: openingFeeDueAt, billableStudents: 0, pricePerStudent: 0, subtotal: 500, finalAmount: 500, paidAmount: 0, dueDate: openingFeeDueAt, status: "UNPAID", internalNote: "رسوم فتح حساب المدرس" } });
-      await tx.auditLog.create({ data: { tenantId: tenant.id, actorId: teacher.id, action: "OPENING_FEE_STATEMENT_CREATED", entityType: "BillingStatement", entityId: openingStatement.id, metadata: { amount: 500, dueAt: openingFeeDueAt.toISOString() }, ipHash } });
+      await tx.teacherBillingSettings.create({ data: { tenantId: tenant.id } });
+      const starterPlan = await tx.subscriptionPlan.findUniqueOrThrow({ where: { code: "STARTER" } });
+      const trial = trialWindow(new Date(), subscriptionPolicy.trialHours);
+      const pricing = calculateSubscriptionPrice(Number(starterPlan.monthlyPrice), "MONTHLY", subscriptionPolicy.pricing);
+      const subscription = await tx.tenantSubscription.create({ data: { tenantId: tenant.id, planId: starterPlan.id, status: "TRIALING", billingCycle: "MONTHLY", baseMonthlyPrice: starterPlan.monthlyPrice!, billedAmount: pricing.amountEgp, discountPercent: 0, activeStudentLimit: starterPlan.activeStudentLimit, storageLimitGb: starterPlan.storageLimitGb, ...trial } });
+      await tx.subscriptionEvent.create({ data: { tenantId: tenant.id, subscriptionId: subscription.id, actorUserId: teacher.id, type: "TRIAL_STARTED", payload: { trialHours: subscriptionPolicy.trialHours, planCode: starterPlan.code } } });
       await tx.auditLog.create({ data: { tenantId: tenant.id, actorId: teacher.id, action: "PUBLIC_TEACHER_SIGNUP", entityType: "Tenant", entityId: tenant.id, metadata: { platformName: data.platformName, slug: data.slug, subject: data.subject, grades: data.grades }, ipHash } });
       return { tenant, teacher };
     });

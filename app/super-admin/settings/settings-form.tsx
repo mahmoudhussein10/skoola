@@ -14,6 +14,17 @@ type Settings = {
   defaultTenantStatus: "TRIAL" | "ACTIVE" | "SUSPENDED" | "DISABLED";
   maxUploadSizeMb: number;
   allowedUploadTypes: string[];
+  billingVodafoneCashEnabled: boolean;
+  billingVodafoneCashNumber: string;
+  billingInstaPayEnabled: boolean;
+  billingInstaPayAddress: string;
+  billingAccountName: string;
+  billingPaymentInstructions: string;
+  subscriptionTrialHours: number;
+  subscriptionGraceDays: number;
+  subscriptionQuarterlyDiscount: number;
+  subscriptionSemiannualDiscount: number;
+  subscriptionAnnualBilledMonths: number;
 };
 
 const uploadTypes = [
@@ -55,7 +66,21 @@ export function PlatformSettingsForm({ initial }: { initial: Settings }) {
       <label><input type="checkbox" checked={form.requireAdminApproval} onChange={(event) => setForm({ ...form, requireAdminApproval: event.target.checked })} />مراجعة حسابات الطلاب قبل التفعيل</label>
       <label><input type="checkbox" checked={form.maintenanceMode} onChange={(event) => setForm({ ...form, maintenanceMode: event.target.checked })} />وضع الصيانة</label>
     </fieldset>
-    <fieldset className="settingsChecks"><legend>أنواع الرفع المسموح بها</legend>{uploadTypes.map(([value, label]) => <label key={value}><input type="checkbox" checked={form.allowedUploadTypes.includes(value)} onChange={() => toggleType(value)} />{label}</label>)}</fieldset>
+    <fieldset className="settingsChecks"><legend>تحصيل اشتراكات المدرسين</legend>
+      <label><input type="checkbox" checked={form.billingVodafoneCashEnabled} onChange={(event) => setForm({ ...form, billingVodafoneCashEnabled: event.target.checked })} />تفعيل فودافون كاش</label>
+      <label><input type="checkbox" checked={form.billingInstaPayEnabled} onChange={(event) => setForm({ ...form, billingInstaPayEnabled: event.target.checked })} />تفعيل إنستا باي</label>
+      <div className="fieldGrid" style={{ width: "100%" }}>
+        <label>رقم فودافون كاش<input dir="ltr" value={form.billingVodafoneCashNumber} onChange={(event) => setForm({ ...form, billingVodafoneCashNumber: event.target.value })} placeholder="010..." /></label>
+        <label>عنوان إنستا باي<input dir="ltr" value={form.billingInstaPayAddress} onChange={(event) => setForm({ ...form, billingInstaPayAddress: event.target.value })} placeholder="username@instapay" /></label>
+        <label>اسم صاحب الحساب<input value={form.billingAccountName} onChange={(event) => setForm({ ...form, billingAccountName: event.target.value })} /></label>
+        <label>تعليمات الدفع<input value={form.billingPaymentInstructions} onChange={(event) => setForm({ ...form, billingPaymentInstructions: event.target.value })} placeholder="تعليمات تظهر للمدرس قبل رفع الإيصال" /></label>
+        <label>مدة التجربة بالساعات<input type="number" min="1" max="720" value={form.subscriptionTrialHours} onChange={(event) => setForm({ ...form, subscriptionTrialHours: Number(event.target.value) })} /></label>
+        <label>فترة السماح بالأيام<input type="number" min="0" max="60" value={form.subscriptionGraceDays} onChange={(event) => setForm({ ...form, subscriptionGraceDays: Number(event.target.value) })} /></label>
+        <label>خصم 3 شهور %<input type="number" min="0" max="50" value={form.subscriptionQuarterlyDiscount} onChange={(event) => setForm({ ...form, subscriptionQuarterlyDiscount: Number(event.target.value) })} /></label>
+        <label>خصم 6 شهور %<input type="number" min="0" max="60" value={form.subscriptionSemiannualDiscount} onChange={(event) => setForm({ ...form, subscriptionSemiannualDiscount: Number(event.target.value) })} /></label>
+        <label>عدد الشهور المدفوعة سنويًا<input type="number" min="1" max="12" value={form.subscriptionAnnualBilledMonths} onChange={(event) => setForm({ ...form, subscriptionAnnualBilledMonths: Number(event.target.value) })} /></label>
+      </div>
+    </fieldset>    <fieldset className="settingsChecks"><legend>أنواع الرفع المسموح بها</legend>{uploadTypes.map(([value, label]) => <label key={value}><input type="checkbox" checked={form.allowedUploadTypes.includes(value)} onChange={() => toggleType(value)} />{label}</label>)}</fieldset>
     <div className="editorActions"><button className="btn primary" disabled={saving}>{saving ? "جارٍ الحفظ…" : "حفظ الإعدادات"}</button></div>
     {message ? <p className="formNotice">{message}</p> : null}
   </form>;

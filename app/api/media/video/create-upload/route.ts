@@ -5,6 +5,7 @@ import { configurationMessage } from "../../../../../lib/bunny/config";
 import { createStreamVideo, createTusCredentials, deleteStreamVideo, ensureAcademyCollection, streamEmbedUrl, streamPlaybackUrl, streamThumbnailUrl } from "../../../../../lib/bunny/stream";
 import { mediaDescriptorSchema, mediaErrorMessage, validateDescriptor } from "../../../../../lib/media/validation";
 import { mediaJson, verifyMediaRelations } from "../../../../../lib/media/permissions";
+import { assertTenantStorageCapacity } from "../../../../../lib/subscriptions";
 
 export async function POST(request: Request) {
   const auth = await authorizeTenant("media.manage");
@@ -18,6 +19,7 @@ export async function POST(request: Request) {
     if (descriptor.resourceType !== "video") return NextResponse.json({ ok: false, message: "هذا المسار مخصص للفيديو فقط" }, { status: 400 });
     const tenantId = auth.context.membership.tenantId;
     await verifyMediaRelations(tenantId, descriptor.courseId, descriptor.lessonId);
+    await assertTenantStorageCapacity(tenantId, descriptor.fileSize);
     const collectionId = await ensureAcademyCollection(tenantId, auth.context.membership.tenant.name);
     const video = await createStreamVideo(descriptor.title, collectionId);
     videoId = video.guid;
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, upload: createTusCredentials(asset.id, video.guid), asset: mediaJson(asset) }, { status: 201 });
   } catch (error) {
     if (videoId) await deleteStreamVideo(videoId).catch(() => undefined);
-    const message = error instanceof Error && (error.message.startsWith("BUNNY_") || error.name === "BunnyConfigurationError") ? configurationMessage(error) : mediaErrorMessage(error);
+    const message = error instanceof Error && error.message === "STORAGE_LIMIT_REACHED" ? "وصلت للحد الأقصى للمساحة. رقِّ الخطة قبل رفع ملف جديد." : error instanceof Error && (error.message.startsWith("BUNNY_") || error.name === "BunnyConfigurationError") ? configurationMessage(error) : mediaErrorMessage(error);
     const status = error instanceof Error && error.name === "BunnyConfigurationError" ? 503 : 400;
     return NextResponse.json({ ok: false, message }, { status });
   }

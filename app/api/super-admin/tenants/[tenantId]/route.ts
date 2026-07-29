@@ -14,11 +14,6 @@ const updateTenantSchema = z.object({
   username: z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,40}$/).optional(),
   phone: z.string().min(8).optional(),
   email: z.string().optional().nullable(),
-  pricePerStudent: z.number().min(0).optional(),
-  studentLimit: z.number().min(1).optional(),
-  subscriptionStart: z.string().optional().nullable(),
-  subscriptionEnd: z.string().optional().nullable(),
-  internalNotes: z.string().optional().nullable(),
   primaryColor: z.string().optional(),
   secondaryColor: z.string().optional(),
 });
@@ -34,10 +29,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ tena
       owner: { select: { id: true, fullName: true, username: true, email: true, phone: true, lastLoginAt: true, createdAt: true } },
       theme: true,
       settings: true,
-      billingSettings: true,
-      billingStatements: { orderBy: { createdAt: "desc" }, take: 20 },
-      teacherPayments: { orderBy: { paymentDate: "desc" }, take: 20 },
-      members: { take: 10, include: { user: { select: { id: true, fullName: true, email: true } } } },
+      billingSettings: true,      members: { take: 10, include: { user: { select: { id: true, fullName: true, email: true } } } },
       auditLogs: { include: { actor: { select: { fullName: true } } }, orderBy: { createdAt: "desc" }, take: 10 },
       _count: {
         select: {
@@ -65,10 +57,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ tena
     prisma.activationCode.count({ where: { tenantId, status: "ACTIVE" } }),
   ]);
 
-  // Billing statistics
-  const pricePerStudent = Number(tenant.billingSettings?.pricePerStudent ?? 0);
-  const calculatedAmountDue = activeStudents * pricePerStudent;
-  const totalPaid = tenant.teacherPayments.reduce((acc, p) => acc + Number(p.amount), 0);
 
   return NextResponse.json({
     ok: true,
@@ -85,13 +73,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ tena
       totalActivationCodes: tenant._count.activationCodes,
       usedCodes,
       availableCodes,
-    },
-    financial: {
-      pricePerStudent,
-      activeStudents,
-      calculatedAmountDue,
-      totalPaid,
-      outstandingBalance: Math.max(0, calculatedAmountDue - totalPaid),
     },
   });
 }
@@ -155,35 +136,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ te
       });
     }
 
-    // 4. Update Billing Settings
-    if (
-      data.pricePerStudent !== undefined ||
-      data.studentLimit !== undefined ||
-      data.subscriptionStart !== undefined ||
-      data.subscriptionEnd !== undefined ||
-      data.internalNotes !== undefined
-    ) {
-      await tx.teacherBillingSettings.upsert({
-        where: { tenantId },
-        create: {
-          tenantId,
-          pricePerStudent: data.pricePerStudent ?? 0,
-          studentLimit: data.studentLimit ?? 100,
-          subscriptionStart: data.subscriptionStart ? new Date(data.subscriptionStart) : new Date(),
-          subscriptionEnd: data.subscriptionEnd ? new Date(data.subscriptionEnd) : null,
-          internalNotes: data.internalNotes || null,
-        },
-        update: {
-          ...(data.pricePerStudent !== undefined ? { pricePerStudent: data.pricePerStudent } : {}),
-          ...(data.studentLimit !== undefined ? { studentLimit: data.studentLimit } : {}),
-          ...(data.subscriptionStart ? { subscriptionStart: new Date(data.subscriptionStart) } : {}),
-          ...(data.subscriptionEnd !== undefined ? { subscriptionEnd: data.subscriptionEnd ? new Date(data.subscriptionEnd) : null } : {}),
-          ...(data.internalNotes !== undefined ? { internalNotes: data.internalNotes } : {}),
-        },
-      });
-    }
 
-    // 5. Audit Log
+    // Audit Log
     await tx.auditLog.create({
       data: {
         tenantId,

@@ -173,54 +173,54 @@ enum NotificationCategory {
 }
 
 model Tenant {
-  id                        String                            @id @default(cuid())
-  name                      String
-  slug                      String                            @unique
-  status                    TenantStatus                      @default(TRIAL)
-  ownerId                   String?
-  logoUrl                   String?
-  faviconUrl                String?
-  description               String?
-  contactEmail              String?
-  contactPhone              String?
-  subject                   String?
-  onboardingStep            Int                               @default(1)
-  onboardingDone            Boolean                           @default(false)
-  suspendedAt               DateTime?
-  archivedAt                DateTime?
-  createdAt                 DateTime                          @default(now())
-  updatedAt                 DateTime                          @updatedAt
-  owner                     User?                             @relation("TenantOwner", fields: [ownerId], references: [id], onDelete: SetNull)
-  members                   TenantMember[]
-  studentProfiles           StudentProfile[]
-  courses                   Course[]
-  sections                  Section[]
-  lessons                   Lesson[]
-  enrollments               Enrollment[]
-  videoProgress             VideoProgress[]
-  exams                     Exam[]
-  questions                 Question[]
-  examAttempts              ExamAttempt[]
-  payments                  Payment[]
-  notifications             Notification[]
-  notificationRecipients    NotificationRecipient[]
-  notificationDeliveries    NotificationDelivery[]
-  pushDevices               PushDevice[]
-  notificationPreferences   NotificationPreference[]
-  activationCodes           ActivationCode[]
-  assignments               Assignment[]
-  submissions               Submission[]
-  staffInvitations          StaffInvitation[]
-  auditLogs                 AuditLog[]
-  activityLogs              ActivityLog[]
-  theme                     ThemeSettings?
-  settings                  TenantSettings?
-  supportSessions           SupportSession[]
-  billingSettings           TeacherBillingSettings?
-  billingStatements         BillingStatement[]
-  teacherPayments           TeacherPaymentRecord[]
-  billingPaymentSubmissions TeacherBillingPaymentSubmission[]
-  mediaAssets               MediaAsset[]
+  id                      String                       @id @default(cuid())
+  name                    String
+  slug                    String                       @unique
+  status                  TenantStatus                 @default(TRIAL)
+  ownerId                 String?
+  logoUrl                 String?
+  faviconUrl              String?
+  description             String?
+  contactEmail            String?
+  contactPhone            String?
+  subject                 String?
+  onboardingStep          Int                          @default(1)
+  onboardingDone          Boolean                      @default(false)
+  suspendedAt             DateTime?
+  archivedAt              DateTime?
+  createdAt               DateTime                     @default(now())
+  updatedAt               DateTime                     @updatedAt
+  owner                   User?                        @relation("TenantOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  members                 TenantMember[]
+  studentProfiles         StudentProfile[]
+  courses                 Course[]
+  sections                Section[]
+  lessons                 Lesson[]
+  enrollments             Enrollment[]
+  videoProgress           VideoProgress[]
+  exams                   Exam[]
+  questions               Question[]
+  examAttempts            ExamAttempt[]
+  payments                Payment[]
+  notifications           Notification[]
+  notificationRecipients  NotificationRecipient[]
+  notificationDeliveries  NotificationDelivery[]
+  pushDevices             PushDevice[]
+  notificationPreferences NotificationPreference[]
+  activationCodes         ActivationCode[]
+  assignments             Assignment[]
+  submissions             Submission[]
+  staffInvitations        StaffInvitation[]
+  auditLogs               AuditLog[]
+  activityLogs            ActivityLog[]
+  theme                   ThemeSettings?
+  settings                TenantSettings?
+  supportSessions         SupportSession[]
+  billingSettings         TeacherBillingSettings?
+  subscriptions           TenantSubscription[]
+  subscriptionPayments    SubscriptionPaymentRequest[]
+  subscriptionEvents      SubscriptionEvent[]
+  mediaAssets             MediaAsset[]
 
   @@index([status, createdAt])
   @@index([ownerId])
@@ -244,46 +244,48 @@ model TenantMember {
 }
 
 model User {
-  id                      String                   @id @default(cuid())
-  fullName                String
-  username                String                   @unique
-  email                   String?                  @unique
-  phone                   String                   @unique
-  passwordHash            String
-  role                    UserRole                 @default(STUDENT)
-  status                  UserStatus               @default(PENDING)
-  avatarUrl               String?
-  emailVerified           Boolean                  @default(false)
-  phoneVerified           Boolean                  @default(false)
-  lastLoginAt             DateTime?
-  deletedAt               DateTime?
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
-  ownedTenants            Tenant[]                 @relation("TenantOwner")
-  memberships             TenantMember[]
-  studentProfiles         StudentProfile[]
-  createdCourses          Course[]                 @relation("CourseCreator")
-  enrollments             Enrollment[]             @relation("StudentEnrollments")
-  videoProgress           VideoProgress[]
-  examAttempts            ExamAttempt[]
-  payments                Payment[]                @relation("StudentPayments")
-  reviewedPayments        Payment[]                @relation("PaymentReviewer")
-  notifications           Notification[]           @relation("LegacyUserNotifications")
-  createdNotifications    Notification[]           @relation("NotificationCreator")
-  notificationRecipients  NotificationRecipient[]
-  notificationDeliveries  NotificationDelivery[]
-  pushDevices             PushDevice[]
-  notificationPreferences NotificationPreference[]
-  deviceSessions          DeviceSession[]
-  auditLogs               AuditLog[]               @relation("AuditActor")
-  activityLogs            ActivityLog[]            @relation("ActivityActor")
-  sessions                AuthSession[]
-  passwordResets          PasswordResetToken[]
-  loginAttempts           LoginAttempt[]
-  staffInvitations        StaffInvitation[]        @relation("InvitationCreator")
-  submissions             Submission[]             @relation("StudentSubmissions")
-  supportSessions         SupportSession[]         @relation("SupportActor")
-  uploadedMedia           MediaAsset[]             @relation("MediaUploadedBy")
+  id                           String                       @id @default(cuid())
+  fullName                     String
+  username                     String                       @unique
+  email                        String?                      @unique
+  phone                        String                       @unique
+  passwordHash                 String
+  role                         UserRole                     @default(STUDENT)
+  status                       UserStatus                   @default(PENDING)
+  avatarUrl                    String?
+  emailVerified                Boolean                      @default(false)
+  phoneVerified                Boolean                      @default(false)
+  lastLoginAt                  DateTime?
+  deletedAt                    DateTime?
+  createdAt                    DateTime                     @default(now())
+  updatedAt                    DateTime                     @updatedAt
+  ownedTenants                 Tenant[]                     @relation("TenantOwner")
+  memberships                  TenantMember[]
+  studentProfiles              StudentProfile[]
+  createdCourses               Course[]                     @relation("CourseCreator")
+  enrollments                  Enrollment[]                 @relation("StudentEnrollments")
+  videoProgress                VideoProgress[]
+  examAttempts                 ExamAttempt[]
+  payments                     Payment[]                    @relation("StudentPayments")
+  reviewedPayments             Payment[]                    @relation("PaymentReviewer")
+  notifications                Notification[]               @relation("LegacyUserNotifications")
+  createdNotifications         Notification[]               @relation("NotificationCreator")
+  notificationRecipients       NotificationRecipient[]
+  notificationDeliveries       NotificationDelivery[]
+  pushDevices                  PushDevice[]
+  notificationPreferences      NotificationPreference[]
+  deviceSessions               DeviceSession[]
+  auditLogs                    AuditLog[]                   @relation("AuditActor")
+  activityLogs                 ActivityLog[]                @relation("ActivityActor")
+  sessions                     AuthSession[]
+  passwordResets               PasswordResetToken[]
+  loginAttempts                LoginAttempt[]
+  staffInvitations             StaffInvitation[]            @relation("InvitationCreator")
+  submissions                  Submission[]                 @relation("StudentSubmissions")
+  supportSessions              SupportSession[]             @relation("SupportActor")
+  uploadedMedia                MediaAsset[]                 @relation("MediaUploadedBy")
+  reviewedSubscriptionPayments SubscriptionPaymentRequest[] @relation("SubscriptionPaymentReviewer")
+  subscriptionEvents           SubscriptionEvent[]          @relation("SubscriptionEventActor")
 
   @@index([role, status])
   @@index([createdAt])
@@ -960,128 +962,219 @@ model SupportSession {
 }
 
 model PlatformSettings {
-  id                            String       @id @default("default")
-  platformName                  String       @default("Skoola")
-  logoUrl                       String?
-  supportPhone                  String?
-  supportWhatsApp               String?
-  supportEmail                  String?
-  primaryColor                  String       @default("#1565f5")
-  registrationEnabled           Boolean      @default(true)
-  teacherRegistrationEnabled    Boolean      @default(true)
-  maxDevicesPerStudent          Int          @default(2)
-  maintenanceMode               Boolean      @default(false)
-  requireAdminApproval          Boolean      @default(false)
-  defaultTenantStatus           TenantStatus @default(TRIAL)
-  allowedUploadTypes            Json?
-  maxUploadSizeMb               Int          @default(25)
-  defaultTeacherPricePerStudent Decimal      @default(15) @db.Decimal(10, 2)
-  teacherBillingDueDay          Int          @default(10)
-  billingVodafoneCashEnabled    Boolean      @default(false)
-  billingVodafoneCashNumber     String?
-  billingInstaPayEnabled        Boolean      @default(false)
-  billingInstaPayAddress        String?
-  billingAccountName            String?
-  billingPaymentInstructions    String?
-  updatedAt                     DateTime     @updatedAt
+  id                             String       @id @default("default")
+  platformName                   String       @default("Skoola")
+  logoUrl                        String?
+  supportPhone                   String?
+  supportWhatsApp                String?
+  supportEmail                   String?
+  primaryColor                   String       @default("#1565f5")
+  registrationEnabled            Boolean      @default(true)
+  teacherRegistrationEnabled     Boolean      @default(true)
+  maxDevicesPerStudent           Int          @default(2)
+  maintenanceMode                Boolean      @default(false)
+  requireAdminApproval           Boolean      @default(false)
+  defaultTenantStatus            TenantStatus @default(TRIAL)
+  allowedUploadTypes             Json?
+  maxUploadSizeMb                Int          @default(25)
+  billingVodafoneCashEnabled     Boolean      @default(false)
+  billingVodafoneCashNumber      String?
+  billingInstaPayEnabled         Boolean      @default(false)
+  billingInstaPayAddress         String?
+  billingAccountName             String?
+  billingPaymentInstructions     String?
+  subscriptionTrialHours         Int          @default(24)
+  subscriptionGraceDays          Int          @default(7)
+  subscriptionQuarterlyDiscount  Decimal      @default(5) @db.Decimal(5, 2)
+  subscriptionSemiannualDiscount Decimal      @default(10) @db.Decimal(5, 2)
+  subscriptionAnnualBilledMonths Int          @default(10)
+  updatedAt                      DateTime     @updatedAt
 }
 
-enum BillingStatementStatus {
-  UNPAID
-  PARTIALLY_PAID
-  PAID
-  OVERDUE
+enum SubscriptionBillingCycle {
+  MONTHLY
+  QUARTERLY
+  SEMIANNUAL
+  ANNUAL
+  CUSTOM
+}
+
+enum TenantSubscriptionStatus {
+  TRIALING
+  ACTIVE
+  GRACE_PERIOD
+  PAST_DUE
   CANCELLED
+  EXPIRED
+}
+
+enum SubscriptionPaymentStatus {
+  PENDING
+  NEEDS_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+enum SubscriptionChangeType {
+  NEW_SUBSCRIPTION
+  RENEWAL
+  UPGRADE
+  DOWNGRADE
+  CUSTOM
+}
+
+enum SubscriptionEventType {
+  CREATED
+  TRIAL_STARTED
+  TRIAL_ENDED
+  ACTIVATED
+  RENEWED
+  PAYMENT_REQUESTED
+  PAYMENT_APPROVED
+  PAYMENT_REJECTED
+  EXPIRY_WARNING_SENT
+  GRACE_STARTED
+  GRACE_ENDED
+  DOWNGRADE_SCHEDULED
+  DOWNGRADE_APPLIED
+  PLAN_CHANGED
+  LIMIT_REACHED
+  CANCELLED
+  EXPIRED
 }
 
 model TeacherBillingSettings {
-  id                  String    @id @default(cuid())
-  tenantId            String    @unique
-  pricePerStudent     Decimal   @default(15) @db.Decimal(10, 2)
-  billingCycle        String    @default("MONTHLY")
-  studentLimit        Int       @default(100)
-  subscriptionStart   DateTime  @default(now())
-  subscriptionEnd     DateTime?
-  internalNotes       String?
-  openingFeeAmount    Decimal   @default(500) @db.Decimal(10, 2)
-  openingFeeDueAt     DateTime?
-  openingFeeStatus    String    @default("NOT_REQUIRED")
-  openingFeeActivatedAt DateTime?
-  vodafoneCashEnabled Boolean   @default(false)
+  id                  String   @id @default(cuid())
+  tenantId            String   @unique
+  vodafoneCashEnabled Boolean  @default(false)
   vodafoneCashNumber  String?
-  instaPayEnabled     Boolean   @default(false)
+  instaPayEnabled     Boolean  @default(false)
   instaPayAddress     String?
-  bankTransferEnabled Boolean   @default(false)
+  bankTransferEnabled Boolean  @default(false)
   bankName            String?
   bankAccountNumber   String?
   bankIban            String?
   accountHolderName   String?
   paymentInstructions String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  tenant              Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  tenant              Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
-model BillingStatement {
-  id                 String                            @id @default(cuid())
-  tenantId           String
-  statementNumber    String                            @unique
-  periodStart        DateTime
-  periodEnd          DateTime
-  billableStudents   Int
-  pricePerStudent    Decimal                           @db.Decimal(10, 2)
-  subtotal           Decimal                           @db.Decimal(10, 2)
-  adjustments        Decimal                           @default(0) @db.Decimal(10, 2)
-  discount           Decimal                           @default(0) @db.Decimal(10, 2)
-  finalAmount        Decimal                           @db.Decimal(10, 2)
-  paidAmount         Decimal                           @default(0) @db.Decimal(10, 2)
-  status             BillingStatementStatus            @default(UNPAID)
-  issueDate          DateTime                          @default(now())
-  dueDate            DateTime
-  internalNote       String?
-  createdAt          DateTime                          @default(now())
-  updatedAt          DateTime                          @updatedAt
-  tenant             Tenant                            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  payments           TeacherPaymentRecord[]
-  paymentSubmissions TeacherBillingPaymentSubmission[]
+model SubscriptionPlan {
+  id                 String                       @id @default(cuid())
+  code               String                       @unique
+  name               String
+  monthlyPrice       Decimal?                     @db.Decimal(10, 2)
+  activeStudentLimit Int?
+  storageLimitGb     Int?
+  isCustom           Boolean                      @default(false)
+  isActive           Boolean                      @default(true)
+  sortOrder          Int                          @default(0)
+  metadata           Json?
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+  subscriptions      TenantSubscription[]         @relation("SubscriptionPlan")
+  pendingDowngrades  TenantSubscription[]         @relation("PendingSubscriptionPlan")
+  paymentRequests    SubscriptionPaymentRequest[]
 
-  @@index([tenantId, status, createdAt])
+  @@index([isActive, sortOrder])
 }
 
-model TeacherPaymentRecord {
-  id              String            @id @default(cuid())
+model TenantSubscription {
+  id                        String                       @id @default(cuid())
+  tenantId                  String                       @unique
+  planId                    String
+  status                    TenantSubscriptionStatus     @default(TRIALING)
+  billingCycle              SubscriptionBillingCycle     @default(MONTHLY)
+  currency                  String                       @default("EGP")
+  baseMonthlyPrice          Decimal                      @db.Decimal(10, 2)
+  discountPercent           Decimal                      @default(0) @db.Decimal(5, 2)
+  billedAmount              Decimal                      @db.Decimal(10, 2)
+  activeStudentLimit        Int?
+  storageLimitGb            Int?
+  trialStartedAt            DateTime
+  trialEndsAt               DateTime
+  currentPeriodStart        DateTime?
+  currentPeriodEnd          DateTime?
+  gracePeriodEndsAt         DateTime?
+  cancelAtPeriodEnd         Boolean                      @default(false)
+  cancelledAt               DateTime?
+  pendingPlanId             String?
+  pendingBillingCycle       SubscriptionBillingCycle?
+  pendingDowngradeAt        DateTime?
+  pendingPeriodEnd          DateTime?
+  pendingBaseMonthlyPrice   Decimal?                     @db.Decimal(10, 2)
+  pendingDiscountPercent    Decimal?                     @db.Decimal(5, 2)
+  pendingBilledAmount       Decimal?                     @db.Decimal(10, 2)
+  pendingActiveStudentLimit Int?
+  pendingStorageLimitGb     Int?
+  trialOfferDismissedAt     DateTime?
+  metadata                  Json?
+  version                   Int                          @default(1)
+  createdAt                 DateTime                     @default(now())
+  updatedAt                 DateTime                     @updatedAt
+  tenant                    Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan                      SubscriptionPlan             @relation("SubscriptionPlan", fields: [planId], references: [id])
+  pendingPlan               SubscriptionPlan?            @relation("PendingSubscriptionPlan", fields: [pendingPlanId], references: [id], onDelete: SetNull)
+  paymentRequests           SubscriptionPaymentRequest[]
+  events                    SubscriptionEvent[]
+
+  @@index([status, trialEndsAt])
+  @@index([status, currentPeriodEnd])
+  @@index([pendingPlanId, pendingDowngradeAt])
+}
+
+model SubscriptionPaymentRequest {
+  id              String                    @id @default(cuid())
   tenantId        String
-  statementId     String?
-  amount          Decimal           @db.Decimal(10, 2)
-  paymentDate     DateTime          @default(now())
-  paymentMethod   PaymentMethod     @default(CASH)
+  subscriptionId  String
+  requestedPlanId String
+  billingCycle    SubscriptionBillingCycle
+  changeType      SubscriptionChangeType    @default(NEW_SUBSCRIPTION)
+  originalAmount  Decimal                   @db.Decimal(10, 2)
+  discountAmount  Decimal                   @default(0) @db.Decimal(10, 2)
+  prorationCredit Decimal                   @default(0) @db.Decimal(10, 2)
+  amount          Decimal                   @db.Decimal(10, 2)
+  currency        String                    @default("EGP")
+  paymentMethod   PaymentMethod?
   referenceNumber String?
-  notes           String?
-  createdAt       DateTime          @default(now())
-  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  statement       BillingStatement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
-
-  @@index([tenantId, paymentDate])
-}
-
-model TeacherBillingPaymentSubmission {
-  id              String           @id @default(cuid())
-  tenantId        String
-  statementId     String
-  amount          Decimal          @db.Decimal(10, 2)
-  paymentMethod   PaymentMethod
-  referenceNumber String?
-  notes           String?
   proofUrl        String?
-  purpose         String           @default("MONTHLY")
-  status          PaymentStatus    @default(PENDING)
-  rejectionReason String?
+  notes           String?
+  status          SubscriptionPaymentStatus @default(PENDING)
+  periodStart     DateTime
+  periodEnd       DateTime
+  reviewedById    String?
   reviewedAt      DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  statement       BillingStatement @relation(fields: [statementId], references: [id], onDelete: Cascade)
+  rejectionReason String?
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  tenant          Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription    TenantSubscription        @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  requestedPlan   SubscriptionPlan          @relation(fields: [requestedPlanId], references: [id], onDelete: Restrict)
+  reviewedBy      User?                     @relation("SubscriptionPaymentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
 
   @@index([tenantId, status, createdAt])
-  @@index([statementId, status])
+  @@index([subscriptionId, status, periodStart])
+  @@index([requestedPlanId, createdAt])
+  @@index([changeType, status, createdAt])
+}
+
+model SubscriptionEvent {
+  id             String                @id @default(cuid())
+  tenantId       String
+  subscriptionId String
+  actorUserId    String?
+  type           SubscriptionEventType
+  key            String?               @unique
+  payload        Json?
+  occurredAt     DateTime              @default(now())
+  tenant         Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription   TenantSubscription    @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  actor          User?                 @relation("SubscriptionEventActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, occurredAt])
+  @@index([subscriptionId, type, occurredAt])
 }

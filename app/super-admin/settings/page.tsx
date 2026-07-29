@@ -18,6 +18,17 @@ export default async function SuperAdminSettingsPage() {
       maxDevicesPerStudent: settings.maxDevicesPerStudent,
       defaultTenantStatus: settings.defaultTenantStatus as "TRIAL" | "ACTIVE" | "SUSPENDED" | "DISABLED",
       maxUploadSizeMb: settings.maxUploadSizeMb,
+      billingVodafoneCashEnabled: settings.billingVodafoneCashEnabled,
+      billingVodafoneCashNumber: settings.billingVodafoneCashNumber ?? "",
+      billingInstaPayEnabled: settings.billingInstaPayEnabled,
+      billingInstaPayAddress: settings.billingInstaPayAddress ?? "",
+      billingAccountName: settings.billingAccountName ?? "",
+      billingPaymentInstructions: settings.billingPaymentInstructions ?? "",
+      subscriptionTrialHours: settings.subscriptionTrialHours,
+      subscriptionGraceDays: settings.subscriptionGraceDays,
+      subscriptionQuarterlyDiscount: Number(settings.subscriptionQuarterlyDiscount),
+      subscriptionSemiannualDiscount: Number(settings.subscriptionSemiannualDiscount),
+      subscriptionAnnualBilledMonths: settings.subscriptionAnnualBilledMonths,
       allowedUploadTypes: Array.isArray(settings.allowedUploadTypes) ? settings.allowedUploadTypes.filter((value): value is string => typeof value === "string") : [],
     }} />
   </DashboardShell>;

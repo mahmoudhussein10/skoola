@@ -124,14 +124,13 @@ export function TeacherSignupForm() {
         <div className="fieldGrid">
           <label>اسم المنصة<input name="platformName" required minLength={2} maxLength={120} placeholder="أكاديمية الأستاذ أحمد" /></label>
           <label className="fieldWide teacherSlugField">
-            <span>رابط المنصة الخاص بك</span>
-            <input name="slug" required minLength={3} maxLength={50} dir="ltr" value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/\s+/g, "-"))} placeholder="مثال: ahmed-math" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" aria-describedby="teacher-slug-guide" />
+            <span>اختار اسمًا قصيرًا لرابط منصتك</span>
+            <input name="slug" required minLength={3} maxLength={50} dir="ltr" value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/\s+/g, "-"))} placeholder="مثال: ahmed" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" aria-describedby="teacher-slug-guide" />
             <div className="teacherSlugGuide" id="teacher-slug-guide">
-              <b>تكتب إيه هنا؟</b>
-              <p>اكتب اسمك أو اسم الأكاديمية <strong>بالإنجليزي</strong>، ومن غير مسافات. استخدم شرطة <strong dir="ltr">-</strong> بين الكلمات.</p>
-              <span>أمثلة صحيحة: <code>ahmed-math</code> · <code>reem-academy</code> · <code>mostafa-science</code></span>
-              <small>رابطك الذي سترسله للطلاب:</small>
-              <strong className="teacherSlugPreview" dir="ltr">{PUBLIC_SITE_HOST}/t/{slug || "ahmed-math"}</strong>
+              <b>ببساطة: اكتب اسمك بالإنجليزي</b>
+              <p>لو اسمك أحمد اكتب <code>ahmed</code>. لو الاسم مستخدم اكتب المادة بعده، مثل <code>ahmed-math</code>.</p>
+              <small>وده رابط منصتك اللي هتبعته للطلاب:</small>
+              <strong className="teacherSlugPreview" dir="ltr">{PUBLIC_SITE_HOST}/t/{slug || "ahmed"}</strong>
             </div>
             {slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? <small className="teacherSlugError">اكتب الرابط بحروف إنجليزية صغيرة وأرقام فقط. مثال: ahmed-math</small> : null}
           </label>

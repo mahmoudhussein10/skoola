@@ -1,0 +1,7 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { authorizeSuperAdmin, isSameOrigin } from "@/lib/api-auth";
+import { requestFingerprint } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+const schema=z.object({monthlyPrice:z.number().positive().max(1_000_000).nullable(),activeStudentLimit:z.number().int().positive().max(1_000_000).nullable(),storageLimitGb:z.number().int().positive().max(100_000).nullable(),isActive:z.boolean()});
+export async function PATCH(request:Request,{params}:{params:Promise<{planId:string}>}){const auth=await authorizeSuperAdmin();if(!auth.ok)return auth.response;if(!isSameOrigin(request))return NextResponse.json({ok:false,message:"طلب غير صالح"},{status:403});const parsed=schema.safeParse(await request.json().catch(()=>null));if(!parsed.success)return NextResponse.json({ok:false,message:"راجع بيانات الخطة"},{status:400});const {planId}=await params;const before=await prisma.subscriptionPlan.findUnique({where:{id:planId}});if(!before)return NextResponse.json({ok:false,message:"الخطة غير موجودة"},{status:404});const {ipHash}=await requestFingerprint();const plan=await prisma.$transaction(async tx=>{const updated=await tx.subscriptionPlan.update({where:{id:planId},data:parsed.data});await tx.auditLog.create({data:{actorId:auth.context.user.id,action:"SUBSCRIPTION_PLAN_UPDATED",entityType:"SubscriptionPlan",entityId:planId,before,after:updated,ipHash}});return updated});return NextResponse.json({ok:true,plan});}

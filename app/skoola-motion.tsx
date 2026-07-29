@@ -1,29 +1,15 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 export function SkoolaExperience({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
-  const [targetPath, setTargetPath] = useState<string | null>(null);
+  const dashboardRoute = pathname.startsWith("/teacher") || pathname.startsWith("/super-admin");
   const previousPath = useRef(pathname);
-  const navigating = Boolean(targetPath && targetPath !== pathname);
 
-  useEffect(() => {
-    const onClick = (event: MouseEvent) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const target = event.target instanceof Element ? event.target.closest("a") : null;
-      if (!target || target.target === "_blank" || target.hasAttribute("download")) return;
-      const href = target.getAttribute("href");
-      if (!href || !href.startsWith("/") || href.startsWith("//")) return;
-      const next = href.split("#")[0].split("?")[0];
-      if (next && next !== pathname) setTargetPath(next);
-    };
-    document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
-  }, [pathname]);
 
   useEffect(() => {
     if (previousPath.current === pathname) return;
@@ -34,8 +20,7 @@ export function SkoolaExperience({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   return <>
-    <AnimatePresence>{navigating && <motion.div className="skoolaNavProgress" initial={{ scaleX: .08, opacity: 0 }} animate={{ scaleX: .82, opacity: 1 }} exit={{ scaleX: 1, opacity: 0 }} transition={{ duration: .22 }} />}</AnimatePresence>
-    <motion.div id="main-content" tabIndex={-1} key={pathname} className="routeMotion" initial={reduceMotion ? false : { opacity: .82, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .14, ease: "easeOut" }}>{children}</motion.div>
+    <motion.div id="main-content" tabIndex={-1} key={pathname} className="routeMotion" initial={reduceMotion ? false : dashboardRoute ? { opacity: .9 } : { opacity: .82, y: 4 }} animate={dashboardRoute ? { opacity: 1 } : { opacity: 1, y: 0 }} transition={{ duration: .14, ease: "easeOut" }}>{children}</motion.div>
   </>;
 }
 

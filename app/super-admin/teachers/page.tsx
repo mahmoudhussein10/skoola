@@ -34,9 +34,7 @@ export default async function TeachersPage({
     prisma.tenant.findMany({
       where,
       include: {
-        owner: { select: { fullName: true, email: true, phone: true, lastLoginAt: true } },
-        billingSettings: { select: { pricePerStudent: true } },
-        _count: { select: { members: true, courses: true } },
+        owner: { select: { fullName: true, email: true, phone: true, lastLoginAt: true } },        _count: { select: { members: true, courses: true } },
       },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * take,
@@ -73,7 +71,6 @@ export default async function TeachersPage({
               <tr>
                 <th>المنصة والربط</th>
                 <th>المدرس / المالك</th>
-                <th>سعر الطالب</th>
                 <th>الأعضاء / الكورسات</th>
                 <th>آخر دخول</th>
                 <th>الحالة</th>
@@ -92,11 +89,7 @@ export default async function TeachersPage({
                     <b>{tenant.owner?.fullName ?? "—"}</b>
                     <br />
                     <small dir="ltr" style={{ color: "#64748b" }}>{tenant.owner?.phone ?? tenant.owner?.email ?? ""}</small>
-                  </td>
-                  <td>
-                    {tenant.billingSettings ? `${Number(tenant.billingSettings.pricePerStudent).toLocaleString("en-US")} ج.م` : "غير محدد"}
-                  </td>
-                  <td>
+                  </td>                  <td>
                     <b>{tenant._count.members.toLocaleString("en-US")} طالب/عضو</b>
                     <br />
                     <small>{tenant._count.courses.toLocaleString("en-US")} كورس</small>

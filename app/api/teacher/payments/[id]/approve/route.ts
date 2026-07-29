@@ -4,6 +4,7 @@ import { prisma } from "../../../../../../lib/prisma";
 import { authorizeTenant, isSameOrigin } from "../../../../../../lib/api-auth";
 import { requestFingerprint } from "../../../../../../lib/auth";
 import { notifyPaymentDecision } from "../../../../../../lib/notifications/events";
+import { assertCanAddActiveStudent } from "../../../../../../lib/subscriptions";
 
 export async function POST(
   request: Request,
@@ -30,6 +31,8 @@ export async function POST(
   if (payment.status === "APPROVED") {
     return NextResponse.json({ ok: false, message: "طلب الدفع مقبول بالفعل" }, { status: 400 });
   }
+
+  try { await assertCanAddActiveStudent(tenantId, payment.studentId); } catch (error) { if (error instanceof Error && error.message === "ACTIVE_STUDENT_LIMIT_REACHED") return NextResponse.json({ ok: false, message: "وصلت للحد الأقصى للطلاب النشطين. رقِّ الخطة قبل قبول طالب جديد." }, { status: 409 }); throw error; }
 
   const { ipHash } = await requestFingerprint();
 

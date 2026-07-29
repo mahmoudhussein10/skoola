@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isSameOrigin } from "../../../../lib/api-auth";
 import { notifyEnrollmentAccepted } from "../../../../lib/notifications/events";
-import { getAuthContext, hashToken } from "../../../../lib/auth";
+import { hashToken } from "../../../../lib/auth";
+import { authorizeStudentSubscription } from "../../../../lib/api-auth";
 import { prisma } from "../../../../lib/prisma";
+import { assertCanAddActiveStudent } from "../../../../lib/subscriptions";
 
 const schema = z.object({ code: z.string().trim().toUpperCase().min(4).max(40) });
 
@@ -12,10 +14,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
   }
 
-  const auth = await getAuthContext();
-  if (!auth || !auth.membership) {
-    return NextResponse.json({ ok: false, message: "يرجى تسجيل الدخول أولاً لتفعيل الكود" }, { status: 401 });
-  }
+  const authorization = await authorizeStudentSubscription();
+  if (!authorization.ok) return authorization.response;
+  const auth = authorization.context;
 
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
   }
 
   const tenantId = auth.membership.tenantId;
+  try { await assertCanAddActiveStudent(tenantId, auth.user.id); } catch (error) { if (error instanceof Error && error.message === "ACTIVE_STUDENT_LIMIT_REACHED") return NextResponse.json({ ok: false, message: "الأكاديمية وصلت للحد الأقصى للطلاب حاليًا" }, { status: 409 }); throw error; }
   const rawCode = parsed.data.code;
   const codeHash = hashToken(rawCode);
 

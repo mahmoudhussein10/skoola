@@ -6,6 +6,7 @@ import { createSession, requestFingerprint } from "../../../../lib/auth";
 import { signupSchema } from "../../../../lib/validation";
 import { isSameOrigin } from "../../../../lib/api-auth";
 import { notifyEnrollmentRequest } from "../../../../lib/notifications/events";
+import { assertCanAddActiveStudent, syncTenantSubscriptionState } from "../../../../lib/subscriptions";
 
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
@@ -25,9 +26,13 @@ export async function POST(request: Request) {
     where: { slug: parsed.data.tenantSlug },
     select: { id: true, slug: true, status: true },
   });
-  if (!tenant || tenant.status === "SUSPENDED" || tenant.status === "DISABLED" || tenant.status === "ARCHIVED") {
+  const syncedSubscription = tenant ? await syncTenantSubscriptionState(tenant.id) : null;
+  const tenantStatus = syncedSubscription?.tenantStatus ?? tenant?.status;
+  if (!tenant || tenantStatus === "SUSPENDED" || tenant.status === "DISABLED" || tenant.status === "ARCHIVED") {
     return NextResponse.json({ ok: false, message: "المدرس غير موجود أو حسابه غير متاح حاليًا" }, { status: 404 });
   }
+
+  try { await assertCanAddActiveStudent(tenant.id); } catch (error) { if (error instanceof Error && error.message === "ACTIVE_STUDENT_LIMIT_REACHED") return NextResponse.json({ ok: false, message: "الأكاديمية وصلت للحد الأقصى من الطلاب النشطين حاليًا" }, { status: 409 }); throw error; }
 
   const { ipHash } = await requestFingerprint();
   const recent = await prisma.loginAttempt.count({ where: { ipHash, identifier: "signup", createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) } } });

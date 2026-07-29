@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "../../../../lib/prisma";
-import { getAuthContext } from "../../../../lib/auth";
+import { authorizeStudentSubscription } from "../../../../lib/api-auth";
 import { isSameOrigin } from "../../../../lib/api-auth";
 import { notifyPaymentSubmitted } from "../../../../lib/notifications/events";
 import { configurationMessage } from "../../../../lib/bunny/config";
@@ -24,10 +24,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "طلب غير صالح" }, { status: 403 });
   }
 
-  const auth = await getAuthContext();
-  if (!auth || auth.user.role !== "STUDENT" || !auth.membership) {
-    return NextResponse.json({ ok: false, message: "يجب تسجيل الدخول كطالب أولاً" }, { status: 401 });
-  }
+  const authorization = await authorizeStudentSubscription();
+  if (!authorization.ok) return authorization.response;
+  const auth = authorization.context;
 
   const contentType = request.headers.get("content-type") ?? "";
   let proofFile: File | null = null;

@@ -18,13 +18,6 @@ export function CreateTeacherClient() {
   const [slug, setSlug] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#1565f5");
   const [secondaryColor, setSecondaryColor] = useState("#081b3a");
-  const [subscriptionStart, setSubscriptionStart] = useState(() => new Date().toISOString().split("T")[0]);
-  const [subscriptionEnd, setSubscriptionEnd] = useState("");
-  const [pricePerStudent, setPricePerStudent] = useState<number>(50);
-  const [studentLimit, setStudentLimit] = useState<number>(500);
-  const [status, setStatus] = useState("ACTIVE");
-  const [internalNotes, setInternalNotes] = useState("");
-
   // Created Success Screen Data
   const [createdData, setCreatedData] = useState<{
     name: string;
@@ -70,14 +63,7 @@ export function CreateTeacherClient() {
           name: platformName,
           slug,
           primaryColor,
-          secondaryColor,
-          subscriptionStart,
-          subscriptionEnd: subscriptionEnd || null,
-          pricePerStudent: Number(pricePerStudent),
-          studentLimit: Number(studentLimit),
-          status,
-          internalNotes,
-        }),
+          secondaryColor,        }),
       });
 
       const data = await res.json();
@@ -282,49 +268,7 @@ export function CreateTeacherClient() {
                   <input type="text" dir="ltr" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} style={{ flex: 1, padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.85rem" }} />
                 </div>
               </div>
-            </div>
-
-            {/* SECTION 3 */}
-            <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", marginBottom: "1rem", borderBottom: "1px solid #edf0f4", paddingBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span>💳</span> 3. الاشتراكات والفوترة والحدود
-            </h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "0.3rem" }}>السعر المحسوب لكل طالب (ج.م) *</label>
-                <input type="number" required min={0} value={pricePerStudent} onChange={(e) => setPricePerStudent(Number(e.target.value))} style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.9rem", fontWeight: 700 }} />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "0.3rem" }}>الحد الأقصى للطلاب</label>
-                <input type="number" required min={10} value={studentLimit} onChange={(e) => setStudentLimit(Number(e.target.value))} style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.9rem", fontWeight: 700 }} />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "0.3rem" }}>تاريخ بداية الاشتراك</label>
-                <input type="date" value={subscriptionStart} onChange={(e) => setSubscriptionStart(e.target.value)} style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.9rem" }} />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "0.3rem" }}>تاريخ الانتهاء (اختياري)</label>
-                <input type="date" value={subscriptionEnd} onChange={(e) => setSubscriptionEnd(e.target.value)} style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.9rem" }} />
-              </div>
-
-              <div style={{ gridColumn: "span 2" }}>
-                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "0.3rem" }}>حالة حساب المنصة</label>
-                <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.9rem", fontWeight: 700 }}>
-                  <option value="ACTIVE">🟢 نشط (ACTIVE)</option>
-                  <option value="TRIAL">⏳ تجريبي (TRIAL)</option>
-                  <option value="SUSPENDED">⚠️ موقوف (SUSPENDED)</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: "1.75rem" }}>
-              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "0.3rem" }}>ملاحظات إدارية داخلية (خاصة بالإدارة فقط)</label>
-              <textarea rows={3} value={internalNotes} onChange={(e) => setInternalNotes(e.target.value)} placeholder="ملاحظات داخلية اختيارية" style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "10px", border: "1px solid #dfe4ec", fontSize: "0.9rem" }} />
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", borderTop: "1px solid #edf0f4", paddingTop: "1.25rem" }}>
+            </div><div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", borderTop: "1px solid #edf0f4", paddingTop: "1.25rem" }}>
               <Link href="/super-admin/teachers" className="btn secondary">
                 إلغاء
               </Link>
@@ -372,18 +316,6 @@ export function CreateTeacherClient() {
               <code dir="ltr" style={{ color: "#1565f5", fontWeight: 700, fontSize: "0.85rem" }}>
                 /t/{slug || "ahmed-samir"}
               </code>
-            </div>
-
-            {/* Price breakdown */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-              <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "10px", textAlign: "center", border: "1px solid #edf0f4" }}>
-                <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b" }}>سعر الطالب المحسوب</span>
-                <b style={{ fontSize: "1.1rem", color: "#0f172a" }}>{pricePerStudent} ج.م</b>
-              </div>
-              <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "10px", textAlign: "center", border: "1px solid #edf0f4" }}>
-                <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b" }}>الحد الأقصى للطلاب</span>
-                <b style={{ fontSize: "1.1rem", color: "#0f172a" }}>{studentLimit} طالب</b>
-              </div>
             </div>
           </div>
         </div>

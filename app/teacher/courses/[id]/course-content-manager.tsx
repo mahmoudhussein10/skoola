@@ -141,12 +141,18 @@ export function CourseContentManager({ course, initialIntent, initialSectionId }
   const [sectionModal, setSectionModal] = useState<{ open: boolean; data?: Section | null }>({ open: false });
   const [lessonModal, setLessonModal] = useState<{ open: boolean; sectionId?: string; data?: Lesson | null }>({ open: initialIntent === "lesson" && Boolean(initialSectionId), sectionId: initialSectionId });
   const [examModal, setExamModal] = useState<{ open: boolean; sectionId?: string | null; data?: Exam | null }>({ open: initialIntent === "exam", sectionId: initialSectionId ?? null });
+  const contentModalOpen = lessonModal.open || examModal.open;
   useEffect(() => {
-    if (!examModal.open) return;
-    const previousOverflow = document.body.style.overflow;
+    if (!contentModalOpen) return;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previousOverflow; };
-  }, [examModal.open]);
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [contentModalOpen]);
   const [confirmDelete, setConfirmDelete] = useState<{ open: boolean; type: "section" | "lesson" | "exam"; id: string; name: string } | null>(null);
 
   // Exam question form temporary state
@@ -890,7 +896,7 @@ export function CourseContentManager({ course, initialIntent, initialSectionId }
                                 <span className="itemIcon purple">
                                   <ClipboardCheck size={20} />
                                 </span>
-                                <div>
+                                <div className="examCardInfo">
                                   <h4>{exam.title}</h4>
                                   <div className="itemTags">
                                     <span className="tag purple">امتحان</span>
@@ -901,38 +907,48 @@ export function CourseContentManager({ course, initialIntent, initialSectionId }
                                       {exam.status === "PUBLISHED" ? "منشور" : "مسودة"}
                                     </span>
                                   </div>
+                                  <p className="examCardHint">إدارة أسئلة الامتحان ومتابعة نتائج الطلاب من مكان واحد</p>
                                 </div>
                               </div>
 
-                              <div className="itemActions">
+                              <div className="itemActions examCardActions">
                                 <Link
-                                  className="btn text"
+                                  className="btn text examResultsAction"
                                   href={`/teacher/exams?examId=${exam.id}`}
                                 >
-                                  النتائج
+                                  <Eye size={16} />
+                                  <span>عرض النتائج</span>
                                 </Link>
+                                <div className="examOrderActions" aria-label="ترتيب الامتحان">
+                                  <button
+                                    type="button"
+                                    aria-label="تحريك الامتحان لأعلى"
+                                    title="تحريك لأعلى"
+                                    disabled={eIndex === 0}
+                                    onClick={() => moveExam(exam.id, "up")}
+                                  >
+                                    <ArrowUp size={15} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    aria-label="تحريك الامتحان لأسفل"
+                                    title="تحريك لأسفل"
+                                    disabled={eIndex === section.exams.length - 1}
+                                    onClick={() => moveExam(exam.id, "down")}
+                                  >
+                                    <ArrowDown size={15} />
+                                  </button>
+                                </div>
                                 <button
-                                  title="تحريك لأعلى"
-                                  disabled={eIndex === 0}
-                                  onClick={() => moveExam(exam.id, "up")}
-                                >
-                                  <ArrowUp size={15} />
-                                </button>
-                                <button
-                                  title="تحريك لأسفل"
-                                  disabled={eIndex === section.exams.length - 1}
-                                  onClick={() => moveExam(exam.id, "down")}
-                                >
-                                  <ArrowDown size={15} />
-                                </button>
-                                <button
-                                  className="btn text"
+                                  className="btn text examEditAction"
                                   onClick={() => openExamModal(section.id, exam)}
                                 >
-                                  تعديل
+                                  <Edit3 size={16} />
+                                  <span>تعديل</span>
                                 </button>
                                 <button
-                                  className="btn text danger"
+                                  className="btn text danger examDeleteAction"
+                                  aria-label="حذف الامتحان"
                                   onClick={() =>
                                     setConfirmDelete({
                                       open: true,
@@ -942,7 +958,8 @@ export function CourseContentManager({ course, initialIntent, initialSectionId }
                                     })
                                   }
                                 >
-                                  حذف
+                                  <Trash2 size={16} />
+                                  <span>حذف</span>
                                 </button>
                               </div>
                             </div>
@@ -1005,12 +1022,12 @@ export function CourseContentManager({ course, initialIntent, initialSectionId }
       )}
 
       {/* Lesson Modal */}
-      {lessonModal.open && (
-        <div className="modalOverlay">
+      {mounted && lessonModal.open ? createPortal(
+        <div className="modalOverlay contentFormOverlay">
           <form ref={lessonFormRef} className="modalSheet wide" onSubmit={saveLesson} role="dialog" aria-modal="true" aria-labelledby="lesson-form-title">
             <header>
               <div><span className="modalEyebrow">محتوى القسم</span><h3 id="lesson-form-title">{lessonModal.data ? "تعديل الدرس" : "إضافة درس جديد"}</h3></div>
-              <button type="button" onClick={() => setLessonModal({ open: false })}>
+              <button type="button" className="modalCloseButton" aria-label="إغلاق فورم الدرس" onClick={() => setLessonModal({ open: false })}>
                 <X size={18} />
               </button>
             </header>
@@ -1078,16 +1095,17 @@ export function CourseContentManager({ course, initialIntent, initialSectionId }
               </button>
             </footer>
           </form>
-        </div>
-      )}
+        </div>,
+        document.body
+      ) : null}
 
       {/* Exam Modal */}
       {mounted && examModal.open ? createPortal(
-        <div className="modalOverlay quizBuilderOverlay">
+        <div className="modalOverlay contentFormOverlay quizBuilderOverlay">
           <form className="modalSheet extraWide" onSubmit={saveExam} noValidate role="dialog" aria-modal="true" aria-labelledby="exam-form-title">
             <header>
               <div><span className="modalEyebrow">تقييم الطالب</span><h3 id="exam-form-title">{examModal.data ? "تعديل الكويز" : "إنشاء كويز جديد"}</h3></div>
-              <button type="button" onClick={() => setExamModal({ open: false })}>
+              <button type="button" className="modalCloseButton" aria-label="إغلاق فورم الامتحان" onClick={() => setExamModal({ open: false })}>
                 <X size={18} />
               </button>
             </header>

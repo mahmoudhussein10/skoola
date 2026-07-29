@@ -777,3 +777,20 @@
     font-size: 15px !important;
   }
 }
+/* Teacher registration desktop workspace: preserve mobile, expand only wide screens. */
+.teacherSlugGuide{display:grid;gap:7px;margin-top:2px;padding:14px 15px;border:1px solid #d9e5f6;border-radius:15px;background:linear-gradient(135deg,#f7faff,#f7f5ff);color:#52627c;font-weight:650}
+.teacherSlugGuide>b{color:#172744;font-size:13px}.teacherSlugGuide p{margin:0;color:#62718b;font-size:12px;line-height:1.75}.teacherSlugGuide code{display:inline-flex;padding:2px 7px;border:1px solid #d6e1f2;border-radius:7px;background:#fff;color:#245fc9;font:800 12px/1.5 Consolas,monospace;direction:ltr}.teacherSlugGuide small{margin-top:3px;color:#73819a;font-size:10px}.teacherSlugPreview{max-width:100%;display:block;overflow:hidden;padding:10px 12px;border:1px solid #ccdaef;border-radius:11px;background:#fff;color:#174fae;font-size:12px;text-align:left;text-overflow:ellipsis;white-space:nowrap}.teacherSlugError{color:#bd3030!important;font-size:11px!important}
+@media (min-width:1001px){
+  .teacherOnlySignupPage{display:block!important;grid-template-columns:none!important;min-height:100svh!important;background:radial-gradient(circle at 12% 12%,rgba(68,111,244,.11),transparent 28%),radial-gradient(circle at 88% 78%,rgba(116,60,241,.09),transparent 30%),#f5f8fd!important}
+  .teacherOnlySignupPage .teacherSelfSignupShell{width:100%!important;min-height:100svh!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-direction:column!important;padding:30px clamp(28px,4vw,72px) 64px!important;background:transparent!important}
+  .teacherOnlySignupPage .teacherSignupBrand{width:min(1180px,100%);display:flex;align-items:center;justify-content:flex-start;margin:0 auto 18px;padding:0 4px}
+  .teacherOnlySignupPage .teacherSelfSignupCard{width:min(1180px,100%)!important;max-width:1180px!important;margin:0 auto!important;padding:clamp(34px,3vw,48px)!important;border:1px solid rgba(132,151,187,.24)!important;border-radius:30px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 32px 90px rgba(16,40,84,.12)!important}
+  .teacherOnlySignupPage .teacherSignupIntro{max-width:760px;margin-bottom:32px}
+  .teacherOnlySignupPage .teacherSignupForm{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:18px}
+  .teacherOnlySignupPage .teacherSignupForm>.teacherPhotoSection,.teacherOnlySignupPage .teacherSignupForm>.teacherSignupTerms,.teacherOnlySignupPage .teacherSignupForm>.formSuccess,.teacherOnlySignupPage .teacherSignupForm>.formError,.teacherOnlySignupPage .teacherSignupForm>.teacherSignupSubmit{grid-column:1/-1}
+  .teacherOnlySignupPage .teacherSignupSection{height:100%;padding:24px;border-radius:22px}
+  .teacherOnlySignupPage .teacherPhotoSection{display:grid;grid-template-columns:minmax(240px,.72fr) minmax(0,1.28fr);align-items:center;gap:22px}
+  .teacherOnlySignupPage .teacherPhotoSection .teacherSignupSectionHead{margin-bottom:0}
+  .teacherOnlySignupPage .teacherPhotoPicker{min-height:98px}
+  .teacherOnlySignupPage .teacherSignupLogin{max-width:760px;margin:24px auto 0}
+}

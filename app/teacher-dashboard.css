@@ -483,3 +483,73 @@ body.dashboardMenuOpen { touch-action: pan-y !important; }
     z-index: 230 !important;
   }
 }
+
+/* Stable dashboard header: floating inside the content gutter with no decorative rail. */
+.routeMotion:has(> .saasShell){transform:none!important}
+.saasShell.teacher .saasMain{min-width:0!important;max-width:100%!important;overflow:visible!important}
+.saasShell.teacher .saasTop{inset-inline:0!important;top:12px!important;width:100%!important;max-width:100%!important;margin:12px auto 28px!important;padding:15px 20px!important;border:1px solid rgba(116,142,188,.18)!important;border-radius:22px!important;background:rgba(255,255,255,.94)!important;box-sizing:border-box!important}
+.saasShell.teacher .saasTop::after{display:none!important;content:none!important}
+@media(max-width:900px){.saasShell.teacher .saasTop{top:max(7px,env(safe-area-inset-top))!important;margin:7px auto 15px!important;padding:9px 10px!important}}
+html.subscriptionModalOpen,body.subscriptionModalOpen{overflow:hidden!important;overscroll-behavior:none!important}
+
+/* Desktop shell v4: fixed full-height sidebar with its own scroll area. */
+@media (min-width: 901px) {
+  .saasShell.teacher,
+  .saasShell.super {
+    --dashboard-side-width: 280px;
+    display: block !important;
+    min-height: 100vh !important;
+    padding-inline-start: var(--dashboard-side-width) !important;
+    transition: padding-inline-start .22s ease;
+  }
+
+  .saasShell.teacher.isCollapsed,
+  .saasShell.super.isCollapsed {
+    --dashboard-side-width: 92px;
+  }
+
+  .saasShell.teacher .saasSide,
+  .saasShell.super .saasSide {
+    position: fixed !important;
+    inset-block: 0 !important;
+    inset-inline-start: 0 !important;
+    z-index: 220 !important;
+    width: var(--dashboard-side-width) !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    box-shadow: -8px 0 34px rgba(12, 35, 76, .07) !important;
+    transition: width .22s ease !important;
+  }
+
+  .saasShell.teacher .saasSide nav,
+  .saasShell.super .saasSide nav {
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable;
+    padding-bottom: 14px !important;
+  }
+
+  .saasShell.teacher .saasSideHead,
+  .saasShell.teacher .sideMobileProfile,
+  .saasShell.teacher .workspaceLabel,
+  .saasShell.teacher .sideFooter,
+  .saasShell.super .saasSideHead,
+  .saasShell.super .sideMobileProfile,
+  .saasShell.super .workspaceLabel,
+  .saasShell.super .sideFooter {
+    flex: 0 0 auto !important;
+  }
+
+  .saasShell.teacher .saasMain,
+  .saasShell.super .saasMain {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
