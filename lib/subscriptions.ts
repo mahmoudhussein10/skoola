@@ -33,7 +33,7 @@ export function subscriptionAllowsDashboard(status: TenantSubscriptionStatus) { 
 
 async function applyPendingDowngrade(tenantId: string, now: Date) {
   return prisma.$transaction(async (tx) => {
-    await tx.$executeRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${tenantId}))`);
+    await tx.$queryRaw<Array<{ locked: string }>>(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${tenantId}))::text AS locked`);
     const subscription = await tx.tenantSubscription.findUnique({ where: { tenantId } });
     if (!subscription?.pendingPlanId || !subscription.pendingDowngradeAt || subscription.pendingDowngradeAt > now || !subscription.pendingPeriodEnd) return null;
     const updated = await tx.tenantSubscription.update({ where: { id: subscription.id }, data: {
@@ -61,7 +61,7 @@ export async function syncTenantSubscriptionState(tenantId: string, now = new Da
   const graceChanged = lifecycle.gracePeriodEndsAt?.getTime() !== current.gracePeriodEndsAt?.getTime();
   if (lifecycle.status === current.status && !graceChanged) return { subscription: current, effectiveStatus: lifecycle.status, tenantStatus: current.tenant.status };
   return prisma.$transaction(async (tx) => {
-    await tx.$executeRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${tenantId}))`);
+    await tx.$queryRaw<Array<{ locked: string }>>(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${tenantId}))::text AS locked`);
     const fresh = await tx.tenantSubscription.findUniqueOrThrow({ where: { tenantId }, include: { tenant: { select: { status: true } } } });
     const next = resolveLifecycle(fresh, policy.graceDays, now);
     const freshGraceChanged = next.gracePeriodEndsAt?.getTime() !== fresh.gracePeriodEndsAt?.getTime();
@@ -114,7 +114,7 @@ export async function assertTenantPlanLimit(tenantId: string, resource: "ACTIVE_
 
 export async function reviewSubscriptionPaymentRequest(input: { requestId: string; reviewerId: string; status: Extract<SubscriptionPaymentStatus, "APPROVED" | "REJECTED" | "NEEDS_REVIEW">; rejectionReason?: string | null }) {
   return prisma.$transaction(async (tx) => {
-    await tx.$executeRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${input.requestId}))`);
+    await tx.$queryRaw<Array<{ locked: string }>>(Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${input.requestId}))::text AS locked`);
     const request = await tx.subscriptionPaymentRequest.findUnique({ where: { id: input.requestId }, include: { requestedPlan: true, subscription: true } }); if (!request) throw new Error("PAYMENT_REQUEST_NOT_FOUND");
     if (request.status === "APPROVED" && input.status === "APPROVED") return { paymentRequest: request, idempotent: true, activated: true };
     if (request.status !== "PENDING" && request.status !== "NEEDS_REVIEW") throw new Error("PAYMENT_REQUEST_ALREADY_REVIEWED");
