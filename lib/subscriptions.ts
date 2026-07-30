@@ -22,7 +22,17 @@ export function subscriptionPeriod(start: Date, billingCycle: SubscriptionBillin
 export function trialWindow(start = new Date(), hours = TRIAL_HOURS) { return { trialStartedAt: start, trialEndsAt: new Date(start.getTime() + hours * 3_600_000) }; }
 
 export async function getSubscriptionPolicy() {
-  const settings = await prisma.platformSettings.upsert({ where: { id: "default" }, update: {}, create: {} });
+  const settings = await prisma.platformSettings.findUnique({
+    where: { id: "default" },
+    select: {
+      subscriptionTrialHours: true,
+      subscriptionGraceDays: true,
+      subscriptionQuarterlyDiscount: true,
+      subscriptionSemiannualDiscount: true,
+      subscriptionAnnualBilledMonths: true,
+    },
+  });
+  if (!settings) return { trialHours: TRIAL_HOURS, graceDays: 7, pricing: DEFAULT_PRICING_POLICY };
   return { trialHours: settings.subscriptionTrialHours, graceDays: settings.subscriptionGraceDays, pricing: { quarterlyDiscountPercent: Number(settings.subscriptionQuarterlyDiscount), semiannualDiscountPercent: Number(settings.subscriptionSemiannualDiscount), annualBilledMonths: settings.subscriptionAnnualBilledMonths } satisfies PricingPolicy };
 }
 
@@ -30,6 +40,21 @@ export function resolveSubscriptionStatus(input: { status: TenantSubscriptionSta
   return resolveLifecycle(input, graceDays, now).status;
 }
 export function subscriptionAllowsDashboard(status: TenantSubscriptionStatus) { return status === "TRIALING" || status === "ACTIVE" || status === "GRACE_PERIOD"; }
+
+export function subscriptionNeedsLifecycleSync(input: {
+  status: TenantSubscriptionStatus;
+  trialEndsAt: Date;
+  currentPeriodEnd: Date | null;
+  gracePeriodEndsAt: Date | null;
+  pendingPlanId?: string | null;
+  pendingDowngradeAt?: Date | null;
+}, now = new Date()) {
+  if (input.pendingPlanId && input.pendingDowngradeAt && input.pendingDowngradeAt <= now) return true;
+  if (input.status === "TRIALING") return input.trialEndsAt <= now;
+  if (input.status === "ACTIVE") return Boolean(input.currentPeriodEnd && input.currentPeriodEnd <= now);
+  if (input.status === "GRACE_PERIOD") return !input.gracePeriodEndsAt || input.gracePeriodEndsAt <= now;
+  return input.status === "PAST_DUE";
+}
 
 async function applyPendingDowngrade(tenantId: string, now: Date) {
   const pending = await prisma.tenantSubscription.findUnique({
@@ -105,7 +130,12 @@ export async function getActiveStudentsLast30Days(tenantId: string, now = new Da
 export async function isStudentActiveLast30Days(tenantId: string, userId: string, now = new Date()) { const cutoff = new Date(now.getTime() - 30 * 86_400_000); return Boolean(await prisma.studentProfile.findFirst({ where: { tenantId, userId, user: { status: "ACTIVE", lastLoginAt: { gte: cutoff } } }, select: { id: true } })); }
 
 export async function getTenantSubscriptionSnapshot(tenantId: string, now = new Date()) {
-  await syncTenantSubscriptionState(tenantId, now); const subscription = await prisma.tenantSubscription.findUnique({ where: { tenantId }, include: { plan: true, pendingPlan: true } }); if (!subscription) return null;
+  let subscription = await prisma.tenantSubscription.findUnique({ where: { tenantId }, include: { plan: true, pendingPlan: true } }); if (!subscription) return null;
+  if (subscriptionNeedsLifecycleSync(subscription, now)) {
+    await syncTenantSubscriptionState(tenantId, now);
+    subscription = await prisma.tenantSubscription.findUnique({ where: { tenantId }, include: { plan: true, pendingPlan: true } });
+    if (!subscription) return null;
+  }
   const [activeStudents, storage] = await Promise.all([getActiveStudentsLast30Days(tenantId, now), prisma.mediaAsset.aggregate({ where: { tenantId, uploadStatus: "COMPLETED", deletedAt: null }, _sum: { fileSizeBytes: true } })]);
   const storageBytes = storage._sum.fileSizeBytes ?? BigInt(0); const storageLimitBytes = subscription.storageLimitGb == null ? null : BigInt(subscription.storageLimitGb) * BigInt(1024) * BigInt(1024) * BigInt(1024);
   const effectiveStatus = resolveSubscriptionStatus(subscription, now);

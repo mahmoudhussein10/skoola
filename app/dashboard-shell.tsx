@@ -100,12 +100,6 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
     return () => window.removeEventListener("resize", closeAtDesktop);
   }, []);
 
-  useEffect(() => {
-    const hrefs = kind === "teacher"
-      ? ["/teacher", "/teacher/courses", "/teacher/students", "/teacher/subscription", "/teacher/payments", "/teacher/exams", "/teacher/assignments", "/teacher/activation-codes", "/teacher/reports", "/teacher/staff", "/teacher/media", "/teacher/branding", "/teacher/help", "/teacher/notifications", "/teacher/settings"]
-      : ["/super-admin", "/super-admin/teachers", "/super-admin/subscriptions", "/super-admin/audit-logs", "/super-admin/announcements", "/super-admin/settings"];
-    hrefs.forEach((href) => router.prefetch(href));
-  }, [kind, router]);
   return <div className={`saasShell ${kind}${courseArea ? " courseArea" : ""}${collapsed ? " isCollapsed" : ""}`}>
 
     <AnimatePresence>{mobileOpen && <motion.button className="sideOverlay" aria-label="إغلاق القائمة" onClick={() => setMobileOpen(false)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} />}</AnimatePresence>
@@ -113,7 +107,7 @@ export function DashboardShell({ children, kind, title, subtitle, userName, tena
       <div className="saasSideHead"><Brand compact={collapsed}/><button className="sideCloseMobile" onClick={() => setMobileOpen(false)} aria-label="إغلاق القائمة"><X size={21}/></button><button className="sideCollapse" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "توسيع القائمة" : "طي القائمة"}>{collapsed ? <ChevronRight size={18}/> : <PanelRightClose size={18}/>}</button></div>
       {!collapsed && <div className="sideMobileProfile"><b>{userName.slice(0, 1)}</b><span><strong dir="auto">{userName}</strong><small>{kind === "super" ? "الإدارة العليا" : "مسؤول الأكاديمية"}</small></span></div>}
       {!collapsed && <span className="workspaceLabel">{kind === "super" ? "إدارة Skoola" : "مساحة الأكاديمية"}</span>}
-      <nav aria-label={kind === "super" ? "أقسام الإدارة العليا" : "أقسام لوحة المدرس"}>{nav.map((item) => { const Icon = item.icon; const active = isActive(item.href); return <Link href={item.href} key={item.href} className={active ? "active" : ""} aria-current={active ? "page" : undefined} onClick={() => setMobileOpen(false)} prefetch>{active && <motion.i className="activeRail" layoutId="active-nav" />}<Icon size={20} strokeWidth={1.9}/>{!collapsed && <span>{item.label}</span>}</Link>; })}</nav>
+      <nav aria-label={kind === "super" ? "أقسام الإدارة العليا" : "أقسام لوحة المدرس"}>{nav.map((item) => { const Icon = item.icon; const active = isActive(item.href); return <Link href={item.href} key={item.href} className={active ? "active" : ""} aria-current={active ? "page" : undefined} onClick={() => setMobileOpen(false)} onMouseEnter={() => router.prefetch(item.href)} onFocus={() => router.prefetch(item.href)} prefetch={false}>{active && <motion.i className="activeRail" layoutId="active-nav" />}<Icon size={20} strokeWidth={1.9}/>{!collapsed && <span>{item.label}</span>}</Link>; })}</nav>
       <div className="sideFooter">{tenantSlug && !collapsed ? <Link className="publicTenantLink" href={`/t/${tenantSlug}`} target="_blank">عرض الأكاديمية للطلاب <ChevronRight size={16}/></Link> : null}<form action="/api/auth/logout" method="post"><input type="hidden" name="next" value={kind === "super" ? "/super-admin/login" : tenantSlug ? `/login/${tenantSlug}` : "/login?role=teacher"}/><button className="saasLogout"><LogOut size={19}/>{!collapsed && <span>تسجيل الخروج</span>}</button></form></div>
       {!collapsed && kind === "super" && <div className="sideUpgrade"><SparkleIcon/><b>إدارة النظام</b><p>تحكم في إعدادات وأمان Skoola.</p><Link href="/super-admin/settings">إعدادات النظام</Link></div>}
     </motion.aside>

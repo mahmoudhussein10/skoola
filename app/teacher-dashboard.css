@@ -553,3 +553,61 @@ html.subscriptionModalOpen,body.subscriptionModalOpen{overflow:hidden!important;
     max-width: 100% !important;
   }
 }
+/* Desktop sidebar polish v5: viewport-locked rail and compact brand. */
+@media (min-width: 901px) {
+  .saasShell.teacher .saasSide,
+  .saasShell.super .saasSide {
+    top: 0 !important;
+    bottom: 0 !important;
+    min-height: 100vh !important;
+    height: 100dvh !important;
+  }
+
+  .saasShell.teacher .saasSideHead,
+  .saasShell.super .saasSideHead {
+    min-height: 64px !important;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e8edf5;
+  }
+
+  .saasShell.teacher .saasSideHead .skoolaBrand,
+  .saasShell.super .saasSideHead .skoolaBrand {
+    min-width: 0;
+    flex: 1 1 auto;
+    gap: 9px;
+    overflow: hidden;
+  }
+
+  .saasShell.teacher .saasSideHead .skoolaLogoFrame,
+  .saasShell.super .saasSideHead .skoolaLogoFrame {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+
+  .saasShell.teacher .saasSideHead .skoolaWordmark strong,
+  .saasShell.super .saasSideHead .skoolaWordmark strong {
+    font-size: 19px;
+    letter-spacing: -.5px;
+  }
+
+  .saasShell.teacher .saasSideHead .skoolaWordmark small,
+  .saasShell.super .saasSideHead .skoolaWordmark small {
+    display: none !important;
+  }
+
+  .saasShell.teacher .sideCollapse,
+  .saasShell.super .sideCollapse {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .saasShell.teacher .sideFooter,
+  .saasShell.super .sideFooter {
+    margin-top: auto !important;
+    padding-top: 12px;
+    border-top: 1px solid #e8edf5;
+    background: #fff;
+  }
+}

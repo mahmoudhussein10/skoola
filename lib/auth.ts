@@ -4,7 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import type { UserRole } from "@prisma/client";
 import { prisma } from "./prisma";
 import { hasPermission, type Permission, tenantStaffRoles } from "./permissions";
-import { subscriptionAllowsDashboard, syncTenantSubscriptionState } from "./subscriptions";
+import { subscriptionAllowsDashboard, subscriptionNeedsLifecycleSync, syncTenantSubscriptionState } from "./subscriptions";
 
 export const SESSION_COOKIE = "chemistry_session";
 export const SUPPORT_COOKIE = "chemistry_support";
@@ -183,7 +183,7 @@ export async function getAuthContext() {
           lastLoginAt: true,
           memberships: {
             where: { status: "ACTIVE" },
-            include: { tenant: { include: { theme: true, settings: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true } } } } },
+            include: { tenant: { include: { theme: true, settings: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true, pendingPlanId: true, pendingDowngradeAt: true } } } } },
             orderBy: { createdAt: "asc" },
           },
         },
@@ -227,7 +227,8 @@ export async function getTenantContext() {
   if (!context) return null;
   if (context.membership) {
     let membership = context.membership;
-    if (tenantStaffRoles.includes(context.user.role)) {
+    const subscription = membership.tenant.subscriptions[0];
+    if (tenantStaffRoles.includes(context.user.role) && subscription && subscriptionNeedsLifecycleSync(subscription)) {
       const synced = await syncTenantSubscriptionState(membership.tenantId);
       if (synced) membership = { ...membership, tenant: { ...membership.tenant, status: synced.tenantStatus, subscriptions: membership.tenant.subscriptions.map((item, index) => index === 0 ? { ...item, status: synced.effectiveStatus } : item) } };
     }
@@ -242,7 +243,7 @@ export async function getTenantContext() {
   if (!supportToken) return null;
   const support = await prisma.supportSession.findUnique({
     where: { tokenHash: hashToken(supportToken) },
-    include: { tenant: { include: { theme: true, settings: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true } } } } },
+    include: { tenant: { include: { theme: true, settings: true, subscriptions: { select: { status: true, trialEndsAt: true, currentPeriodEnd: true, gracePeriodEndsAt: true, pendingPlanId: true, pendingDowngradeAt: true } } } } },
   });
   if (!support || support.actorUserId !== context.user.id || support.endedAt || support.expiresAt <= new Date()) return null;
 

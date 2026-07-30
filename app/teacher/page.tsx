@@ -32,7 +32,13 @@ export default async function TeacherDashboard() {
   const context = await requireTenantMember(tenantStaffRoles);
   const canViewAnalytics = hasPermission(context.membership.role, "analytics.view", context.membership.permissions);
   const { tenant, tenantId } = context.membership;
-  const [subscriptionSnapshot, subscriptionPlans] = await Promise.all([getTenantSubscriptionSnapshot(tenantId), getSubscriptionPlansWithQuotes(tenantId)]);
+  const [subscriptionSnapshot, dashboard] = await Promise.all([
+    getTenantSubscriptionSnapshot(tenantId),
+    canViewAnalytics ? getTeacherDashboardData(tenantId) : Promise.resolve(null),
+  ]);
+  const subscriptionPlans = subscriptionSnapshot?.effectiveStatus === "TRIALING" && !subscriptionSnapshot.subscription.trialOfferDismissedAt
+    ? await getSubscriptionPlansWithQuotes(tenantId)
+    : [];
   const trialExperience = subscriptionSnapshot ? <DashboardTrialExperience subscription={{
     status: subscriptionSnapshot.effectiveStatus,
     planName: subscriptionSnapshot.subscription.plan.name,
@@ -63,7 +69,7 @@ export default async function TeacherDashboard() {
     );
   }
 
-  const dashboard = await getTeacherDashboardData(tenantId);
+  if (!dashboard) throw new Error("TEACHER_DASHBOARD_DATA_UNAVAILABLE");
   const summary = [
     { label: "طلاب جدد", value: dashboard.today.newStudents, note: "منذ بداية اليوم", icon: GraduationCap, tone: "blue" },
     { label: "مشاهدات اليوم", value: dashboard.today.lessonViews, note: "دروس فُتحت اليوم", icon: PlayCircle, tone: "violet" },
